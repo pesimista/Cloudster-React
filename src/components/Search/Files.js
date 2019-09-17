@@ -2,8 +2,8 @@ import React  from 'react';
 import { NavLink } from "react-router-dom";
 
 const Files = (props) => {
-  const { handleClick, contextMenu, changeRep } = props;
-  const { id, name, ext, isFile, lastModified, size, nivel } = props.file;
+  const { handleClick, contextMenu, index, changeRep } = props;
+  const { id, name, ext, isFile, lastModified, fullSize, size, dependency, nivel } = props.file;
   const content = (
 		<React.Fragment>
 			<img src={props.getIcon(isFile, ext)} alt={ext}/>
@@ -12,6 +12,8 @@ const Files = (props) => {
 			</p>
 		</React.Fragment>
     );
+    
+  // oldVariable = {display: 'block', textAlign:'center', margin: '10px 5px', width: '90px', height: '120px' };
   if(!isFile){
      return (
       <div onClick={(e) => handleClick(id)} onContextMenu={(e) => contextMenu(e)} className="file" style={{cursor: 'pointer'}}>
@@ -25,9 +27,9 @@ const Files = (props) => {
           {content}
         </a>
         <ul id={`dropdown${id}`} class='dropdown-content'>
-          <li><a href={`http://${props.serverIp}:6969/api/download/${id}?user=${props.userid}`}>Descargar</a></li>
-          { !props.getIcon(isFile, ext).includes('zerosize')? <li><NavLink to="Reproductor" onClick={() => changeRep(id)}>Visualizar</NavLink></li> : ''}
-          <li><a data-target={`slide-out${id}`} class="sidenav-trigger">Información</a></li>
+          <li><a href={`http://localhost:6969/api/download/${id}?user=${props.userid}`}>Descargar</a></li>
+          <li><NavLink to="Reproductor" onClick={() => changeRep(id)}>Visualizar</NavLink></li>
+          <li><a data-target={`slide-out${id}`} class="sidenav-trigger" href="#">Información</a></li>
         </ul>
         <div id={`slide-out${id}`} className="card center-align sidenav" >
           <div className="card-content" style={{padding: "6px"}}>
@@ -43,7 +45,10 @@ const Files = (props) => {
               <br style={{margin: '5px 0'}} />
               <span className="left" >Tamaño: </span>
               <span className="right" >{size}</span>
-              <br style={{margin: '5px 0'}} />              
+              <br style={{margin: '5px 0'}} />
+              <span className="left" >Subido por: </span>
+              <span className="right" >MezzMar</span>               
+              <br style={{margin: '5px 0'}} />
               <span className="left" >Nivel: </span>
               <span className="right" >{nivel}</span>
           </div>

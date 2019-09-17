@@ -6,8 +6,7 @@ class Register extends Component {
 	constructor(props) {
         super(props);
         this.state = {
-      registerUsername: '',
-      userExist: false,
+			registerUsername: '',
 			registerNombre: '',
 			registerPassword: '',
 			registerPasswordTwo: '',
@@ -70,7 +69,7 @@ class Register extends Component {
 		this.setState({respuesta2: event.target.value});
 	} 
 	handleRegister = () => {
-    fetch('/api/register', {
+    fetch('http://localhost:6969/api/register', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -89,10 +88,6 @@ class Register extends Component {
       {
         localStorage.setItem("user", JSON.stringify(data.user));
         this.props.history.push('search');
-        this.setState({userExist: false})
-      }
-      else if(data.response === 'El nombre de usuario ya existe!'){
-        this.setState({userExist: true})
       }
 	  else
 	  {
@@ -105,7 +100,7 @@ class Register extends Component {
 	render() {
 		if(JSON.parse(localStorage.getItem('user'))) return <Redirect to='/search' />
 		M.AutoInit();
-		const { registerUsername, registerNombre, registerPassword, registerPasswordTwo, respuesta1, respuesta2, pregunta1, pregunta2, userExist } = this.state;
+		const { registerUsername, registerNombre, registerPassword, registerPasswordTwo, respuesta1, respuesta2, pregunta1, pregunta2 } = this.state;
 		const { onUserChange, onPasswordChange, onPasswordTwoChange, handleChange1, handleChange2 } = this; 
 
 		const preguntas = this.state.Q.map( P => {
@@ -133,9 +128,6 @@ class Register extends Component {
 										htmlFor="username">
 											Nombre de usuario*											
 										</label>
-                    <p style={{fontSize: '0.8rem', color: '#B53E3E'}} className="left"> 
-                      {   userExist  ? 'El nombre de usuario ya existe.' : '' 
-                      } </p>
 									</div>
 									<div className="input-field col s12">
 										<input id="nombre" onChange={this.onNombreChange} type="text" className="validate"/>
@@ -152,7 +144,7 @@ class Register extends Component {
 										<label 
 										className="tooltipped" 
 										data-position="top" 
-										data-tooltip="Debe ser mayor a cinco (5) carácteres." 
+										data-tooltip="Debe ser mayor a seis (6) carácteres." 
 										htmlFor="pass">
 											Contraseña*
 										</label>

@@ -19,7 +19,7 @@ class Search extends Component {
   barWithin = (
     <div className="row" style={{marginBottom: '0px', borderBottom: '1px solid #424242'}}>
 
-			<div className="col s2 m1 valign-wrapper row" style={{fontSize: '18px', fontWeight: '600', lineHeight: '20px', padding: '5px', marginBottom: '0'}}>
+			<div className="col s1 valign-wrapper row" style={{fontSize: '18px', fontWeight: '600', lineHeight: '20px', padding: '5px', marginBottom: '0'}}>
         <button className="col s4" style={{width: '100%'}} onClick={(e) => this.props.goBack() }>
           <i className="fa fa-arrow-left grey-text text-darken-3"></i>
         </button>
@@ -39,7 +39,7 @@ class Search extends Component {
           <i className="fa fa-home grey-text text-darken-3"></i>
         </button>
 			</div>
-      <div className="col s6 m7 " style={{height: '100%', padding: '2px 0 0 0'}}>
+      <div className="col s7 " style={{height: '100%', padding: '5px'}}>
         <p style={{fontSize: "16px", textAlign: "center"}}>Puedes acceder al CR desde 
         <span style={{fontSize: "16px", fontWeight: "bold"}}>{` http://${this.props.ip}:3000/`}</span></p>
       </div>
@@ -47,12 +47,12 @@ class Search extends Component {
       <div className="col s4 file-field input-field" style={{margin: '0', padding: '0', display: 'flex'}}>
         <div className="btn" style={{borderRadius: '0', boxShadow: 'none', height: '2.2rem', lineHeight: '2.2rem'}}>
           <span>Subir</span>
-          <input onChange={(e) => this.onChange(e)} id='file' name="file" type="file"/>
+          <input onChange={(e) => this.onChange(e)} id='file' name="file" type="file" multiple />
         </div>
         <div className="file-path-wrapper">
           <input className="file-path validate" style={{margin: '0', border: 'none', height: '2.2rem'}} type="text" placeholder="Upload one or more files"/>
         </div>
-        <button onClick={(e) => this.uploadFile()} id="button" className="btn waves-effect waves-light" style={{borderRadius: '0', boxShadow: 'none', height: '2.2rem', lineHeight: '2.2rem', minWidth: "85px", width:"21%"}} type="button">Aceptar</button>
+        <button onClick={(e) => this.uploadFile()} id="button" className="btn waves-effect waves-light" style={{borderRadius: '0', boxShadow: 'none', height: '2.2rem', lineHeight: '2.2rem', minWidth: "85px", width:"21%"}} type="button">Submit</button>
       </div>
     </div>
   );
@@ -63,16 +63,13 @@ class Search extends Component {
   {
     let formData = new FormData();
     formData.append('file', this.state.fileField.files[0]);
-    fetch(`/api/file?whereTo=${this.props.files[0].dependency}`, {
+    fetch(`http://${this.props.ip}/api/file?whereTo=${this.props.files[0].dependency}`, {
       method: "POST",
       enctype: "multipart/form-data",
       body: formData
     })
     .then(res => res.json())
-    .then(data => {
-      this.props.handleClick(this.props.files[0].dependency)
-      alert('Recibido!')
-    });
+    .then(data => {this.props.handleClick(this.props.files[0].dependency)});
   }
   handleATag = (id) =>
   {
@@ -103,7 +100,6 @@ class Search extends Component {
           contextMenu={this.props.contextMenu}
           changeRep={this.props.changeRep}	
           getIcon={this.props.getIcon}
-          serverIp={this.props.ip}
         />
       ));
     }

@@ -140,7 +140,7 @@ class ProfileSettings extends Component {
 							<label 
 							className="tooltipped active" 
 							data-position="top" 
-							data-tooltip="Nueva contraseña. No puede ser igual a la anterior. Debe ser mayor a cinco (5) carácteres." 
+							data-tooltip="Nueva contraseña. No puede ser igual a la anterior. Debe ser mayor a seis (6) carácteres." 
 							for="password">
 								Nueva contraseña*
 							</label>
@@ -209,9 +209,8 @@ class ProfileSettings extends Component {
 							<div className="row valign-wrapper">
 								<button 
 									disabled = {
-										(changePassword.length > 0 && changePassword.length < 6) ||
-                    changePassword === changePasswordTwo ||
-										changePasswordTwo.length < 6 ||
+										changePassword.length > 0 && changePassword.length < 6 ||
+										changePassword === changePasswordTwo ||
 										pregunta1 === pregunta2 ||
 										((respuesta1 === respuesta2) && respuesta1.length > 0 )
 									}

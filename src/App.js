@@ -35,7 +35,11 @@ import compress from './components/SF/svg/Papirus-Team-Papirus-compress.svg';
 import iso from './components/SF/svg/Papirus-Team-Papirus-iso.svg';
 import video from './components/SF/svg/Papirus-Team-Papirus-video.svg';
 import zerosize from './components/SF/svg/Papirus-Team-Papirus-zerosize.svg';
+import arrow from './components/SF/svg/Papirus-Team-Papirus-arrow.svg';
+import Xoj from './components/SF/svg/Papirus-Team-Papirus-Xoj.svg';
 import Mimetypes from './components/SF/svg/Papirus-Team-Papirus-Mimetypes-X-office-document.svg';
+import png from './components/SF/svg/png.svg';
+import logo from './components/SF/svg/logo.svg';
 import pic from './components/SF/svg/Papirus-Team-Papirus-ImageGeneric.svg';
 /*----------------- Media ---------------------*/
 
@@ -60,14 +64,16 @@ class App extends Component {
       searchUserField: '',
       show: '',
       idRep: null,
-      serverIp: 'localhost'
+      serverIp: window.location.href.substring(7, window.location.href.indexOf('3')-1 )
     }
+    console.log(location.href.substring(7, location.href.indexOf('3')-1 ));
     if(this.state.serverIp === "localhost")
     {
-      fetch(`/api/dir`)
+      fetch(`http://localhost:6969/api/dir`)
       .then(res => res.json())
       .then(data => {
-        this.setState({serverIp: data.IP})
+        this.setState({serverIp: parseInt(data.IP)})
+        alert(this.state.serverIp);
       })
     }
   }
@@ -104,10 +110,11 @@ class App extends Component {
     }
     if(this.state.serverIp === "localhost")
     {
-      fetch(`/api/dir`)
+      fetch(`http://localhost:6969/api/dir`)
       .then(res => res.json())
       .then(data => {
         this.setState({serverIp: data.IP})
+        alert(this.state.serverIp);
       }).catch(e => console.log('Eoor')) 
     }
   }
@@ -126,9 +133,9 @@ class App extends Component {
   }
   updateFiles = (id) => 
   {
-    console.log(`/api/allFiles/${id}?user=${this.state.user.nivel}`);
+    console.log(`http://${this.state.serverIp}:6969/api/allFiles/${id}?user=${this.state.user.nivel}`);
     // fetch(`/api/allFiles/${id}?user=${this.state.user.nivel}`)
-    fetch(`/api/allFiles/${id}?user=${this.state.user.nivel}`)
+    fetch(`http://${this.state.serverIp}:6969/api/allFiles/${id}?user=${this.state.user.nivel}`)
     .then(res =>{return res.json();})
     .then(data => 
       {
@@ -189,7 +196,7 @@ class App extends Component {
     {
       const { files } = this.state;
       // fetch('http://localhost:6969/api/fileInfo/' + files[0].dependency)
-      fetch(`/api/fileInfo/${files[0].dependency}`)
+      fetch(`http://${this.state.serverIp}:6969/api/fileInfo/${files[0].dependency}`)
       .then(res =>{
         return res.json();
       })

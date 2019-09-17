@@ -18,7 +18,7 @@ class Login extends Component {
 	}
 
   handleLogin = () => {
-    fetch('/api/login', {
+    fetch('http://localhost:6969/api/login', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -65,8 +65,7 @@ class Login extends Component {
     }
     else if(response === 'Bloqueado por multiples intentos fallidos')
     {
-      this.setState({block: true});
-      this.setState({wrong: 'grant'});
+      this.setState({block: false});
     }
     else{
       this.setState({wrong: 'un'});
@@ -119,7 +118,7 @@ class Login extends Component {
                       <label  
                       className="tooltipped" 
                       data-position="top" 
-                      data-tooltip="Debe ser mayor a cinco (5) carácteres." 
+                      data-tooltip="Debe ser mayor a seis (6) carácteres." 
                       htmlFor="password">Password</label>
                       <p style={{fontSize: '0.8rem', color: '#B53E3E'}} className="left"> 
                       {   wrong === 'grant' ? '' 

@@ -114,7 +114,6 @@ class Recover extends Component {
   </React.Fragment>)
 
   render(){
-    const { respuesta1, respuesta2, password, passwordTwo } = this.state;
 		return(
       <div className="row center valign-wrapper" style={{height: '100%', marginBottom:'0', backgroundColor:'rgb(57,61,70)'}}>
         <div className="col s10 m8 l3 valign" style={{margin: 'auto',float: 'none'}}>
@@ -139,9 +138,6 @@ class Recover extends Component {
                   </div>
                   <div className="col s12" style={{textAlign: 'center'}}>
                     <button
-                      disabled = {
-                        ((respuesta1 === respuesta2) && respuesta1.length > 0 ) 
-                      }
                       onClick={this.handleQuestions}
                       className="btn waves-effect waves-light" style={{background: 'rgb(239,113,71)', height: '55px', width: '120px'}}>
                       <i className="fa fa-arrow-right"></i>
@@ -167,9 +163,6 @@ class Recover extends Component {
                       </div>
                     </div>  
                     <button
-                      disabled = {
-                        password.length > 0 && (password.length < 6 || password !== passwordTwo)
-                      }
                       onClick={this.changePassword}
                       className="btn waves-effect waves-light" style={{background: 'rgb(239,113,71)', height: '55px', width: '120px'}}>
                       <i className="fa fa-arrow-right"></i>

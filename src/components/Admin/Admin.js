@@ -12,21 +12,17 @@ class Admin extends Component {
 		  filesList: [],
 		  usersList: []
 		}
-  }
-  
-  fetchUsers = () => {
-    fetch('/api/users')
+	}
+	componentDidMount() {
+		fetch('http://localhost:6969/api/users')
     	.then(res => res.json())
     	.then(users => {
 		this.setState({
 			usersList: users
 		});
 		});
-  }
-	componentDidMount() {
-    this.fetchUsers();
 
-		fetch('/api/allFiles')
+		fetch('http://localhost:6969/api/allFiles')
 		.then(res => res.json())
 		.then(files => {
 		this.setState({
@@ -72,8 +68,6 @@ class Admin extends Component {
 
 				<div id="users">
 					<ShowUsers
-          fetchUsers={this.fetchUsers}
-          user={this.props.user}
 					usersList={filteredUsers} 
 					modifyBar={modifyBar}
 					/>
