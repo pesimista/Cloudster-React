@@ -63,10 +63,8 @@ class App extends Component {
       searchFileField: '',
       searchUserField: '',
       show: '',
-      idRep: null,
-      serverIp: window.location.href.substring(7, window.location.href.indexOf('3')-1 )
+      idRep: null
     }
-    console.log(location.href.substring(7, location.href.indexOf('3')-1 ));
     if(this.state.serverIp === "localhost")
     {
       fetch(`http://localhost:6969/api/dir`)
