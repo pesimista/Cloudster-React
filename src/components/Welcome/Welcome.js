@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from "react-router-dom";
 import View from "../SF/Media/intropag.png";
 
-const Welcome = () => {
+export const Welcome = () => {
 	return(
 		<div className="white-text" style={{overflowY: 'hidden', backgroundColor: 'rgb(57,62,70)', borderBottom: '20px solid #66bb6a', height: '100%'}}>
     <nav className="green lighten-1" role="navigation">
@@ -32,5 +32,3 @@ const Welcome = () => {
 		</div>
 	)
 }
-
-export default Welcome;
