@@ -1,8 +1,9 @@
-import React from 'react';
+import { React } from 'react';
 import { NavLink } from "react-router-dom";
-import View from "../SF/Media/intropag.png";
+import { View } from "../SF/Media/intropag.png";
 
-export const Welcome = () => {
+export default function Welcome() 
+{
 	return(
 		<div className="white-text" style={{overflowY: 'hidden', backgroundColor: 'rgb(57,62,70)', borderBottom: '20px solid #66bb6a', height: '100%'}}>
     <nav className="green lighten-1" role="navigation">
