@@ -3,6 +3,10 @@
   margin: 0px;
   padding: 0px;
 }
+red-hover:hover
+{
+  color: red !important;
+}
 body, html
 {
   height: 100%;
