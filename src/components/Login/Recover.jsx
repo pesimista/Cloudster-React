@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useReducer } from 'react';
 import { withRouter } from "react-router-dom";
 import { Link as RouterLink } from 'react-router-dom';
 //import { TextField, Card, CardContent, CardActions, Link, Divider, CardHeader, Box, StepLabel, Stepper, Typography, Step, makeStyles, Button, FormControl } from '@material-ui/core';
@@ -49,7 +49,7 @@ const getSteps = () => {
 const initialState = {
    activeStep: 0,
    user: '',
-   id_usuario: '',
+   id: '',
    pregunta1: '',
    pregunta2: '',
    respuesta1: '',
@@ -57,21 +57,16 @@ const initialState = {
    password: '',
    password2: ''
 }
+const reducer = (state, action) => {
+   return { ...state, ...action }
+};
 
 const Recover = (props) => {
    const classes = useStyles();
    const steps = getSteps();
    const preventDefault = event => event.preventDefault();
 
-   const [state, update] = useState(initialState);
-
-   /**
-    * updates the state
-    * @param {initialState} value The new value to assign to the state
-    */
-   const updateState = value => {
-      update({ ...state, ...value });
-   };
+   const [state, update] = useReducer(reducer, initialState);
 
    /**
     * Updates the value of certain key
@@ -79,71 +74,32 @@ const Recover = (props) => {
     * @param {any} value the new value to assign to it
     */
    const updateByKey = (key, value) => {
-      update({ ...state, [key]: value });
+      update({ [key]: value });
    };
 
-   const [activeStep, setActiveStep] = React.useState(0);
-   const [user, updateUser] = React.useState('');
-   const [pregunta1, updatePregunta1] = React.useState();
-   const [pregunta2, updatePregunta2] = React.useState();
-   const [respuesta1, updateRespuesta1] = React.useState();
-   const [respuesta2, updateRespuesta2] = React.useState();
-   const [password, updatePassword] = React.useState();
-   const [password2, updatePassword2] = React.useState();
 
-   const old_handleUsername = (e) => {
-      fetch(`http://localhost:6969/api/questions/${user}`, {
-      })
-         .then(res => res.json())
-         .then(data => {
-            setActiveStep(prevActiveStep => prevActiveStep + 1);
-            updatePregunta1(data.user.pregunta1);
-            updatePregunta2(data.user.pregunta2);
-         })
-         .catch(e => console.log(e));
-   }
    const handleUsername = () => {
-      if (state.user.length === 0) return
-      fetch(`http://localhost:6969/api/users/${state.user}/questions`)
+      if (state.user.trim().length === 0) return
+      fetch(`http://localhost:1234/api/users/${state.user}/questions`)
          .then(handleFetch)
          .then(data => {
-            updateState({
-               user: data.usuario,
-               id_usuario: data.id_usuario,
+            console.log('asd');
+            update({
+               user: data.usuario.trim(),
+               id_usuario: data.id_usuario.trim(),
                pregunta1: data.pregunta1,
                pregunta2: data.pregunta2,
                activeStep: 1
             });
          })
          .catch(e => console.log(e));
-   }
-
-
-   const old_handleQuestions = (e) => {
-      fetch('http://localhost:6969/api/checkQuestions', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({
-            usuario: { user },
-            respuesta1: { respuesta1 },
-            respuesta2: { respuesta2 }
-         })
-      })
-         .then(res => res.json())
-         .then(data => {
-            console.log(data.response);
-            if (data.response === 'Grant access') {
-               setActiveStep(prevActiveStep => prevActiveStep + 1);
-            }
-         })
-         .catch(err => console.log("ERROR", err));
-   }
+   };
 
    const handleQuestions = () => {
       if (state.respuesta1.trim().length === 0 || state.respuesta2.trim().length === 0)
          return;
 
-      fetch(`http://localhost:6969/api/users/${state.id_usuario}/questions`, {
+      fetch(`http://localhost:1234/api/users/${state.id_usuario}/questions`, {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify({
@@ -159,46 +115,18 @@ const Recover = (props) => {
          .catch(e => alert(e));
    }
 
-   const old_changePassword = (e) => {
-      if ({ password } === { password2 }) {
-         fetch('http://localhost:6969/api/password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            type: 'cors',
-            body: JSON.stringify({
-               usuario: { user },
-               password: { password },
-               withUser: true
-            })
-         })
-            .then(res => res.json())
-            .then(data => {
-               console.log(data.response);
-               if (data.response.endsWith('exitosa')) {
-                  console.log(data.user);
-                  localStorage.setItem("user", JSON.stringify(data.user));
-                  alert(data.response);
-                  props.history.push('search');
-               }
-            })
-            .catch(err => console.log("ERROR", err));
-      }
-   }
-
    const changePassword = (e) => {
       if (state.password.length > 0 && state.password === state.password2) {
-         fetch(`http://localhost:6969/api/users/${state.id_usuario}`, {
+         fetch(`http://localhost:1234/api/users/${state.id_usuario}`, {
             method: 'PUT',
             headers: {
                'Content-Type': 'application/json',
                'Authorization': localStorage.getItem('token')
             },
-            body: JSON.stringify({ password: password })
+            body: JSON.stringify({ password: state.password })
          })
             .then(handleFetch)
             .then(data => {
-               debugger
-               console.log(data);
                localStorage.setItem("token", "bearer " + data.token);
                localStorage.setItem("user", JSON.stringify(data.user));
                props.history.push('/busqueda');
@@ -213,7 +141,8 @@ const Recover = (props) => {
             changePassword();
    };
    const handleBack = () => {
-      setActiveStep(prevActiveStep => prevActiveStep - 1);
+      update({activeStep: state.activeStep-1});
+      // setActiveStep(prevActiveStep => prevActiveStep - 1);
    };
 
    const handleChange = (e) => {

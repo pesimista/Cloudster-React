@@ -41,24 +41,39 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const initialState = {
+  open: false,
+  openModal: false
+}
+
+const reducer = (state, action) => {
+   return { ...state, ...action }
+};
+
 
 const Files = (props)  => {
+  const classes = useStyles();
   const history = useHistory();
+
   const { index, handleClick, contextMenu, changeRep } = props;
-  const { id, name, ext, isFile, lastModified, size, nivel } = props.f;
+  const { id, name, ext, isFile, lastModified, size, nivel } = props.file;
+
+  const [state, update] = React.useReducer(reducer, state);
+
   const [open, setOpen] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
   const anchorRef = React.useRef(null);
-  const classes = useStyles();
+  
 
   const prevOpen = React.useRef(open);
+
   React.useEffect(() => {
-    if (prevOpen.current === true && open === false) {
+    if (prevOpen.current && !open) {
       anchorRef.current.focus();
     }
 
     prevOpen.current = open;
-  }, [open]);
+  }, [state.open]);
 
   const content = (
 		<Grow
@@ -79,34 +94,52 @@ const Files = (props)  => {
   );
 
   const handleToggle = () => {
-    setOpen(prevOpen => !prevOpen);
+    update({open: !state.open})
+    // setOpen(prevOpen => !prevOpen);
   };
 
   const handleClose = event => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
-    setOpen(false);
+    update({open: false});
+    // setOpen(false);
   };
   const handleOpenModal = () => {
-    setOpenModal(true);
-    setOpen(false);
+    update({
+      open: false,
+      openModal: true
+    });
+    // setOpenModal(true);
+    // setOpen(false);
   };
 
   const handleCloseModal = () => {
-    setOpenModal(false);
+    update({openModal: false});
+    // setOpenModal(false);
   };
   
   
   const modRep = (id) => {
     props.changeRep(id);
-    history.push('/Reproductor');
+    history.push('/reproductor');
   }//changeRep
+
+  const download = ino => {
+    fetch(`http://localhost:1234/api/files/${ino}/download`, {
+      method: 'GET',
+      headers: {
+      'Content-Type': 'application/json',
+      'Authorization': localStorage.getItem('token'),
+    },
+    })
+  }
 
   function handleListKeyDown(event) {
     if (event.key === 'Tab') {
       event.preventDefault();
-      setOpen(false);
+      update({open: true})
+      // setOpen(false);
     }
   }
 
@@ -121,11 +154,16 @@ const Files = (props)  => {
     }else {
       return(
       <Box textAlign="center" width={80} style={{ margin: '0px 5px 10px', cursor: 'pointer'}}>
-        <a ref={anchorRef} aria-controls={open ? 'menu-list-grow' : undefined} aria-haspopup="true" onClick={handleToggle} onContextMenu={(e) => contextMenu(e)} 
+        <a 
+          ref={anchorRef}
+          aria-controls={state.open ? 'menu-list-grow' : undefined}
+          aria-haspopup="true" 
+          onClick={handleToggle} 
+          onContextMenu={(e) => contextMenu(e)} 
         >
           {content}
         </a>
-        <Popper className={classes.popper} open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+        <Popper className={classes.popper} open={state.open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
           {({ TransitionProps, placement }) => (
             <Grow
               {...TransitionProps}
@@ -134,7 +172,9 @@ const Files = (props)  => {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                    <MenuItem><Link color="inherit" underline="none" href={`http://${props.serverIp}:6969/api/download/${id}?user=${props.userId}`}>Descargar</Link></MenuItem>
+                    <MenuItem onClick={()=>download(ino)}>
+                      Descargar                        
+                    </MenuItem>
                     <MenuItem onClick={() => modRep(id)}>Reproducir</MenuItem>
                     <MenuItem onClick={handleOpenModal}>Información</MenuItem>
                   </MenuList>

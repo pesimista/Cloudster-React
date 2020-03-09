@@ -15,6 +15,7 @@ import { Link as RouterLink, useHistory } from "react-router-dom";
 import MySnackbarContentWrapper from "../SubSnackBar/SubSnackBar";
 
 import { handleFetch } from "../SF/helpers";
+import { useReducer } from "react";
 
 const useStyles = makeStyles(theme => ({
    root: {
@@ -31,6 +32,10 @@ const useStyles = makeStyles(theme => ({
    }
 }));
 
+/**
+ * updates the state
+ * @param {initialState} value The new value to assign to the state
+ */
 const initialState = {
    open: false,
    logedIn: false,
@@ -39,6 +44,11 @@ const initialState = {
    wrong: "",
    block: false
 };
+
+const reducer = (state, action) => {
+   return { ...state, ...action }
+};
+
 
 const reactLink = React.forwardRef((props, ref) => (
    <RouterLink innerRef={ref} {...props} />
@@ -49,15 +59,7 @@ const Login = props => {
    const classes = useStyles();
    const preventDefault = event => event.preventDefault();
 
-   const [state, update] = useState(initialState);
-
-   /**
-    * updates the state
-    * @param {initialState} value The new value to assign to the state
-    */
-   const updateState = value => {
-      update({ ...state, ...value });
-   };
+   const [state, update] = useReducer(reducer, initialState);
 
    /**
     * Updates the value of certain key
@@ -65,47 +67,14 @@ const Login = props => {
     * @param {any} value the new value to assign to it
     */
    const updateByKey = (key, value) => {
-      update({ ...state, [key]: value });
-   };
-
-   const [open, setOpen] = React.useState(false);
-   const [signInUser, updateUser] = useState("");
-   const [signInPassword, updatePassword] = useState("");
-   const [wrong, updateWrong] = useState("");
-   const [block, updateBlock] = useState(false);
-
-   const old_handleLogin = () => {
-      fetch("/api/login", {
-         method: "post",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({
-            nombre: signInUser,
-            usuario: signInUser,
-            password: signInPassword
-         })
-      })
-         .then(res => res.json())
-         .then(data => {
-            if (data.response === "Grant access") {
-               localStorage.setItem("user", JSON.stringify(data.user));
-               setOpen(true);
-               console.log("hace esto");
-               setTimeout(() => {
-                  history.push("/Busqueda");
-               }, 1000);
-            } else if (data.response === "Contraseña incorrecta!") {
-            } else {
-               console.log("reason 2: ", data.response);
-            }
-         })
-         .catch(err => console.log("ERROR", err));
+      update({ [key]: value });
    };
 
    const handleLogin = () => {
       if (state.signInUser.trim().length === 0 || state.signInPassword.trim().length === 0)
          return;
-         
-      fetch("http://localhost:6969/api/users/login", {
+
+      fetch("http://localhost:1234/api/users/login", {
          method: "post",
          headers: { "Content-Type": "application/json" },
          body: JSON.stringify({
@@ -117,9 +86,9 @@ const Login = props => {
          .then(data => {
             localStorage.setItem("token", "bearer " + data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
-            updateState({ open: true });
+            update({ open: true });
             setTimeout(() => {
-               history.push("/Busqueda");
+               history.push("/busqueda");
             }, 500);
          })
          .catch(error => {
@@ -127,23 +96,10 @@ const Login = props => {
          })
    };
 
-   const onTry = response => {
-      if (response === "Grant access") {
-         updateWrong("grant");
-      } else if (response === "Contraseña incorrecta!") {
-         updateWrong("ci");
-      } else if (response === "Bloqueado por multiples intentos fallidos") {
-         updateBlock(true);
-         updateWrong("grant");
-      } else {
-         updateWrong("un");
-      }
-   };
-
    const handleClose = (event, reason) => {
       if (reason === "clickaway")
          return;
-      setOpen(false);
+      update({ open: false });
    };
 
    return (
@@ -168,7 +124,7 @@ const Login = props => {
                <CardContent className={classes.buttonStyle}>
                   <TextField
                      disabled={state.block}
-                     onChange={e => updateByKey("signInUser", e.target.value)}
+                     onChange={e => update({ "signInUser": e.target.value })}
                      id="outlined-basic"
                      label="Nombre de usuario"
                      variant="outlined"
@@ -176,7 +132,7 @@ const Login = props => {
                   <Box>
                      <TextField
                         disabled={state.block}
-                        onChange={e => updateByKey("signInPassword", e.target.value)}
+                        onChange={e => update({ "signInPassword": e.target.value })}
                         id="outlined-basic"
                         type="password"
                         label="Contraseña"

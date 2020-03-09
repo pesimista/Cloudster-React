@@ -7,7 +7,6 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { Redirect } from 'react-router-dom';
 import Files from './Files';
 import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
-//import { makeStyles, AppBar, Toolbar, IconButton, Typography, Button, Box, TextField, Snackbar } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -43,8 +42,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const initialState = {
+  open: false,
+  fileField: '',
+  fileFieldText: '',
+  currentFile: 0
+}
+
+const reducer = (state, action) => {
+   return { ...state, ...action }
+};
+
 const Search = (props) => {
   const classes = useStyles();
+  const [state, update] = React.useReducer(reducer, initialState);
+
   const [open, setOpen] = React.useState(false);
   const [fileField, updateFileField] = React.useState('');
   const [fileFieldText, updateFileFieldText] = React.useState('');
@@ -57,8 +69,7 @@ const Search = (props) => {
   
 
   const items = () => {
-    let grows = [];
-    props.files.map( (f, index) => (
+    return props.files.map( (file, index) => (
       grows.push(
         <Files
           useTheme={props.useTheme}
@@ -70,11 +81,10 @@ const Search = (props) => {
           handleClick={props.handleClick}
           key={index}
           index={index}
-          f={f}
+          file={file}
         />
       )
     ));
-  return grows;
   }
 
   const onChange = (e) => {

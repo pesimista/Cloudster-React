@@ -47,6 +47,8 @@ const useStyles = makeStyles(theme => ({
    },
 }));
 
+// const {Provider, Consumer} = React.createContext(defaultValue);
+
 const App = (props) => {
 
    const classes = useStyles();
@@ -222,15 +224,15 @@ const App = (props) => {
       return (
          !isFile ? folder :
             ext === 'jpg' || ext === 'png' ? pic :
-               ext === 'mp3' || ext === 'wav' ? audio :
-                  ext === 'mp4' || ext === 'mkv' ? video :
-                     ext === 'rar' || ext === 'zip' ? compress :
-                        ext === 'json' || ext === 'js' ? json :
-                           ext === 'iso' ? iso :
-                              ext === 'json' ? json :
-                                 ext === 'pdf' ? pdf :
-                                    ext === 'txt' ? Mimetypes :
-                                       ext === 'html' ? html : zerosize
+            ext === 'mp3' || ext === 'wav' ? audio :
+            ext === 'mp4' || ext === 'mkv' ? video :
+            ext === 'rar' || ext === 'zip' ? compress :
+            ext === 'json' || ext === 'js' ? json :
+            ext === 'iso' ? iso :
+            ext === 'json' ? json :
+            ext === 'pdf' ? pdf :
+            ext === 'txt' ? Mimetypes :
+            ext === 'html' ? html : zerosize
       );
    }//GetIcon
    /*---------------------- HANDLERS ----------------------*/
@@ -272,12 +274,11 @@ const App = (props) => {
                />
                <Route exact path="/recover" component={Recover} />
                <Route exact path="/register" component={Register} />
-               <Route exact path="/Busqueda"
+               <Route exact path="/busqueda"
                   render={(props) => (
                      <Search
                         useTheme={useTheme}
                         serverIp={serverIp}
-                        userId={user.id}
                         changeRep={changeRep}
                         ip={serverIp}
                         getIcon={getIcon}
