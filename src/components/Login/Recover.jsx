@@ -1,24 +1,23 @@
-import React, { Component, useReducer } from 'react';
-import { withRouter } from "react-router-dom";
-import { Link as RouterLink } from 'react-router-dom';
-//import { TextField, Card, CardContent, CardActions, Link, Divider, CardHeader, Box, StepLabel, Stepper, Typography, Step, makeStyles, Button, FormControl } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Link from '@material-ui/core/Link';
-import Divider from '@material-ui/core/Divider';
-import CardHeader from '@material-ui/core/CardHeader';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
+import Divider from '@material-ui/core/Divider';
+import FormControl from '@material-ui/core/FormControl';
+import Link from '@material-ui/core/Link';
+import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
-import Typography from '@material-ui/core/Typography';
-import Step from '@material-ui/core/Step';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-
+//import { TextField, Card, CardContent, CardActions, Link, Divider, CardHeader, Box, StepLabel, Stepper, Typography, Step, makeStyles, Button, FormControl } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import React, { useReducer } from 'react';
+import { Link as RouterLink, withRouter } from "react-router-dom";
 import { handleFetch } from "../SF/helpers";
+
 
 const useStyles = makeStyles(theme => ({
    root: {
@@ -64,7 +63,6 @@ const reducer = (state, action) => {
 const Recover = (props) => {
    const classes = useStyles();
    const steps = getSteps();
-   const preventDefault = event => event.preventDefault();
 
    const [state, update] = useReducer(reducer, initialState);
 

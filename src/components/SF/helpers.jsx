@@ -8,12 +8,10 @@ export const handleFetch = (response) => {
       });
 };
 
-class key {name;required;type;length}
-
 /**
  * 
  * @param {any} item 
- * @param {key[]} keys 
+ * @param {{name;required;type;length}[]} keys
  */
 export const structuteChecker = (item, keys) => {
    return keys.every(
@@ -21,18 +19,18 @@ export const structuteChecker = (item, keys) => {
          console.log(key);
          const { name, required, type, length } = key;
 
-         if (required && !item[name]){  
+         if (required && !item[name]) {
             console.log(item);
             console.log('Missing required ' + name + ' ' + item[name])
             return false;
          }
-         
-         if(type && typeof item[name]!==type){ 
+
+         if (type && typeof item[name] !== type) {
             console.log('Type doesnt match ' + name)
             return false;
          }
 
-         if(length && item[name].length<length){  
+         if (length && item[name].length < length) {
             console.log('length ' + name)
             return false;
          }

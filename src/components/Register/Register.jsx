@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { Link as RouterLink, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import { Snackbar } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import Link from "@material-ui/core/Link";
 import MenuItem from '@material-ui/core/MenuItem';
-import TextField from "@material-ui/core/TextField";
-import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
 import Step from '@material-ui/core/Step';
-import Stepper from '@material-ui/core/Stepper';
-import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
+import StepLabel from '@material-ui/core/StepLabel';
+import Stepper from '@material-ui/core/Stepper';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from "@material-ui/core/TextField";
+import Typography from '@material-ui/core/Typography';
+import React, { useReducer } from 'react';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
+import { handleFetch, structuteChecker } from '../SF/helpers';
 import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
-import { Snackbar } from '@material-ui/core';
 
-import { structuteChecker, handleFetch } from '../SF/helpers';
 
 const useStyles = makeStyles(theme => ({
    root: {
@@ -65,70 +65,29 @@ const reactLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {.
 
 const initialState = {
    open: false,
-   activeStep: 2,
-   nombre: "asd",
-   apellido: "asd",
-   user: " MEzza",
+   activeStep: 0,
+   nombre: "",
+   apellido: "",
+   user: "",
    userExist: false,
-   password: "asdasd",
-   password2: "asdasd",
+   password: "",
+   password2: "",
    pregunta1: 1,
    pregunta2: 2,
-   respuesta1: "asd",
-   respuesta2: "asd",
+   respuesta1: "",
+   respuesta2: "",
    questions: []
 }
 
-//    open: false,
-//    activeStep: 0,
-//    nombre: '',
-//    apellido: '',
-//    user: '',
-//    userExist: false,
-//    password: '',
-//    password2: '',
-//    pregunta1: 1,
-//    pregunta2: 2,
-//    respuesta1: '',
-//    respuesta2: '',
-//    questions: []
-// };
+const reducer = (state, action) => {
+   return { ...state, ...action };
+}
 
 const Register = (props) => {
    let history = useHistory();
    const classes = useStyles();
 
-   const [state, update] = useState(initialState);
-
-   /**
-    * updates the state
-    * @param {initialState} value The new value to assign to the state
-    */
-   const updateState = value => {
-      update({ ...state, ...value });
-   };
-
-   /**
-    * Updates the value of certain key
-    * @param {string} key name of the property to be changed
-    * @param {any} value the new value to assign to it
-    */
-   const updateByKey = (key, value) => {
-      update({ ...state, [key]: value });
-   };
-
-   const [open, setOpen] = React.useState(false);
-   const [activeStep, setActiveStep] = React.useState(0);
-   const [nombre, updateNombre] = React.useState('');
-   const [apellido, updateApellido] = React.useState('');
-   const [user, updateUser] = React.useState('');
-   const [userExist, updateUserExist] = React.useState(false);
-   const [password, updatePassword] = React.useState('');
-   const [password2, updatePassword2] = React.useState('');
-   const [pregunta1, updatePregunta1] = React.useState(1);
-   const [pregunta2, updatePregunta2] = React.useState(2);
-   const [respuesta1, updateRespuesta1] = React.useState('');
-   const [respuesta2, updateRespuesta2] = React.useState('');
+   const [state, update] = useReducer(reducer, initialState);
 
    const questions = [
       { id: "1", pregunta: "Cuál es el nombre de tu mejor amigo?" },
@@ -138,45 +97,7 @@ const Register = (props) => {
       { id: "5", pregunta: "Cuál es el segundo nombre de tu madre?" }
    ];
 
-   const old_handleRegister = () => {
-      fetch('/api/register', {
-         method: 'post',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({
-            nombre: nombre,
-            password: password,
-            usuario: user,
-            pregunta1: pregunta1,
-            pregunta2: pregunta2,
-            respuesta1: respuesta1,
-            respuesta2: respuesta2
-         })
-      })
-         .then(handleFetch)
-         .then(data => {
-
-            if (data.response === 'Grant access') {
-               localStorage.setItem("user", JSON.stringify(data.user));
-               updateUserExist(false);
-               setOpen(true);
-               setTimeout(() => {
-                  history.push('/Busqueda');
-               }, 1000);
-            }
-            else if (data.response === 'El nombre de usuario ya existe!') {
-               console.log(data.response);
-               updateUserExist(true);
-               setActiveStep(2);
-            }
-            else {
-               alert(data.response);
-            }
-         })
-         .catch(err => console.log("ERROR", err));
-   }
-
    const handleRegister = () => {
-      console.log(state);
       const keys = [
          { name: "nombre", required: true, type: "string", length: 2 },
          { name: "apellido", required: true, type: "string", length: 2 },
@@ -204,13 +125,11 @@ const Register = (props) => {
             respuesta1: state.respuesta1.trim(),
             respuesta2: state.respuesta2.trim()
          })
-      }).then(
-         res => res.json()
-      ).then(
+      }).then(handleFetch).then(
          data => {
             localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", 'bearer ' + data.token);
-            updateState({
+            update({
                userExist: false,
                open: true
             });
@@ -221,7 +140,7 @@ const Register = (props) => {
          }
       ).catch(err => {
          console.log(err);
-         updateByKey('activeStep', 2);
+         update({activeStep: 2});
       });
    }
 
@@ -229,21 +148,21 @@ const Register = (props) => {
       if (reason === 'clickaway') {
          return;
       }
-      updateByKey('open', false);
+      update({open: false});
       // setOpen(false);
    };
 
    const steps = ['Nombres y Contraseña', 'Preguntas Secretas', 'Nombre de usuario'];
-   const handleNext = () => updateByKey('activeStep', state.activeStep + 1);
-   const handleBack = () => updateByKey('activeStep', state.activeStep - 1);
+   const handleNext = () => update({activeStep: state.activeStep + 1});
+   const handleBack = () => update({activeStep: state.activeStep - 1});
    const handleClick = () => state.activeStep < 2 ? handleNext() : handleRegister();
 
    const handleChange = (e) => {
       if (state.userExist && e.target.name === 'user') {
-         updateState({ userExist: false, user: e.target.value });
+         update({ userExist: false, user: e.target.value });
       }
       else
-         updateByKey(e.target.name, e.target.value);
+         update({[e.target.name]: e.target.value});
 
       console.log(e.target.name, e.target.value);
    }
@@ -364,8 +283,8 @@ const Register = (props) => {
                      onChange={handleChange}
                      name="user"
                      value={state.user}
-                     helperText={userExist ? 'El nombre de usuario ya existe' : ' '}
-                     error={userExist}
+                     helperText={state.userExist ? 'El nombre de usuario ya existe' : ' '}
+                     error={state.userExist}
                      id="outlined-basic"
                      label="Nombre de usuario"
                      variant="outlined" />
@@ -409,7 +328,7 @@ const Register = (props) => {
                                  onClick={handleClick}
                                  className={classes.button}
                               >
-                                 {activeStep === (steps.length - 1) ? 'Registrarse' : 'Siguiente'}
+                                 {state.activeStep === (steps.length - 1) ? 'Registrarse' : 'Siguiente'}
                               </Button>
                            </div>
                         </div>
@@ -423,7 +342,7 @@ const Register = (props) => {
                      vertical: 'bottom',
                      horizontal: 'left',
                   }}
-                  open={open}
+                  open={state.open}
                   autoHideDuration={6000}
                   onClose={handleClose}
                >
@@ -450,3 +369,47 @@ const Register = (props) => {
 }
 
 export default Register;
+
+// const old_handleRegister = () => {
+//    fetch('/api/register', {
+//       method: 'post',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({
+//          nombre: nombre,
+//          password: password,
+//          usuario: user,
+//          pregunta1: pregunta1,
+//          pregunta2: pregunta2,
+//          respuesta1: respuesta1,
+//          respuesta2: respuesta2
+//       })
+//    })
+//       .then(handleFetch)
+//       .then(data => {
+
+//          if (data.response === 'Grant access') {
+//             localStorage.setItem("user", JSON.stringify(data.user));
+//             updateUserExist(false);
+//             setOpen(true);
+//             setTimeout(() => {
+//                history.push('/Busqueda');
+//             }, 1000);
+//          }
+//          else if (data.response === 'El nombre de usuario ya existe!') {
+//             console.log(data.response);
+//             updateUserExist(true);
+//             setActiveStep(2);
+//          }
+//          else {
+//             alert(data.response);
+//          }
+//       })
+//       .catch(err => console.log("ERROR", err));
+// }
+
+// const [password, updatePassword] = React.useState('');
+// const [password2, updatePassword2] = React.useState('');
+// const [pregunta1, updatePregunta1] = React.useState(1);
+// const [pregunta2, updatePregunta2] = React.useState(2);
+// const [respuesta1, updateRespuesta1] = React.useState('');
+// const [respuesta2, updateRespuesta2] = React.useState('');

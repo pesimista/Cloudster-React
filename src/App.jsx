@@ -1,64 +1,87 @@
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import green from '@material-ui/core/colors/green';
+import orange from '@material-ui/core/colors/orange';
 import React from 'react';
-import { Switch, BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import './App.css';
-import Welcome from './components/Welcome/Welcome';
-import Reproductor from './components/Reproductor/Reproductor';
+import Admin from './components/Admin/Admin';
+import Err from './components/Err/Err';
+import RequireLogin from './components/Err/RequireLogin';
 import Search from './components/Files/Search';
 import Login from './components/Login/Login';
 import Recover from './components/Login/Recover';
-import Register from './components/Register/Register';
-import TopBar from './components/TopBar/TopBar';
-import Sidebar from './components/Sidebar/Sidebar';
 import Profile from './components/Profile/Profile';
 import ProfileSettings from './components/Profile/ProfileSettings';
-import Err from './components/Err/Err';
-import RequireLogin from './components/Err/RequireLogin';
-import Admin from './components/Admin/Admin';
-import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core';
-import green from '@material-ui/core/colors/green';
-import orange from '@material-ui/core/colors/orange';
-
+import Register from './components/Register/Register';
+import Reproductor from './components/Reproductor/Reproductor';
+import Sidebar from './components/Sidebar/Sidebar';
 //SVG
 import folder from './components/svg/folder.svg';
-import pdf from './components/svg/Papirus-Team-Papirus-pdf.svg';
-import html from './components/svg/Papirus-Team-Papirus-html.svg';
 import audio from './components/svg/Papirus-Team-Papirus-audio.svg';
-import json from './components/svg/Papirus-Team-Papirus-json.svg';
 import compress from './components/svg/Papirus-Team-Papirus-compress.svg';
+import html from './components/svg/Papirus-Team-Papirus-html.svg';
+import pic from './components/svg/Papirus-Team-Papirus-ImageGeneric.svg';
 import iso from './components/svg/Papirus-Team-Papirus-iso.svg';
+import json from './components/svg/Papirus-Team-Papirus-json.svg';
+import Mimetypes from './components/svg/Papirus-Team-Papirus-Mimetypes-X-office-document.svg';
+import pdf from './components/svg/Papirus-Team-Papirus-pdf.svg';
 import video from './components/svg/Papirus-Team-Papirus-video.svg';
 import zerosize from './components/svg/Papirus-Team-Papirus-zerosize.svg';
-import Mimetypes from './components/svg/Papirus-Team-Papirus-Mimetypes-X-office-document.svg';
-import pic from './components/svg/Papirus-Team-Papirus-ImageGeneric.svg';
 //SVG
+import TopBar from './components/TopBar/TopBar';
+import Welcome from './components/Welcome/Welcome';
 
 const useStyles = makeStyles(theme => ({
    root: {
       display: 'flex',
-   },
-   theme: {
-      backgroundColor: theme.palette.background.default,
-      color: theme.palette.text.primary,
-   },
-   toolbar: theme.mixins.toolbar,
-   useDark: {
-      display: 'flex',
-      backgroundColor: '#393d46'
+   }, theme: {
+      backgroundColor: theme.palette.background.default, color: theme.palette.text.primary,
+   }, toolbar: theme.mixins.toolbar, useDark: {
+      display: 'flex', backgroundColor: '#393d46'
    },
 }));
+
+const prins = createMuiTheme({
+   palette: {
+      primary: { main: green[400], dark: '#424242' },
+      secondary: { main: orange[400], dark: '#252525' },
+      textPrimary: { main: '#FFF' },
+      bg: { main: orange[50] },
+   },
+});
+const dark = createMuiTheme({
+   palette: {
+      primary: { main: '#424242' },
+      secondary: { main: '#252525' },
+      primaryText: { main: '#FFF' },
+      bg: { main: '#393d46' },
+   },
+});
+
+const initialUser = {
+   id: 0,
+   nombre: "",
+   nivel: 1,
+   desde: "",
+   usuario: ""
+};
+
+// const reducer = (state, action) => {
+//    switch (action.name) {
+//       case 'user':
+//          return { ...state, ...action.payload };
+//       default:
+//          return { ...state };
+
+//    }
+// }
 
 // const {Provider, Consumer} = React.createContext(defaultValue);
 
 const App = (props) => {
 
    const classes = useStyles();
-   const initialUser = {
-      id: 0,
-      nombre: "",
-      nivel: 1,
-      desde: "",
-      usuario: ""
-   };
+
    const [user, updateUser] = React.useState(initialUser);
    const [currentFolder, updateCurrentFolder] = React.useState(0);
    const [serverIp, updateServerIp] = React.useState('localhost');
@@ -69,41 +92,6 @@ const App = (props) => {
    const [searchFileField, updateSearchFile] = React.useState('');
    const [searchUserField, updateSearchUser] = React.useState('');
    const [useTheme, updateTheme] = React.useState(false);
-
-   const prins = createMuiTheme({
-      palette: {
-         primary: {
-            main: green[400],
-            dark: '#424242'
-         },
-         secondary: {
-            main: orange[400],
-            dark: '#252525'
-         },
-         textPrimary: {
-            main: '#FFF'
-         },
-         bg: {
-            main: orange[50],
-         },
-      },
-   });
-   const dark = createMuiTheme({
-      palette: {
-         primary: {
-            main: '#424242',
-         },
-         secondary: {
-            main: '#252525',
-         },
-         primaryText: {
-            main: '#FFF',
-         },
-         bg: {
-            main: '#393d46',
-         },
-      },
-   });
 
    React.useEffect(() => {
       const localUser = localStorage.getItem('user');
@@ -120,6 +108,7 @@ const App = (props) => {
                updateServerIp(data.IP);
             }).catch(e => console.log('Eoor'))
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []); //Use Effect
 
    const loadUser = (data) => {
@@ -150,34 +139,34 @@ const App = (props) => {
       arr.sort(byName);
       arr.sort(byFileType);
       updateFiles(arr);
-   }//Sort
+   };//Sort
    const byName = (a, b) => {
       var x = a.name.toLowerCase();
       var y = b.name.toLowerCase();
       return compare(x, y);
-   }//By name
+   };//By name
    const byFileType = (a, b) => {
       var x = a.ext.toLowerCase();
       var y = b.ext.toLowerCase();
       return compare(x, y);
-   }//ByFileType
+   };//ByFileType
    const compare = (a, b) => {
       return (a < b ? -1 :
          a > b ? 1 : 0);
-   }//Compare
+   };//Compare
    /*----------------- OWN METHODS ---------------------*/
    /*---------------------- HANDLERS ----------------------*/
    const contextMenu = (e) => {
       e.preventDefault();
-   }//ContextMenu
+   };//ContextMenu
    const handleClick = (id) => {
       updateCurrentFolder(id);
       loadFiles(id);
-   }//Handleclick
+   };//Handleclick
    const goHome = () => {
       updateCurrentFolder(0);
       loadFiles(0);
-   }//GoHome
+   };//GoHome
    const goBack = () => {
       console.log(currentFolder)
       if (currentFolder !== 0) {
@@ -195,10 +184,10 @@ const App = (props) => {
                console.log(e);
             });
       }
-   }//Go Back
+   };//Go Back
    const changeRep = (id) => {
       updateReproductor(id);
-   }//changeRep
+   };//changeRep
    const onSearchFileChange = (event) => { /* Changes what files are shown */
       updateSearchFile(event.target.value);
    }
@@ -210,30 +199,46 @@ const App = (props) => {
       updateUser(initialUser);
       updateCurrentFolder(0);
       updateShowBar('');
-   }//signout
+   };//signout
    const modifyBar = (show) => {
       updateShowBar(show);
-   }//ModifyBar
+   };//ModifyBar
    const modifySearch = (show) => {
       updateSearchBar(show);
-   }//ModifySearch
+   };//ModifySearch
    const updateSwitch = event => {
       updateTheme(event.target.checked);
    };
    const getIcon = (isFile, ext) => {
-      return (
-         !isFile ? folder :
-            ext === 'jpg' || ext === 'png' ? pic :
-            ext === 'mp3' || ext === 'wav' ? audio :
-            ext === 'mp4' || ext === 'mkv' ? video :
-            ext === 'rar' || ext === 'zip' ? compress :
-            ext === 'json' || ext === 'js' ? json :
-            ext === 'iso' ? iso :
-            ext === 'json' ? json :
-            ext === 'pdf' ? pdf :
-            ext === 'txt' ? Mimetypes :
-            ext === 'html' ? html : zerosize
-      );
+      if (!isFile) 
+         return folder;
+      switch (ext) {
+         case 'jpg':
+         case 'png':
+            return pic;
+         case 'mp3':
+         case 'wav':
+            return audio;
+         case 'mp4':
+         case 'mkv':
+            return video;
+         case 'rar':
+         case 'zip':
+            return compress;
+         case 'json':
+         case 'js':
+            return json;
+         case 'iso':
+            return iso;
+         case 'pdf':
+            return pdf;
+         case 'txt':
+            return Mimetypes;
+         case 'html':
+            return html;
+         default:
+            return zerosize;
+      }
    }//GetIcon
    /*---------------------- HANDLERS ----------------------*/
 
@@ -291,20 +296,20 @@ const App = (props) => {
                      />
                   )}
                />
-               <Route exact path="/Perfil"
+               <Route exact path="/perfil"
                   render={(props) => (
                      <Profile
                         user={user}
                      />
                   )}
                />
-               <Route exact path="/Configuracion"
+               <Route exact path="/configuracion"
                   render={(props) => (
                      <ProfileSettings
                      />
                   )}
                />
-               <Route exact path="/Reproductor"
+               <Route exact path="/reproductor"
                   render={(props) => (
                      <Reproductor
                         serverIp={serverIp}
@@ -318,7 +323,7 @@ const App = (props) => {
                      />
                   )}
                />
-               <Route exact path="/Admin"
+               <Route exact path="/admin"
                   render={(props) => (
                      <Admin
                         useTheme={useTheme}

@@ -1,5 +1,5 @@
 //import { Button, Card, CardActions, CardContent, CardHeader, Divider, Link, makeStyles, Snackbar, TextField } from '@material-ui/core';
-import React, { useState } from "react";
+import React from "react";
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -60,15 +60,6 @@ const Login = props => {
    const preventDefault = event => event.preventDefault();
 
    const [state, update] = useReducer(reducer, initialState);
-
-   /**
-    * Updates the value of certain key
-    * @param {string} key name of the property to be changed
-    * @param {any} value the new value to assign to it
-    */
-   const updateByKey = (key, value) => {
-      update({ [key]: value });
-   };
 
    const handleLogin = () => {
       if (state.signInUser.trim().length === 0 || state.signInPassword.trim().length === 0)
