@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.background.default, color: theme.palette.text.primary,
    }, toolbar: theme.mixins.toolbar, useDark: {
       display: 'flex', backgroundColor: '#393d46'
-   },
+   }
 }));
 
 const prins = createMuiTheme({
@@ -76,7 +76,6 @@ const initialUser = {
 //    }
 // }
 
-// const {Provider, Consumer} = React.createContext(defaultValue);
 
 const App = (props) => {
 
@@ -93,6 +92,10 @@ const App = (props) => {
    const [searchUserField, updateSearchUser] = React.useState('');
    const [useTheme, updateTheme] = React.useState(false);
 
+   /**
+    * TODO
+    * Verificacion de token on init
+    */
    React.useEffect(() => {
       const localUser = localStorage.getItem('user');
       if (localUser !== null && JSON.stringify(user) === JSON.stringify(initialUser)) {
@@ -155,7 +158,12 @@ const App = (props) => {
          a > b ? 1 : 0);
    };//Compare
    /*----------------- OWN METHODS ---------------------*/
+
    /*---------------------- HANDLERS ----------------------*/
+
+   /** MOVER A COMPONENTES */
+
+   /** Search */
    const contextMenu = (e) => {
       e.preventDefault();
    };//ContextMenu
@@ -167,6 +175,8 @@ const App = (props) => {
       updateCurrentFolder(0);
       loadFiles(0);
    };//GoHome
+
+   /** Va hacia la carpeta contenedora de la carpeta actual - Files */
    const goBack = () => {
       console.log(currentFolder)
       if (currentFolder !== 0) {
@@ -185,32 +195,51 @@ const App = (props) => {
             });
       }
    };//Go Back
+
    const changeRep = (id) => {
       updateReproductor(id);
    };//changeRep
-   const onSearchFileChange = (event) => { /* Changes what files are shown */
+
+   /** Filtra archivos - Files */
+   const onSearchFileChange = (event) => {
       updateSearchFile(event.target.value);
    }
-   const onSearchUserChange = (event) => { /* Changes what files are shown */
+
+   /** Filtra usuarios en la pagina de admin - Provider */
+   const onSearchUserChange = (event) => {
       updateSearchUser(event.target.value);
    }
+
+   /** Logs out - Sidebar*/
    const signout = () => {
       localStorage.removeItem('user');
       updateUser(initialUser);
       updateCurrentFolder(0);
       updateShowBar('');
    };//signout
+
    const modifyBar = (show) => {
+      /** True || false */
       updateShowBar(show);
    };//ModifyBar
+
+   /** Cambia si busca usuarios o archivos - Provider*/
    const modifySearch = (show) => {
       updateSearchBar(show);
    };//ModifySearch
+
+   /** Cambia el tema - Profile*/
    const updateSwitch = event => {
       updateTheme(event.target.checked);
    };
+   /** MOVER A COMPONENTES */
+
+
+   /** Oculta o mustra la barra de busqueda */
+
+
    const getIcon = (isFile, ext) => {
-      if (!isFile) 
+      if (!isFile)
          return folder;
       switch (ext) {
          case 'jpg':
@@ -317,12 +346,7 @@ const App = (props) => {
                      />
                   )}
                />
-               <Route exact path="/notlogged"
-                  render={(props) => (
-                     <RequireLogin
-                     />
-                  )}
-               />
+               <Route exact path="/notlogged" component={RequireLogin} />
                <Route exact path="/admin"
                   render={(props) => (
                      <Admin
