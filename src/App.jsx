@@ -1,7 +1,7 @@
-import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import green from '@material-ui/core/colors/green';
 import orange from '@material-ui/core/colors/orange';
-import React from 'react';
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import React, { useContext } from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import './App.css';
 import Admin from './components/Admin/Admin';
@@ -14,6 +14,8 @@ import Profile from './components/Profile/Profile';
 import ProfileSettings from './components/Profile/ProfileSettings';
 import Register from './components/Register/Register';
 import Reproductor from './components/Reproductor/Reproductor';
+import { sadux } from './components/SF/Context';
+import { handleFetch, history } from './components/SF/helpers';
 import Sidebar from './components/Sidebar/Sidebar';
 //SVG
 import folder from './components/svg/folder.svg';
@@ -66,20 +68,28 @@ const initialUser = {
    usuario: ""
 };
 
-// const reducer = (state, action) => {
-//    switch (action.name) {
-//       case 'user':
-//          return { ...state, ...action.payload };
-//       default:
-//          return { ...state };
+/**
+ * Checks if the token inside the local storage is valid 
+ * and if it is retrieves the user
+ * @param {function} cb callback function
+ */
+const useFetchUser = (cb) => {
+   const didMount = React.useRef(false);
 
-//    }
-// }
+   React.useEffect(() => {
+      if (!didMount.current) {
+         cb();
+         didMount.current = true;
+      }
+   });
+}
 
 
 const App = (props) => {
 
    const classes = useStyles();
+
+   const { state: globalState, dispatch } = useContext(sadux);
 
    const [user, updateUser] = React.useState(initialUser);
    const [currentFolder, updateCurrentFolder] = React.useState(0);
@@ -92,27 +102,40 @@ const App = (props) => {
    const [searchUserField, updateSearchUser] = React.useState('');
    const [useTheme, updateTheme] = React.useState(false);
 
-   /**
-    * TODO
-    * Verificacion de token on init
-    */
-   React.useEffect(() => {
-      const localUser = localStorage.getItem('user');
-      if (localUser !== null && JSON.stringify(user) === JSON.stringify(initialUser)) {
-         loadUser(JSON.parse(localUser));
-         loadFiles(currentFolder);
-      }
-      else return;
+   /** Verificacion de token on init */
+   useFetchUser(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
 
-      if (serverIp === "localhost") {
-         fetch(`/api/dir`)
-            .then(res => res.json())
-            .then(data => {
-               updateServerIp(data.IP);
-            }).catch(e => console.log('Eoor'))
+         fetch(`http://localhost:1234/api/users/token`, {
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json',
+               'Authorization': localStorage.getItem('token')
+            },
+         }).then(
+            handleFetch
+         ).then(
+            res => dispatch({ type: 'update', payload: { user: res } })
+         ).catch(
+            mistake => {
+               localStorage.clear();
+               history.push('/');
+            }
+         )
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, []); //Use Effect
+      else {
+         localStorage.clear();
+         history.push('/');
+      };
+      // if (serverIp === "localhost") {
+      //    fetch(`/api/dir`)
+      //       .then(res => res.json())
+      //       .then(data => {
+      //          updateServerIp(data.IP);
+      //       }).catch(e => console.log('Eoor'))
+      // }
+   }); //Use Effect
 
    const loadUser = (data) => {
       if (data) {
@@ -211,12 +234,7 @@ const App = (props) => {
    }
 
    /** Logs out - Sidebar*/
-   const signout = () => {
-      localStorage.removeItem('user');
-      updateUser(initialUser);
-      updateCurrentFolder(0);
-      updateShowBar('');
-   };//signout
+
 
    const modifyBar = (show) => {
       /** True || false */
@@ -277,35 +295,11 @@ const App = (props) => {
       }) : [];
       return (
          <div className={!useTheme ? classes.root : classes.useDark}>
-            <Route path={["/Perfil", "/Configuracion", "/Busqueda", "/transfers", "/reproductor", "/Admin"]} render={(props) => (
-               <Sidebar
-                  useTheme={useTheme}
-                  userLvl={user.nivel}
-                  signout={signout}
-                  modifyBar={modifyBar}
-                  modifySearch={modifySearch}
-               />
-            )}
-            />
-            <Route path={["/Perfil", "/Configuracion", "/Busqueda", "/transfers", "/reproductor", "/Admin"]} render={(props) => (
-               <TopBar
-                  name={user.usuario}
-                  onSearchFileChange={onSearchFileChange}
-                  onSearchUserChange={onSearchUserChange}
-                  showBar={showBar}
-                  showSearch={showSearch}
-                  useTheme={useTheme}
-                  updateSwitch={updateSwitch}
-               />
-            )}
-            />
+            <Route path={["/Perfil", "/Configuracion", "/Busqueda", "/transfers", "/reproductor", "/Admin"]} component={Sidebar} />
+            <Route path={["/Perfil", "/Configuracion", "/Busqueda", "/transfers", "/reproductor", "/Admin"]} component={TopBar} />
             <Switch>
                <Route exact path="/" component={Welcome} />
-               <Route exact path="/login"
-                  render={(props) => (
-                     <Login />
-                  )}
-               />
+               <Route exact path="/login" component={Login} />
                <Route exact path="/recover" component={Recover} />
                <Route exact path="/register" component={Register} />
                <Route exact path="/busqueda"
@@ -325,13 +319,7 @@ const App = (props) => {
                      />
                   )}
                />
-               <Route exact path="/perfil"
-                  render={(props) => (
-                     <Profile
-                        user={user}
-                     />
-                  )}
-               />
+               <Route exact path="/perfil" component={Profile} />
                <Route exact path="/configuracion"
                   render={(props) => (
                      <ProfileSettings

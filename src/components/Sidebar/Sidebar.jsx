@@ -14,6 +14,7 @@ import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { sadux } from "../SF/Context";
 
 const drawerWidth = 51;
 const routes = [`/busqueda`, `/reproductor`, `/perfil`, `/admin`];
@@ -50,26 +51,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = (props) => {
-   const location = useLocation();
    const classes = useStyles();
+   const location = useLocation();
+
    const [selectedIndex, setSelectedIndex] = React.useState(1);
-   const { modifyBar } = props;
+   const { state: globalState, dispatch } = React.useContext(sadux);
 
    React.useEffect(() => {
-      console.log(location.pathname)
       let x = routes.indexOf(location.pathname) + 1;
-      modifyBar(x);
       setSelectedIndex(x)
-   }, [location.pathname, modifyBar])
+   }, [location.pathname])
 
-   const handleListItemClick = (index) => {
-      setSelectedIndex(index);
-      props.modifyBar(index);
-      props.modifySearch(0);
+   const signout = () => {
+      localStorage.clear();
+      dispatch({ type: 'reset' })
    };
 
    return (
-      <Box className={props.useTheme ? classes.useDark : ''}>
+      <Box className={globalState.theme ? classes.useDark : ''}>
          <Drawer
             className={classes.drawer}
             color="primary.main"
@@ -82,29 +81,25 @@ const Sidebar = (props) => {
             <List>
                <ListItem button component={reactLink} to='/busqueda'
                   selected={selectedIndex === 1}
-                  onClick={() => handleListItemClick(1)}
                >
                   <ListItemIcon><FolderIcon fontSize="large" /></ListItemIcon>
                </ListItem>
                <Divider />
                <ListItem button component={reactLink} to='/reproductor'
                   selected={selectedIndex === 2}
-                  onClick={() => handleListItemClick(2)}
                >
                   <ListItemIcon ><PlayCircleFilledIcon fontSize="large" /></ListItemIcon>
                </ListItem>
                <Divider />
                <ListItem button component={reactLink} to='/perfil'
                   selected={selectedIndex === 3}
-                  onClick={() => handleListItemClick(3)}
                >
                   <ListItemIcon ><AccountCircleIcon fontSize="large" /></ListItemIcon>
                </ListItem>
                <Divider />
-               {props.userLvl === 5 ?
+               {globalState.user.nivel >= 5 ?
                   <ListItem button component={reactLink} to='/admin'
                      selected={selectedIndex === 4}
-                     onClick={() => handleListItemClick(4)}
                   >
                      <ListItemIcon ><SettingsIcon fontSize="large" /></ListItemIcon>
                   </ListItem> : ''}
@@ -112,7 +107,7 @@ const Sidebar = (props) => {
             </List>
             <div className={classes.grow} />
             <List>
-               <ListItem button component={reactLink} to='/' onClick={props.signout}>
+               <ListItem button component={reactLink} to='/' onClick={signout}>
                   <ListItemIcon ><ExitToAppIcon fontSize="large" /></ListItemIcon>
                </ListItem>
             </List>

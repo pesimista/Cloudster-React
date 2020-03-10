@@ -19,9 +19,10 @@ import Snackbar from "@material-ui/core/Snackbar";
 
 const drawerWidth = 51;
 const useStyles = makeStyles(theme => ({
-   root: {
-      flexGrow: 1,
-   },
+   root: { flexGrow: 1 },
+   title: { flexGrow: 1 },
+   input: { display: 'none' },
+   toolbar: theme.mixins.toolbar,
    appBar: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
@@ -32,13 +33,6 @@ const useStyles = makeStyles(theme => ({
    },
    menuButton: {
       marginRight: theme.spacing(2),
-   },
-   title: {
-      flexGrow: 1,
-   },
-   toolbar: theme.mixins.toolbar,
-   input: {
-      display: 'none',
    },
 }));
 
@@ -64,12 +58,12 @@ const Search = (props) => {
    React.useEffect(() => {
       props.loadUser(JSON.parse(localStorage.getItem("user")));
       props.handleClick((props.files.length !== 0) ? props.files[0].dependency : 0);
-   // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
 
    const items = () => {
-      return props.files.map((file, index) => 
+      return props.files.map((file, index) =>
          <Files
             useTheme={props.useTheme}
             serverIp={props.serverIp}
@@ -129,7 +123,7 @@ const Search = (props) => {
                   <HomeIcon />
                </IconButton>
                <Typography variant="h6" className={classes.title}>
-                  Puedes acceder desde {` http://${props.ip}:3000/`}
+                  Puedes acceder desde {window.location.origin}
                </Typography>
                <input
                   accept="image/*"

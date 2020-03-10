@@ -11,39 +11,34 @@ import Link from "@material-ui/core/Link";
 //import { Link, Avatar, makeStyles, Card, CardContent, Typography, CardActions, Button, CardHeader, Divider, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link as RouterLink, Redirect } from "react-router-dom";
+import { sadux } from "../SF/Context";
 
 const useStyles = makeStyles(theme => ({
-   card: {
-      minWidth: 275,
+   card: { minWidth: 275 },
+   title: { fontSize: 14 },
+   pos: { marginBottom: 12 },
+   avatar: { backgroundColor: green[500] },
+   toolbar: theme.mixins.toolbar,
+   content: {
+      flexGrow: 1,
+      padding: theme.spacing(3),
    },
    bullet: {
       display: 'inline-block',
       margin: '0 2px',
       transform: 'scale(0.8)',
    },
-   title: {
-      fontSize: 14,
-   },
-   pos: {
-      marginBottom: 12,
-   },
-   avatar: {
-      backgroundColor: green[500],
-   },
-   toolbar: theme.mixins.toolbar,
-   content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
-   },
 }));
 
-const Link1 = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
+const reactLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
 
 const Profile = (props) => {
-   const { nombre, nivel, desde, usuario } = props.user;
    const classes = useStyles();
+
+   // const { nombre, nivel, desde, usuario } = props.user;
+   const { state: { user }, dispatch } = useContext(sadux);
 
    if (!JSON.parse(localStorage.getItem('user'))) return <Redirect to='/notlogged' />
 
@@ -56,10 +51,10 @@ const Profile = (props) => {
             <Divider />
             <CardContent>
                <Typography variant="h3" className={classes.asd} gutterBottom>
-                  {usuario}
+                  {user.usuario}
                </Typography>
                <Box display='flex' justifyContent='center'>
-                  <Avatar className={classes.avatar}>{nivel}</Avatar>
+                  <Avatar className={classes.avatar}>{user.nivel}</Avatar>
                </Box>
                <Typography className={classes.pos} color="textSecondary">
                   Nivel de jerarquía
@@ -67,17 +62,17 @@ const Profile = (props) => {
                <Divider />
                <Typography component={'span'} >
                   <Box>
-                     {nombre}
+                     {`${user.nombre} ${user.apellido}`}
                   </Box>
                   <Box>
-                     Miembro desde: {desde}
+                     Miembro desde: {user.desde}
                   </Box>
                </Typography>
                <Divider />
             </CardContent>
             <CardActions>
                <Box mx="auto">
-                  <Link component={Link1} to='/Configuracion' underline='none'>
+                  <Link component={reactLink} to='/Configuracion' underline='none'>
                      <Button variant="contained" color="primary">Configuración</Button>
                   </Link>
                </Box>

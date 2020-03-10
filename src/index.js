@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { Provider } from './components/SF/helpers';
+import { StoreProvider } from './components/SF/Context';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 
 ReactDOM.render(
-	<Provider>
+	<StoreProvider>
 		<App/>
-	</Provider>
+	</StoreProvider>
    , document.getElementById('root')
 );
 

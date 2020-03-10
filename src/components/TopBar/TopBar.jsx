@@ -1,3 +1,5 @@
+/*import { AppBar, Toolbar, Typography, InputBase, fade, makeStyles } from '@material-ui/core'*/
+/*import { Wifi as WifiIcon, Search as SearchIcon, AccountCircle} from '@material-ui/icons';*/
 import AppBar from '@material-ui/core/AppBar';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
@@ -6,34 +8,25 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import SearchIcon from '@material-ui/icons/Search';
-/*import { AppBar, Toolbar, Typography, InputBase, fade, makeStyles } from '@material-ui/core'*/
-/*import { Wifi as WifiIcon, Search as SearchIcon, AccountCircle} from '@material-ui/icons';*/
 import WifiIcon from '@material-ui/icons/Wifi';
-import React from 'react';
+import React, { useContext } from 'react';
+import { sadux } from "../SF/Context";
+import { useLocation } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
-	grow: {
-		flexGrow: 1,
-	},
-	appBar: {
-		zIndex: theme.zIndex.drawer + 1,
-	},
-	menuButton: {
-		marginRight: theme.spacing(2),
-	},
+	grow: { flexGrow: 1, },
+	appBar: { zIndex: theme.zIndex.drawer + 1 },
+	menuButton: { marginRight: theme.spacing(2) },
+	inputRoot: { color: 'inherit' },
 	title: {
 		display: 'none',
-		[theme.breakpoints.up('sm')]: {
-			display: 'block',
-		},
+		[theme.breakpoints.up('sm')]: { display: 'block' },
 	},
 	search: {
 		position: 'relative',
 		borderRadius: theme.shape.borderRadius,
 		backgroundColor: fade(theme.palette.common.white, 0.15),
-		'&:hover': {
-			backgroundColor: fade(theme.palette.common.white, 0.25),
-		},
+		'&:hover': { backgroundColor: fade(theme.palette.common.white, 0.25) },
 		marginRight: theme.spacing(2),
 		marginLeft: 0,
 		width: '100%',
@@ -51,49 +44,45 @@ const useStyles = makeStyles(theme => ({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
-	inputRoot: {
-		color: 'inherit',
-	},
 	inputInput: {
 		padding: theme.spacing(1, 1, 1, 7),
 		transition: theme.transitions.create('width'),
 		width: '100%',
-		[theme.breakpoints.up('md')]: {
-			width: 200,
-		},
+		[theme.breakpoints.up('md')]: { width: 200 },
 	},
 	sectionDesktop: {
 		display: 'none',
-		[theme.breakpoints.up('md')]: {
-			display: 'flex',
-		},
-	},
+		[theme.breakpoints.up('md')]: { display: 'flex' }
+	}
 }));
+
+const routes = [`/busqueda`, `/admin`]
 
 const TopBar = (props) => {
 	const classes = useStyles();
+	const location = useLocation();
 
-	const search = (showBar, showSearch) => {
-		if ((showBar === 4) || (showBar === 1))
-			return (
-				<div className={classes.search}>
-					<div className={classes.searchIcon}>
-						<SearchIcon />
-					</div>
-					<InputBase
-						placeholder={!showSearch ? "Buscar archivos..." : "Buscar usuario..."}
-						classes={{
-							root: classes.inputRoot,
-							input: classes.inputInput,
-						}}
-						inputProps={{ 'aria-label': 'search' }}
-						onChange={(e) => { !showSearch ? props.onSearchFileChange(e) : props.onSearchUserChange(e) }}
-					/>
-				</div>
-			)
-		else
-			return;
-	}
+	const { state: { search, theme, user: { usuario } }, dispatch } = useContext(sadux);
+
+	const handleCheck = (event) => dispatch({ type: 'update', payload: { theme: event.target.checked } });
+
+	const searchBar = (
+		<div className={classes.search}>
+			<div className={classes.searchIcon}>
+				<SearchIcon />
+			</div>
+			<InputBase
+				placeholder="Buscar..."
+				classes={{
+					root: classes.inputRoot,
+					input: classes.inputInput,
+				}}
+				inputProps={{ 'aria-label': 'search' }}
+				value={search}
+				onChange={(e) => dispatch({ type: 'update', payload: { search: e.target.value } })}
+			/>
+		</div>
+	)
 
 	return (
 		<AppBar className={classes.appBar} position="fixed">
@@ -102,15 +91,15 @@ const TopBar = (props) => {
 				<Typography className={classes.title} variant="h5" noWrap>
 					Cloudster
           </Typography>
-				{search(props.showBar, props.showSearch)}
+				{routes.includes(location.pathname) ? searchBar : ''}
 				<div className={classes.grow} />
 				<AccountCircle />
 				<Typography>
-					{props.name}
+					{usuario}
 				</Typography>
 				<Switch
-					checked={props.useTheme}
-					onChange={(e) => props.updateSwitch(e)}
+					checked={theme}
+					onChange={handleCheck}
 					value="theme"
 					color="primary"
 					inputProps={{ 'aria-label': 'primary checkbox' }}

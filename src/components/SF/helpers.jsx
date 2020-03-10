@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+export const history = require("history").createBrowserHistory();
 
 export const handleFetch = (response) => {
    return response.json()
@@ -13,7 +13,11 @@ export const handleFetch = (response) => {
 /**
  * 
  * @param {any} item 
- * @param {{name;required;type;length}[]} keys
+ * @param {Object[]} keys description
+ * @param {string} keys.name
+ * @param {boolean} keys.required
+ * @param {number} [keys.length]
+ * @param {string} keys.type
  */
 export const structuteChecker = (item, keys) => {
    return keys.every(
@@ -42,23 +46,6 @@ export const structuteChecker = (item, keys) => {
    )
 };
 
-export const Context = createContext({
-   usuario: {
-      id: '',
-      usuario: '',
-      nombre: '',
-      apellido: '',
-      pregunta1: '',
-      pregunta2: '',
-      desde: '',
-      nivel: 0 
-   }
-});
-
-// archivo a reproducir, carpeta actual, tema, busqueda
-export const Provider = Context.Provider;
-export const Consumer = Context.Consumer;
-
 /**
  * Usuario:
  * Añadir chart con los tipos de archivos subidos por el usuario
@@ -71,16 +58,51 @@ export const Consumer = Context.Consumer;
  * Estadisticas generales y especificas
  */
 
- /**
-  * Admin:
-  * Añadir chart con los tipos de archivos subidos al sistema
-  * Añadir memiria total del servidor
-  * Usuarios por nivel
-  * Total de usuarios
-  */
+/**
+ * Admin:
+ * Añadir chart con los tipos de archivos subidos al sistema
+ * Añadir memiria total del servidor
+ * Usuarios por nivel
+ * Total de usuarios
+ */
 
- /**
-  * Milcelaneos
-  * Hacer que el reproductor funcione en segundo plano
-  * Subir archivos en un modal
-  */
+/**
+ * Milcelaneos
+ * Hacer que el reproductor funcione en segundo plano
+ * Subir archivos en un modal
+ */
+
+/** Auxiliares para la documentacion */
+
+/**
+ * @typedef  key
+ * @type {Object}
+ * @property {string} name
+ * @property {boolean} required
+ * @property {number} length
+ * @property {string} type
+ */
+
+/**
+ * @typedef usuario
+ * @type {object} 
+ * @property {string} id - UUID
+ * @property {string} usuario - nombre de usuario
+ * @property {string} nombre - self explanatory
+ * @property {string} apellido - self explanatory
+ * @property {number} pregunta1 - id de la primera pregunta secreta
+ * @property {number} pregunta2 - id de la seguda pregunta secreta
+ * @property {string} desde - la fecha de registro del usuario
+ * @property {int} nivel - nivel del usuario
+   }
+ */
+
+/**
+ * @typedef store
+ * @type {object}
+ * @property {usuario} user - nombre de usuario
+ * @property {number} playing - self explanatory
+ * @property {number} folder - self explanatory
+ * @property {string} theme - id de la primera pregunta secreta
+ * @property {string} search - id de la seguda pregunta secreta
+ */

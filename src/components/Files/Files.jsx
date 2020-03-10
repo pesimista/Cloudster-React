@@ -14,29 +14,21 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
-	popper: {
-		zIndex: 10000
-	},
+	popper: { zIndex: 10000 },
+	text: { color: "white" },
+	image: { width: 164, height: 164 },
 	paper: {
 		margin: theme.spacing(1),
 		backgroundColor: "inherit"
 	},
 	paperMod: {
 		padding: theme.spacing(2),
-		margin: "auto",
-		maxWidth: 700
-	},
-	image: {
-		width: 164,
-		height: 164
+		margin: "auto", maxWidth: 700
 	},
 	modal: {
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center"
-	},
-	text: {
-		color: "white"
 	}
 }));
 
@@ -49,54 +41,28 @@ const reducer = (state, action) => {
 	return { ...state, ...action };
 };
 
-const Files = props => {
+const Files = (props) => {
 	const classes = useStyles();
 	const history = useHistory();
+
+	const [state, update] = React.useReducer(reducer, initialState);
+	// const { state: globalState, dispatch } = useContext(sadux);
 
 	const { index, handleClick, contextMenu } = props;
 	const { ino, name, ext, isFile, lastModified, size, nivel } = props.file;
 
-	const [state, update] = React.useReducer(reducer, initialState);
-
 	const anchorRef = React.useRef(null);
-
 	const prevOpen = React.useRef(state.open);
 
 	React.useEffect(() => {
 		if (prevOpen.current && !state.open) {
 			anchorRef.current.focus();
 		}
-
 		prevOpen.current = state.open;
 	}, [state.open]);
 
-	const content = (
-		<Grow
-			key={index}
-			in
-			style={{ transformOrigin: "0 0 0" }}
-			{...(true ? { timeout: index * 100 } : {})}
-		>
-			<Paper color="primary" elevation={0} className={classes.paper}>
-				<React.Fragment>
-					<img src={props.getIcon(isFile, ext)} alt={ext} />
-					<Typography
-						variant="body2"
-						className={props.useTheme ? classes.text : ""}
-						style={{ overflowWrap: "break-word" }}
-					>
-						{name.length > 30
-							? name.substring(0, 27) + "..." + ext
-							: name}
-					</Typography>
-				</React.Fragment>
-			</Paper>
-		</Grow>
-	);
-
 	const handleToggle = () => {
 		update({ open: !state.open });
-		// setOpen(prevOpen => !prevOpen);
 	};
 
 	const handleClose = event => {
@@ -104,15 +70,12 @@ const Files = props => {
 			return;
 		}
 		update({ open: false });
-		// setOpen(false);
 	};
 	const handleOpenModal = () => {
 		update({
 			open: false,
 			openModal: true
 		});
-		// setOpenModal(true);
-		// setOpen(false);
 	};
 
 	const handleCloseModal = () => {
@@ -142,6 +105,30 @@ const Files = props => {
 			// setOpen(false);
 		}
 	}
+
+	const content = (
+		<Grow
+			key={index}
+			in
+			style={{ transformOrigin: "0 0 0" }}
+			{...(true ? { timeout: index * 100 } : {})}
+		>
+			<Paper color="primary" elevation={0} className={classes.paper}>
+				<React.Fragment>
+					<img src={props.getIcon(isFile, ext)} alt={ext} />
+					<Typography
+						variant="body2"
+						className={props.useTheme ? classes.text : ""}
+						style={{ overflowWrap: "break-word" }}
+					>
+						{name.length > 30
+							? name.substring(0, 27) + "..." + ext
+							: name}
+					</Typography>
+				</React.Fragment>
+			</Paper>
+		</Grow>
+	);
 
 	if (!isFile) {
 		return (
