@@ -37,10 +37,9 @@ const reactLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {.
 const Profile = (props) => {
    const classes = useStyles();
 
-   // const { nombre, nivel, desde, usuario } = props.user;
-   const { state: { user }, dispatch } = useContext(sadux);
+   const { state: { user } } = useContext(sadux);
 
-   if (!JSON.parse(localStorage.getItem('user'))) return <Redirect to='/notlogged' />
+   if (!user.id) return <Redirect to='/notlogged' />
 
    return (
       <Box display="flex" width={1} textAlign="center" bgcolor="bg.main" justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
