@@ -46,7 +46,7 @@ const Files = (props) => {
 	const history = useHistory();
 
 	const [state, update] = React.useReducer(reducer, initialState);
-	// const { state: globalState, dispatch } = useContext(sadux);
+	// const { state: globalState, dispatch } = useContext(saduwux);
 
 	const { index, handleClick, contextMenu } = props;
 	const { ino, name, ext, isFile, lastModified, size, nivel } = props.file;

@@ -14,7 +14,7 @@ import Profile from './components/Profile/Profile';
 import ProfileSettings from './components/Profile/ProfileSettings';
 import Register from './components/Register/Register';
 import Reproductor from './components/Reproductor/Reproductor';
-import { sadux } from './components/SF/Context';
+import { saduwux } from './components/SF/Context';
 import { handleFetch, history } from './components/SF/helpers';
 import Sidebar from './components/Sidebar/Sidebar';
 //SVG
@@ -89,7 +89,7 @@ const App = (props) => {
 
    const classes = useStyles();
 
-   const { state: globalState, dispatch } = useContext(sadux);
+   const { state: globalState, dispatch } = useContext(saduwux);
 
    const [user, updateUser] = React.useState(initialUser);
    const [currentFolder, updateCurrentFolder] = React.useState(0);
@@ -116,15 +116,20 @@ const App = (props) => {
          }).then(
             handleFetch
          ).then(
-            res => dispatch({ type: 'update', payload: { user: res } })
+            res => {
+               dispatch({ type: 'update', payload: { user: res } })
+               alert('BBBBBBBBBBBBB')
+            }
          ).catch(
             mistake => {
+               alert('AAAAAAAAAAAA')
                localStorage.clear();
                history.push('/');
             }
          )
       }
       else {
+         alert('CCCCCCCCCC')
          localStorage.clear();
          history.push('/');
       };
@@ -335,7 +340,7 @@ const App = (props) => {
                   )}
                />
                <Route exact path="/notlogged" component={RequireLogin} />
-               <Route exact path="/admin"
+               {/* <Route exact path="/admin"
                   render={(props) => (
                      <Admin
                         useTheme={useTheme}
@@ -346,7 +351,7 @@ const App = (props) => {
                         searchUserField={searchUserField}
                      />
                   )}
-               />
+               /> */}
                <Route component={Err} />
             </Switch>
          </div>

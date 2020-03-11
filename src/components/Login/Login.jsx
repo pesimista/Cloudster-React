@@ -1,21 +1,20 @@
 //import { Button, Card, CardActions, CardContent, CardHeader, Divider, Link, makeStyles, Snackbar, TextField } from '@material-ui/core';
-import React from "react";
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
-import Link from "@material-ui/core/Link";
-import { makeStyles } from "@material-ui/core/styles";
-import Snackbar from "@material-ui/core/Snackbar";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import Link from "@material-ui/core/Link";
+import Snackbar from "@material-ui/core/Snackbar";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import React, { useReducer, useContext } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
-import MySnackbarContentWrapper from "../SubSnackBar/SubSnackBar";
-
+import { saduwux } from "../SF/Context";
 import { handleFetch } from "../SF/helpers";
-import { useReducer } from "react";
+import MySnackbarContentWrapper from "../SubSnackBar/SubSnackBar";
 
 const useStyles = makeStyles(theme => ({
    root: {
@@ -46,9 +45,8 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
-   return { ...state, ...action }
+   return { ...state, ...action };
 };
-
 
 const reactLink = React.forwardRef((props, ref) => (
    <RouterLink innerRef={ref} {...props} />
@@ -60,9 +58,13 @@ const Login = props => {
    const preventDefault = event => event.preventDefault();
 
    const [state, update] = useReducer(reducer, initialState);
+   const { dispatch } = useContext(saduwux);
 
    const handleLogin = () => {
-      if (state.signInUser.trim().length === 0 || state.signInPassword.trim().length === 0)
+      if (
+         state.signInUser.trim().length === 0 ||
+         state.signInPassword.trim().length === 0
+      )
          return;
 
       fetch("http://localhost:1234/api/users/login", {
@@ -76,7 +78,7 @@ const Login = props => {
          .then(handleFetch)
          .then(data => {
             localStorage.setItem("token", "bearer " + data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
+            dispatch({ type: "update", payload: { user: data.user } });
             update({ open: true });
             setTimeout(() => {
                history.push("/busqueda");
@@ -84,12 +86,11 @@ const Login = props => {
          })
          .catch(error => {
             alert(error.message);
-         })
+         });
    };
 
    const handleClose = (event, reason) => {
-      if (reason === "clickaway")
-         return;
+      if (reason === "clickaway") return;
       update({ open: false });
    };
 
@@ -115,7 +116,7 @@ const Login = props => {
                <CardContent className={classes.buttonStyle}>
                   <TextField
                      disabled={state.block}
-                     onChange={e => update({ "signInUser": e.target.value })}
+                     onChange={e => update({ signInUser: e.target.value })}
                      id="outlined-basic"
                      label="Nombre de usuario"
                      variant="outlined"
@@ -123,7 +124,9 @@ const Login = props => {
                   <Box>
                      <TextField
                         disabled={state.block}
-                        onChange={e => update({ "signInPassword": e.target.value })}
+                        onChange={e =>
+                           update({ signInPassword: e.target.value })
+                        }
                         id="outlined-basic"
                         type="password"
                         label="Contraseña"
@@ -133,7 +136,8 @@ const Login = props => {
                   <Button
                      disabled={
                         state.block ||
-                        state.signInUser.length === 0 || state.signInPassword.length < 6
+                        state.signInUser.length === 0 ||
+                        state.signInPassword.length < 6
                      }
                      onClick={handleLogin}
                      variant="outlined"
@@ -180,7 +184,11 @@ const Login = props => {
                      color="secondary"
                      onClick={preventDefault}
                   >
-                     <Link component={reactLink} to="/register" underline="none">
+                     <Link
+                        component={reactLink}
+                        to="/register"
+                        underline="none"
+                     >
                         <Box fontWeight="fontWeightBold">Registrarse</Box>
                      </Link>
                   </Button>

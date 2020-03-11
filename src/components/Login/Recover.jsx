@@ -125,8 +125,7 @@ const Recover = (props) => {
          })
             .then(handleFetch)
             .then(data => {
-               localStorage.setItem("token", "bearer " + data.token);
-               localStorage.setItem("user", JSON.stringify(data.user));
+               localStorage.setItem('token', 'bearer ' + data.token);
                props.history.push('/busqueda');
             })
             .catch(err => console.log("ERROR", err));
@@ -176,7 +175,7 @@ const Recover = (props) => {
                      value={state.respuesta1}
                      id="outlined-basic"
                      label="Respuesta #1"
-                     helperText={`Primera pregunta: ${state.pregunta1}`}
+                     helperText={state.pregunta1}
                      variant="outlined" />
                   <Box>
                      <TextField
@@ -185,7 +184,7 @@ const Recover = (props) => {
                         value={state.respuesta2}
                         id="outlined-basic"
                         label="Respuesta #2"
-                        helperText={`Segunda pregunta: ${state.pregunta2}`}
+                        helperText={state.pregunta2}
                         variant="outlined" />
                   </Box>
                </React.Fragment>
