@@ -18,17 +18,17 @@ const useStyles = makeStyles(theme => ({
 
 const Reproductor = props => {
    const classes = useStyles();
-   const { state, dispatch } = useContext(saduwux);
+   const { state: { playing, user } } = useContext(saduwux);
 
-   if (!state.user.id)
+   if (!user.id)
       return <Redirect to="/notlogged" />;
 
-   if (props.idReproductor) {
+   if (playing) {
       return (
          <Box width={1} style={{ height: "100vh" }}>
             <div className={classes.toolbar} />
             <Iframe
-               url={`http://${props.serverIp}:6969/api/files/${props.idReproductor}`}
+               url={`${window.location.origin}/api/files/${playing}?token=${localStorage.getItem('token')}`}
                width="99.8%"
                height="92.9%"
                allow="fullscreen"
