@@ -14,7 +14,7 @@ import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { sadux } from "../SF/Context";
+import { saduwux } from "../SF/Context";
 
 const drawerWidth = 51;
 const routes = [`/busqueda`, `/reproductor`, `/perfil`, `/admin`];
@@ -55,7 +55,7 @@ const Sidebar = (props) => {
    const location = useLocation();
 
    const [selectedIndex, setSelectedIndex] = React.useState(1);
-   const { state: globalState, dispatch } = React.useContext(sadux);
+   const { state: globalState, dispatch } = React.useContext(saduwux);
 
    React.useEffect(() => {
       let x = routes.indexOf(location.pathname) + 1;

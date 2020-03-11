@@ -9,8 +9,8 @@ const initialValue = {
       usuario: '',
       nombre: '',
       apellido: '',
-      pregunta1: '',
-      pregunta2: '',
+      pregunta1: 0,
+      pregunta2: 0,
       desde: '',
       nivel: 0
    },
@@ -21,8 +21,8 @@ const initialValue = {
 };
 
 /** Store */
-const sadux = createContext(initialValue);
-const Provider = sadux.Provider;
+const saduwux = createContext(initialValue);
+const Provider = saduwux.Provider;
 
 const reducer = (state, action) => {
    const { payload, type } = action;
@@ -49,4 +49,4 @@ const StoreProvider = ({ children }) => {
 
 }
 
-export { StoreProvider, sadux }
+export { StoreProvider, saduwux }

@@ -10,7 +10,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import SearchIcon from '@material-ui/icons/Search';
 import WifiIcon from '@material-ui/icons/Wifi';
 import React, { useContext } from 'react';
-import { sadux } from "../SF/Context";
+import { saduwux } from "../SF/Context";
 import { useLocation } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
@@ -62,7 +62,7 @@ const TopBar = (props) => {
 	const classes = useStyles();
 	const location = useLocation();
 
-	const { state: { search, theme, user: { usuario } }, dispatch } = useContext(sadux);
+	const { state: { search, theme, user: { usuario } }, dispatch } = useContext(saduwux);
 
 	const handleCheck = (event) => dispatch({ type: 'update', payload: { theme: event.target.checked } });
 
