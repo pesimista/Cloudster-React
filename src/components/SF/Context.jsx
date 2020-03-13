@@ -1,8 +1,12 @@
+/**
+ * @typedef {import('./typedefs.jsx').store} store
+ * @typedef {import('./typedefs.jsx').key} key
+ */
 import React, { createContext, useReducer } from "react";
 
 // archivo a reproducir, carpeta actual, tema, busqueda
 
-/** @const {store} */
+/** @type {store} */
 const initialValue = {
    user: {
       id: '',
@@ -24,6 +28,7 @@ const initialValue = {
 const saduwux = createContext(initialValue);
 const Provider = saduwux.Provider;
 
+/** @type {function} */
 const reducer = (state, action) => {
    const { payload, type } = action;
 
@@ -50,3 +55,4 @@ const StoreProvider = ({ children }) => {
 }
 
 export { StoreProvider, saduwux }
+

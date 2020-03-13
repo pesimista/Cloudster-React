@@ -16,7 +16,6 @@ import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { handleFetch, structuteChecker } from '../SF/helpers';
 import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
 
-
 const useStyles = makeStyles(theme => ({
    root: {
       '& .MuiTextField-root': {
@@ -83,6 +82,8 @@ const reducer = (state, action) => {
    return { ...state, ...action };
 }
 
+const a = [];
+
 const Register = (props) => {
    let history = useHistory();
    const classes = useStyles();
@@ -140,7 +141,7 @@ const Register = (props) => {
          }
       ).catch(err => {
          console.log(err);
-         update({activeStep: 2});
+         update({ activeStep: 2 });
       });
    }
 
@@ -148,13 +149,13 @@ const Register = (props) => {
       if (reason === 'clickaway') {
          return;
       }
-      update({open: false});
+      update({ open: false });
       // setOpen(false);
    };
 
    const steps = ['Nombres y Contraseña', 'Preguntas Secretas', 'Nombre de usuario'];
-   const handleNext = () => update({activeStep: state.activeStep + 1});
-   const handleBack = () => update({activeStep: state.activeStep - 1});
+   const handleNext = () => update({ activeStep: state.activeStep + 1 });
+   const handleBack = () => update({ activeStep: state.activeStep - 1 });
    const handleClick = () => state.activeStep < 2 ? handleNext() : handleRegister();
 
    const handleChange = (e) => {
@@ -162,7 +163,7 @@ const Register = (props) => {
          update({ userExist: false, user: e.target.value });
       }
       else
-         update({[e.target.name]: e.target.value});
+         update({ [e.target.name]: e.target.value });
 
       console.log(e.target.name, e.target.value);
    }

@@ -28,7 +28,7 @@ const Reproductor = props => {
          <Box width={1} style={{ height: "100vh" }}>
             <div className={classes.toolbar} />
             <Iframe
-               url={`${window.location.origin}/api/files/${playing}?token=${localStorage.getItem('token')}`}
+               url={`${window.location.origin}/api/files/${playing}?token=${localStorage.getItem('token')?.replace(/[Bb]earer /, '')}`}
                width="99.8%"
                height="92.9%"
                allow="fullscreen"

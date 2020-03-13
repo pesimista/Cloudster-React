@@ -1,23 +1,26 @@
-import React from "react";
+/**
+ * @typedef {import('../SF/typedefs.jsx').file} file
+ */
+import AppBar from "@material-ui/core/AppBar";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import Snackbar from "@material-ui/core/Snackbar";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 //import { ArrowBack as ArrowBackIcon, Cached as CachedIcon, Home as HomeIcon, CloudUpload as CloudUploadIcon } from '@material-ui/icons';
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CachedIcon from "@material-ui/icons/Cached";
-import HomeIcon from "@material-ui/icons/Home";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import HomeIcon from "@material-ui/icons/Home";
+import React, { useContext } from "react";
 import { Redirect } from "react-router-dom";
-import Files from "./Files";
-import MySnackbarContentWrapper from "../SubSnackBar/SubSnackBar";
-import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import TextField from "@material-ui/core/TextField";
-import Snackbar from "@material-ui/core/Snackbar";
 import { saduwux } from "../SF/Context";
-import { useContext } from "react";
+import MySnackbarContentWrapper from "../SubSnackBar/SubSnackBar";
+import Files from "./Files";
+
 
 const drawerWidth = 51;
 const useStyles = makeStyles(theme => ({
@@ -48,8 +51,12 @@ const useStyles = makeStyles(theme => ({
 // const reducer = (state, action) => {
 //    return { ...state, ...action }
 // };
-
-const Search = props => {
+/**
+ * asd
+ * @param {object} params
+ * @param {file[]} params.files
+ */
+const Search = ({ files, ...props }) => {
    const classes = useStyles();
    // const [state, update] = React.useReducer(reducer, initialState);
 
@@ -60,16 +67,15 @@ const Search = props => {
    const { state: globalSate, dispatch } = useContext(saduwux);
 
    React.useEffect(() => {
-      props.loadUser(JSON.parse(localStorage.getItem("user")));
       props.handleClick(
-         props.files.length !== 0 ? props.files[0].dependency : 0
+         files.length !== 0 ? files[0].dependency : 0
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
    const items = () => {
-      return props.files.map((file, index) => (
-         <Files
+      return files.reduce((filtered, file, index) => {
+         return <Files
             useTheme={props.useTheme}
             serverIp={props.serverIp}
             userId={props.userId}
@@ -81,7 +87,7 @@ const Search = props => {
             index={index}
             file={file}
          />
-      ));
+      }, []);
    };
 
    const onChange = e => {
@@ -99,14 +105,14 @@ const Search = props => {
    const uploadFile = () => {
       let formData = new FormData();
       formData.append("file", fileField.files[0]);
-      fetch(`/api/file?whereTo=${props.files[0].dependency}`, {
+      fetch(`/api/file?whereTo=${files[0].dependency}`, {
          method: "POST",
          enctype: "multipart/form-data",
          body: formData
       })
          .then(res => res.json())
          .then(data => {
-            props.handleClick(props.files[0].dependency);
+            props.handleClick(files[0].dependency);
             setOpen(true);
          });
    };

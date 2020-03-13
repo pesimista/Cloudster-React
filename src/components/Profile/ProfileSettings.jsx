@@ -11,8 +11,8 @@ import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types";
 import React from "react";
 import { Redirect } from "react-router-dom";
-import { handleFetch } from "../SF/helpers";
 import { saduwux } from "../SF/Context";
+import { handleFetch } from "../SF/helpers";
 
 const useStyles = makeStyles(theme => ({
    root: {
@@ -38,16 +38,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const questions = [
-   { Id: "1", pregunta: "Cuál es el nombre de tu mejor amigo?" },
-   { Id: "2", pregunta: "Cuál es la ciudad donde naciste?" },
-   { Id: "3", pregunta: "Cómo se llamaba tu primera mascota?" },
-   { Id: "4", pregunta: "Cuál es tu color favorito?" },
-   { Id: "5", pregunta: "Cuál es el segundo nombre de tu madre?" }
+   { id: "1", pregunta: "¿Cuál es el nombre de tu mejor amigo?" },
+   { id: "2", pregunta: "¿Cuál es la ciudad donde naciste?" },
+   { id: "3", pregunta: "¿Cómo se llamaba tu primera mascota?" },
+   { id: "4", pregunta: "¿Cuál es tu color favorito?" },
+   { id: "5", pregunta: "¿Cuál es el segundo nombre de tu madre?" }
 ];
 
-function TabPanel(props) {
-   const { children, value, index, ...other } = props;
-
+const TabPanel = ({ children, value, index, ...other }) => {
    return (
       <Typography
          component="div"
@@ -100,44 +98,10 @@ const ProfileSettings = props => {
       dispatch
    } = React.useContext(saduwux);
 
-   const [value, setValue] = React.useState(0);
-   const [nombre, updateNombre] = React.useState("");
-   const [apellido, updateApellido] = React.useState("");
    const [password0, updatePassword0] = React.useState("");
-   const [password, updatePassword] = React.useState("");
-   const [password2, updatePassword2] = React.useState("");
-   const [pregunta1, updatePregunta1] = React.useState(1);
-   const [pregunta2, updatePregunta2] = React.useState(2);
-   const [respuesta1, updateRespuesta1] = React.useState("");
-   const [respuesta2, updateRespuesta2] = React.useState("");
 
-   const _handleUpdate = () => {
-      fetch(`http://localhost:1234/api/users/${user.id}`, {
-         method: "PUT",
-         headers: {
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("token")
-         },
-         body: JSON.stringify({
-            id: props.user.id,
-            nombre: nombre,
-            apellido: apellido
-         })
-      })
-         .then(res => res.json())
-         .then(data => {
-            if (data.response === "Grant access") {
-               localStorage.setItem("user", JSON.stringify(data.user));
-               props.history.push("search");
-            } else {
-               alert(data.response);
-            }
-         })
-         .catch(err => console.log("ERROR", err));
-   };
-
-   const getPartialInfo = () => {
-      switch (state.value) {
+   const getPartialInfo = (tab) => {
+      switch (tab) {
          case 0: {
             return JSON.stringify({
                nombre: state.nombre,
@@ -166,7 +130,7 @@ const ProfileSettings = props => {
    };
 
    const handleUpdate = () => {
-      if(state.value===1 && state.password2!==state.password1){
+      if (state.value === 1 && state.password2 !== state.password1) {
          alert('Marico las contraseñas no coinciden');
          return;
       }
@@ -176,70 +140,23 @@ const ProfileSettings = props => {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("token")
          },
-         body: ""
+         body: getPartialInfo(state.value)
       })
          .then(handleFetch)
          .then(res => {
             localStorage.setItem("token", "bearer " + res.token);
             dispatch({ type: 'update', payload: { user: res.user } });
             alert('Yes');
+         })
+         .catch(mistake => {
+            console.log(mistake)
+            alert('Error');
          });
-   };
-
-   const handleUpdatePassword = () => {
-      fetch("http://localhost:6969/api/update", {
-         method: "post",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({
-            id: props.user.id,
-            currentpassword: password0,
-            password: password,
-            confirmpassword: password2
-         })
-      })
-         .then(res => res.json())
-         .then(data => {
-            if (data.response === "Grant access") {
-               localStorage.setItem("user", JSON.stringify(data.user));
-               props.history.push("search");
-            } else {
-               alert(data.response);
-            }
-         })
-         .catch(err => console.log("ERROR", err));
-   };
-   const handleUpdateQuestions = () => {
-      fetch("http://localhost:6969/api/update", {
-         method: "post",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({
-            id: props.user.id,
-            password: password,
-            pregunta1: pregunta1,
-            pregunta2: pregunta2,
-            respuesta1: respuesta1,
-            respuesta2: respuesta2
-         })
-      })
-         .then(res => res.json())
-         .then(data => {
-            if (data.response === "Grant access") {
-               localStorage.setItem("user", JSON.stringify(data.user));
-               props.history.push("search");
-            } else {
-               alert(data.response);
-            }
-         })
-         .catch(err => console.log("ERROR", err));
-   };
-
-   const handleChange = (event, newValue) => {
-      setValue(newValue);
    };
 
    const mapPreguntas = questions.map((P, index) => {
       return (
-         <MenuItem key={index} value={P.Id}>
+         <MenuItem key={index} value={P.id}>
             {" "}
             {P.pregunta}{" "}
          </MenuItem>
@@ -262,9 +179,9 @@ const ProfileSettings = props => {
             <Tabs
                orientation="vertical"
                variant="fullWidth"
-               value={value}
+               value={state.value}
                indicatorColor="primary"
-               onChange={handleChange}
+               onChange={(event, newValue) => update({ value: newValue })}
                aria-label="Vertical tabs example"
                className={classes.tabs}
             >
@@ -273,11 +190,11 @@ const ProfileSettings = props => {
                <Tab label="Preguntas Secretas" {...a11yProps(2)} />
             </Tabs>
             <Typography>
-               <TabPanel value={value} index={0}>
+               <TabPanel value={state.value} index={0}>
                   <div>
                      <TextField
-                        onChange={e => updateNombre(e.target.value)}
-                        defaultValue="Diego"
+                        onChange={e => update({ nombre: e.target.value })}
+                        defaultValue={user.nombre}
                         id="outlined-basic"
                         label="Nombre"
                         variant="outlined"
@@ -285,8 +202,8 @@ const ProfileSettings = props => {
                   </div>
                   <div>
                      <TextField
-                        onChange={e => updateApellido(e.target.value)}
-                        defaultValue="Lopez"
+                        onChange={e => update({ apellido: e.target.value })}
+                        defaultValue={user.apellido}
                         id="outlined-basic"
                         label="Apellido"
                         variant="outlined"
@@ -302,7 +219,7 @@ const ProfileSettings = props => {
                      Guardar
                   </Button>
                </TabPanel>
-               <TabPanel value={value} index={1}>
+               <TabPanel value={state.value} index={1}>
                   <TextField
                      onChange={e => updatePassword0(e.target.value)}
                      id="outlined-password-input"
@@ -311,7 +228,8 @@ const ProfileSettings = props => {
                   />
                   <Box>
                      <TextField
-                        onChange={e => updatePassword(e.target.value)}
+                        onChange={e => update({ password: e.target.value })}
+                        error={state.password.length < 6}
                         id="outlined-password-input"
                         label="Nueva contraseña"
                         variant="outlined"
@@ -319,8 +237,8 @@ const ProfileSettings = props => {
                   </Box>
                   <Box>
                      <TextField
-                        onChange={e => updatePassword2(e.target.value)}
-                        error={password2.length > 6 && password !== password2}
+                        onChange={e => update({ password2: e.target.value })}
+                        error={state.password2.length < 6 || state.password !== state.password2}
                         id="outlined-password-input"
                         label="Confirmar nueva contraseña"
                         variant="outlined"
@@ -330,7 +248,7 @@ const ProfileSettings = props => {
                      variant="contained"
                      color="primary"
                      className={classes.button}
-                     onClick={handleUpdatePassword}
+                     onClick={handleUpdate}
                   >
                      {" "}
                      Guardar
@@ -343,19 +261,17 @@ const ProfileSettings = props => {
                            id="outlined-select-currency"
                            select
                            label="Primera pregunta"
-                           value={pregunta1}
-                           onChange={e => {
-                              updatePregunta1(e.target.value);
-                           }}
+                           value={state.pregunta1}
+                           onChange={e => update({ pregunta1: e.target.value })}
                            variant="outlined"
                         >
                            {mapPreguntas}
                         </TextField>
                         <Box>
                            <TextField
-                              onChange={e => updateRespuesta1(e.target.value)}
+                              onChange={e => update({ respuesta1: e.target.value })}
                               id="outlined-basic"
-                              value={respuesta1}
+                              value={state.respuesta1}
                               label="Respuesta "
                               variant="outlined"
                            />
@@ -366,19 +282,17 @@ const ProfileSettings = props => {
                            id="outlined-select-currency"
                            select
                            label="Segunda pregunta"
-                           value={pregunta2}
-                           onChange={e => {
-                              updatePregunta2(e.target.value);
-                           }}
+                           value={state.pregunta2}
+                           onChange={e => update({ pregunta2: e.target.value })}
                            variant="outlined"
                         >
                            {mapPreguntas}
                         </TextField>
                         <Box>
                            <TextField
-                              onChange={e => updateRespuesta2(e.target.value)}
+                              onChange={e => update({ respuesta2: e.target.value })}
                               id="outlined-basic"
-                              value={respuesta2}
+                              value={state.respuesta2}
                               label="Respuesta "
                               variant="outlined"
                            />
@@ -388,7 +302,7 @@ const ProfileSettings = props => {
                         variant="contained"
                         color="primary"
                         className={classes.button}
-                        onClick={handleUpdateQuestions}
+                        onClick={handleUpdate}
                      >
                         {" "}
                         Guardar
@@ -396,8 +310,8 @@ const ProfileSettings = props => {
                   </Box>
                </TabPanel>
             </Typography>
-         </Container>
-      </Box>
+         </Container >
+      </Box >
    );
 };
 
