@@ -64,7 +64,7 @@ const Search = ({ files, ...props }) => {
    const [fileField, updateFileField] = React.useState("");
    const [fileFieldText, updateFileFieldText] = React.useState("");
 
-   const { state: globalSate, dispatch } = useContext(saduwux);
+   const { state: globalSate} = useContext(saduwux);
 
    React.useEffect(() => {
       props.handleClick(

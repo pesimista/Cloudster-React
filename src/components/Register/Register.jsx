@@ -82,8 +82,6 @@ const reducer = (state, action) => {
    return { ...state, ...action };
 }
 
-const a = [];
-
 const Register = (props) => {
    let history = useHistory();
    const classes = useStyles();

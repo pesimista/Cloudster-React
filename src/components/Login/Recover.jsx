@@ -108,7 +108,7 @@ const Recover = (props) => {
          .then(handleFetch)
          .then(data => {
             localStorage.setItem("token", "bearer " + data.token);
-            updateByKey('activeStep', 2)
+            update({ 'activeStep': 2 })
          })
          .catch(e => alert(e));
    }
@@ -138,12 +138,12 @@ const Recover = (props) => {
             changePassword();
    };
    const handleBack = () => {
-      update({activeStep: state.activeStep-1});
+      update({ activeStep: state.activeStep - 1 });
       // setActiveStep(prevActiveStep => prevActiveStep - 1);
    };
 
    const handleChange = (e) => {
-      updateByKey(e.target.name, e.target.value.trim());
+      update({ [e.target.name]: e.target.value.trim() });
    }
 
    /**

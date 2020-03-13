@@ -98,7 +98,7 @@ const ProfileSettings = props => {
       dispatch
    } = React.useContext(saduwux);
 
-   const [password0, updatePassword0] = React.useState("");
+   const [, updatePassword0] = React.useState("");
 
    const getPartialInfo = (tab) => {
       switch (tab) {
@@ -254,7 +254,7 @@ const ProfileSettings = props => {
                      Guardar
                   </Button>
                </TabPanel>
-               <TabPanel value={value} index={2}>
+               <TabPanel value={state.value} index={2}>
                   <Box>
                      <Box>
                         <TextField
