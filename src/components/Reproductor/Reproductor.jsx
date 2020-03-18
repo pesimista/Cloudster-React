@@ -3,10 +3,8 @@ import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import React from "react";
+import React, { useContext } from "react";
 import Iframe from "react-iframe";
-import { Redirect } from "react-router-dom";
-import { useContext } from "react";
 import { saduwux } from "../SF/Context";
 
 const useStyles = makeStyles(theme => ({
@@ -18,21 +16,29 @@ const useStyles = makeStyles(theme => ({
 
 const Reproductor = props => {
    const classes = useStyles();
-   const { state: { playing, user } } = useContext(saduwux);
+   const { state: { playing } } = useContext(saduwux);
 
-   if (!user.id)
-      return <Redirect to="/notlogged" />;
+   // if (!user.id)
+   //    return <Redirect to="/notlogged" />;
+
+   console.log('Rendering');
 
    if (playing) {
       return (
          <Box width={1} style={{ height: "100vh" }}>
-            <div className={classes.toolbar} />
-            <Iframe
-               url={`${window.location.origin}/api/files/${playing}?token=${localStorage.getItem('token')?.replace(/[Bb]earer /, '')}`}
-               width="99.8%"
-               height="92.9%"
-               allow="fullscreen"
-            />
+            <div style={{ display: "flex", flexDirection: "column", height: "100%" }} >
+
+               <div className={classes.toolbar} />
+               <div style={{ flexGrow: "1", overflow: "auto", width: "100%" }}>
+                  <Iframe
+                     url={`http://localhost:1234/api/files/${playing}/watch?token=${localStorage.getItem('token')?.replace(/[Bb]earer /, '')}`}
+                     height="100%"
+                     width="100%"
+                     allow="fullscreen"
+                     frameBorder="0"
+                  />
+               </div>
+            </div>
          </Box>
       );
    } else {

@@ -10,7 +10,7 @@ import Link from "@material-ui/core/Link";
 import Snackbar from "@material-ui/core/Snackbar";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import React, { useReducer, useContext } from "react";
+import React, { useContext, useReducer } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { saduwux } from "../SF/Context";
 import { handleFetch } from "../SF/helpers";
@@ -53,7 +53,7 @@ const reactLink = React.forwardRef((props, ref) => (
 ));
 
 const Login = props => {
-   let history = useHistory();
+   const history = useHistory();
    const classes = useStyles();
    const preventDefault = event => event.preventDefault();
 

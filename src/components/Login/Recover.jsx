@@ -14,8 +14,9 @@ import { makeStyles } from '@material-ui/core/styles';
 //import { TextField, Card, CardContent, CardActions, Link, Divider, CardHeader, Box, StepLabel, Stepper, Typography, Step, makeStyles, Button, FormControl } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import React, { useReducer } from 'react';
-import { Link as RouterLink, withRouter } from "react-router-dom";
+import React, { useContext, useReducer } from 'react';
+import { Link as RouterLink, useHistory, withRouter } from "react-router-dom";
+import { saduwux } from '../SF/Context';
 import { handleFetch } from "../SF/helpers";
 
 
@@ -41,10 +42,6 @@ const useStyles = makeStyles(theme => ({
 
 const reactLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
 
-const getSteps = () => {
-   return ['Nombre de Usuario', 'Preguntas Secretas', 'Nueva Contraseña'];
-}
-
 const initialState = {
    activeStep: 0,
    user: '',
@@ -62,19 +59,11 @@ const reducer = (state, action) => {
 
 const Recover = (props) => {
    const classes = useStyles();
-   const steps = getSteps();
+   const steps = ['Nombre de Usuario', 'Preguntas Secretas', 'Nueva Contraseña'];
+   const history = useHistory();
 
    const [state, update] = useReducer(reducer, initialState);
-
-   /**
-    * Updates the value of certain key
-    * @param {string} key name of the property to be changed
-    * @param {any} value the new value to assign to it
-    */
-   const updateByKey = (key, value) => {
-      update({ [key]: value });
-   };
-
+   const { dispatch } = useContext(saduwux);
 
    const handleUsername = () => {
       if (state.user.trim().length === 0) return
@@ -125,8 +114,9 @@ const Recover = (props) => {
          })
             .then(handleFetch)
             .then(data => {
+               dispatch({ type: "update", payload: { user: data.user } });
                localStorage.setItem('token', 'bearer ' + data.token);
-               props.history.push('/busqueda');
+               history.push('/busqueda');
             })
             .catch(err => console.log("ERROR", err));
       }

@@ -18,11 +18,18 @@ const initialValue = {
       desde: '',
       nivel: 0
    },
-   playing: 0,
+   playing: 525906,
    folder: 0,
    theme: false,
-   search: ''
+   search: '',
+   logStatus: 0
 };
+
+/** @params {logStatus} 
+ * 0 logof 
+ * 1 loging in
+ * 2 log in
+ * */
 
 /** Store */
 const saduwux = createContext(initialValue);

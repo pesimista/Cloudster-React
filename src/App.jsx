@@ -4,7 +4,7 @@ import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/sty
 import React, { useContext } from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import './App.css';
-import Admin from './components/Admin/Admin';
+// import Admin from './components/Admin/Admin';
 import Err from './components/Err/Err';
 import RequireLogin from './components/Err/RequireLogin';
 import Search from './components/Files/Search';
@@ -17,19 +17,6 @@ import Reproductor from './components/Reproductor/Reproductor';
 import { saduwux } from './components/SF/Context';
 import { handleFetch, history } from './components/SF/helpers';
 import Sidebar from './components/Sidebar/Sidebar';
-//SVG
-import folder from './components/svg/folder.svg';
-import audio from './components/svg/Papirus-Team-Papirus-audio.svg';
-import compress from './components/svg/Papirus-Team-Papirus-compress.svg';
-import html from './components/svg/Papirus-Team-Papirus-html.svg';
-import pic from './components/svg/Papirus-Team-Papirus-ImageGeneric.svg';
-import iso from './components/svg/Papirus-Team-Papirus-iso.svg';
-import json from './components/svg/Papirus-Team-Papirus-json.svg';
-import Mimetypes from './components/svg/Papirus-Team-Papirus-Mimetypes-X-office-document.svg';
-import pdf from './components/svg/Papirus-Team-Papirus-pdf.svg';
-import video from './components/svg/Papirus-Team-Papirus-video.svg';
-import zerosize from './components/svg/Papirus-Team-Papirus-zerosize.svg';
-//SVG
 import TopBar from './components/TopBar/TopBar';
 import Welcome from './components/Welcome/Welcome';
 
@@ -60,14 +47,6 @@ const dark = createMuiTheme({
    },
 });
 
-const initialUser = {
-   id: 0,
-   nombre: "",
-   nivel: 1,
-   desde: "",
-   usuario: ""
-};
-
 /**
  * Checks if the token inside the local storage is valid 
  * and if it is retrieves the user
@@ -85,28 +64,17 @@ const useFetchUser = (cb) => {
 }
 
 
-const App = (props) => {
+const App = () => {
 
    const classes = useStyles();
 
-   const { state: globalState, dispatch } = useContext(saduwux);
-
-   const [user, updateUser] = React.useState(initialUser);
-   const [currentFolder, updateCurrentFolder] = React.useState(0);
-   const [serverIp, updateServerIp] = React.useState('localhost');
-   const [files, updateFiles] = React.useState();
-   const [idReproductor, updateReproductor] = React.useState();
-   const [showBar, updateShowBar] = React.useState(1);
-   const [showSearch, updateSearchBar] = React.useState(0);
-   const [searchFileField, updateSearchFile] = React.useState('');
-   const [searchUserField, updateSearchUser] = React.useState('');
-   const [useTheme, updateTheme] = React.useState(false);
+   const { state, dispatch } = useContext(saduwux);
 
    /** Verificacion de token on init */
    useFetchUser(() => {
       const token = localStorage.getItem('token');
       if (token) {
-
+         dispatch({ type: 'update', payload: { logStatus: 1 } })
          fetch(`http://localhost:1234/api/users/token`, {
             method: 'GET',
             headers: {
@@ -116,23 +84,19 @@ const App = (props) => {
          }).then(
             handleFetch
          ).then(
-            res => {
-               dispatch({ type: 'update', payload: { user: res } })
-               alert('BBBBBBBBBBBBB')
-            }
+            res => dispatch({ type: 'update', payload: { user: res } })
          ).catch(
-            mistake => {
-               alert('AAAAAAAAAAAA')
+            () => {
                localStorage.clear();
                history.push('/');
             }
          )
       }
       else {
-         alert('CCCCCCCCCC')
+         dispatch({ type: 'update', payload: { logStatus: 0 } })
          localStorage.clear();
          history.push('/');
-      };
+      }
       // if (serverIp === "localhost") {
       //    fetch(`/api/dir`)
       //       .then(res => res.json())
@@ -142,49 +106,49 @@ const App = (props) => {
       // }
    }); //Use Effect
 
-   const loadUser = (data) => {
-      if (data) {
-         updateUser({
-            id: parseInt(data.id),
-            nombre: data.nombre,
-            nivel: data.nivel,
-            desde: data.desde,
-            usuario: data.usuario
-         });
-      }
-   }//Load user
-   const loadFiles = (id) => {
-      console.log(`/api/allFiles/${id}?user=${user.nivel}`);
-      fetch(`/api/allFiles/${id}?user=${user.nivel}`)
-         .then(res => { return res.json(); })
-         .then(data => {
-            sort(data);
-            updateFiles(data);
-         })
-         .catch(e => {
-         });
-   }//Load Files
+   // const loadUser = (data) => {
+   //    if (data) {
+   //       updateUser({
+   //          id: parseInt(data.id),
+   //          nombre: data.nombre,
+   //          nivel: data.nivel,
+   //          desde: data.desde,
+   //          usuario: data.usuario
+   //       });
+   //    }
+   // };//Load user
+   // const loadFiles = (id) => {
+   //    console.log(`/api/allFiles/${id}?user=${user.nivel}`);
+   //    fetch(`/api/allFiles/${id}?user=${user.nivel}`)
+   //       .then(res => { return res.json(); })
+   //       .then(data => {
+   //          sort(data);
+   //          updateFiles(data);
+   //       })
+   //       .catch(e => {
+   //       });
+   // }//Load Files
 
    /*----------------- OWN METHODS ---------------------*/
-   const sort = (arr) => {
-      arr.sort(byName);
-      arr.sort(byFileType);
-      updateFiles(arr);
-   };//Sort
-   const byName = (a, b) => {
-      var x = a.name.toLowerCase();
-      var y = b.name.toLowerCase();
-      return compare(x, y);
-   };//By name
-   const byFileType = (a, b) => {
-      var x = a.ext.toLowerCase();
-      var y = b.ext.toLowerCase();
-      return compare(x, y);
-   };//ByFileType
-   const compare = (a, b) => {
-      return (a < b ? -1 :
-         a > b ? 1 : 0);
-   };//Compare
+   // const sort = (arr) => {
+   //    arr.sort(byName);
+   //    arr.sort(byFileType);
+   //    updateFiles(arr);
+   // };//Sort
+   // const byName = (a, b) => {
+   //    var x = a.name.toLowerCase();
+   //    var y = b.name.toLowerCase();
+   //    return compare(x, y);
+   // };//By name
+   // const byFileType = (a, b) => {
+   //    var x = a.ext.toLowerCase();
+   //    var y = b.ext.toLowerCase();
+   //    return compare(x, y);
+   // };//ByFileType
+   // const compare = (a, b) => {
+   //    return (a < b ? -1 :
+   //       a > b ? 1 : 0);
+   // };//Compare
    /*----------------- OWN METHODS ---------------------*/
 
    /*---------------------- HANDLERS ----------------------*/
@@ -192,114 +156,81 @@ const App = (props) => {
    /** MOVER A COMPONENTES */
 
    /** Search */
-   const contextMenu = (e) => {
-      e.preventDefault();
-   };//ContextMenu
-   const handleClick = (id) => {
-      updateCurrentFolder(id);
-      loadFiles(id);
-   };//Handleclick
+   // const contextMenu = (e) => {
+   //    e.preventDefault();
+   // };//ContextMenu
+   // const handleClick = (id) => {
+   //    updateCurrentFolder(id);
+   //    loadFiles(id);
+   // };//Handleclick
    const goHome = () => {
-      updateCurrentFolder(0);
-      loadFiles(0);
+      console.log('Im goind home')
+      // updateCurrentFolder(0);
+      // loadFiles(0);
    };//GoHome
 
    /** Va hacia la carpeta contenedora de la carpeta actual - Files */
    const goBack = () => {
-      console.log(currentFolder)
-      if (currentFolder !== 0) {
-         // fetch('http://localhost:6969/api/fileInfo/' + files[0].dependency)
-         fetch(`/api/fileInfo/${files[0].dependency}`)
-            .then(res => {
-               return res.json();
-            })
-            .then(data => {
-               loadFiles(data.dependency);
-               updateCurrentFolder(data.dependency);
-            })
-            .catch(e => {
-               console.log("Something went wrong");
-               console.log(e);
-            });
-      }
+      console.log('Im goind back')
+      // console.log(currentFolder)
+      // if (currentFolder !== 0) {
+      //    // fetch('http://localhost:6969/api/fileInfo/' + files[0].dependency)
+      //    fetch(`/api/fileInfo/${files[0].dependency}`)
+      //       .then(res => {
+      //          return res.json();
+      //       })
+      //       .then(data => {
+      //          loadFiles(data.dependency);
+      //          updateCurrentFolder(data.dependency);
+      //       })
+      //       .catch(e => {
+      //          console.log("Something went wrong");
+      //          console.log(e);
+      //       });
+      // }
    };//Go Back
 
-   const changeRep = (id) => {
-      updateReproductor(id);
-   };//changeRep
+   // const changeRep = (id) => {
+   //    updateReproductor(id);
+   // };//changeRep
 
    /** Filtra archivos - Files */
-   const onSearchFileChange = (event) => {
-      updateSearchFile(event.target.value);
-   }
+   // const onSearchFileChange = (event) => {
+   //    updateSearchFile(event.target.value);
+   // }
 
    /** Filtra usuarios en la pagina de admin - Provider */
-   const onSearchUserChange = (event) => {
-      updateSearchUser(event.target.value);
-   }
+   // const onSearchUserChange = (event) => {
+   //    updateSearchUser(event.target.value);
+   // }
 
    /** Logs out - Sidebar*/
 
 
-   const modifyBar = (show) => {
-      /** True || false */
-      updateShowBar(show);
-   };//ModifyBar
+   // const modifyBar = (show) => {
+   //    /** True || false */
+   //    updateShowBar(show);
+   // };//ModifyBar
 
    /** Cambia si busca usuarios o archivos - Provider*/
-   const modifySearch = (show) => {
-      updateSearchBar(show);
-   };//ModifySearch
+   // const modifySearch = (show) => {
+   //    updateSearchBar(show);
+   // };//ModifySearch
 
    /** Cambia el tema - Profile*/
-   const updateSwitch = event => {
-      updateTheme(event.target.checked);
-   };
+   // const updateSwitch = event => {
+   //    updateTheme(event.target.checked);
+   // };
    /** MOVER A COMPONENTES */
 
 
    /** Oculta o mustra la barra de busqueda */
 
-
-   const getIcon = (isFile, ext) => {
-      if (!isFile)
-         return folder;
-      switch (ext) {
-         case 'jpg':
-         case 'png':
-            return pic;
-         case 'mp3':
-         case 'wav':
-            return audio;
-         case 'mp4':
-         case 'mkv':
-            return video;
-         case 'rar':
-         case 'zip':
-            return compress;
-         case 'json':
-         case 'js':
-            return json;
-         case 'iso':
-            return iso;
-         case 'pdf':
-            return pdf;
-         case 'txt':
-            return Mimetypes;
-         case 'html':
-            return html;
-         default:
-            return zerosize;
-      }
-   }//GetIcon
    /*---------------------- HANDLERS ----------------------*/
 
    const switchView = () => {
-      const filteredFiles = (files) ? files.filter(f => {
-         return f.name.toLowerCase().includes(searchFileField.toLowerCase())
-      }) : [];
       return (
-         <div className={!useTheme ? classes.root : classes.useDark}>
+         <div className={!state.theme ? classes.root : classes.useDark}>
             <Route path={["/Perfil", "/Configuracion", "/Busqueda", "/transfers", "/reproductor", "/Admin"]} component={Sidebar} />
             <Route path={["/Perfil", "/Configuracion", "/Busqueda", "/transfers", "/reproductor", "/Admin"]} component={TopBar} />
             <Switch>
@@ -307,39 +238,19 @@ const App = (props) => {
                <Route exact path="/login" component={Login} />
                <Route exact path="/recover" component={Recover} />
                <Route exact path="/register" component={Register} />
+               <Route exact path="/reproductor" component={Reproductor} />
+               <Route exact path="/notlogged" component={RequireLogin} />
                <Route exact path="/busqueda"
-                  render={(props) => (
+                  render={() => (
                      <Search
-                        useTheme={useTheme}
-                        serverIp={serverIp}
-                        changeRep={changeRep}
-                        ip={serverIp}
-                        getIcon={getIcon}
-                        contextMenu={contextMenu}
-                        files={filteredFiles}
-                        loadUser={loadUser}
                         goBack={goBack}
                         goHome={goHome}
-                        handleClick={handleClick}
                      />
                   )}
                />
                <Route exact path="/perfil" component={Profile} />
-               <Route exact path="/configuracion"
-                  render={(props) => (
-                     <ProfileSettings
-                     />
-                  )}
-               />
-               <Route exact path="/reproductor"
-                  render={(props) => (
-                     <Reproductor
-                        serverIp={serverIp}
-                        idReproductor={idReproductor}
-                     />
-                  )}
-               />
-               <Route exact path="/notlogged" component={RequireLogin} />
+               <Route exact path="/configuracion" component={ProfileSettings} />
+
                {/* <Route exact path="/admin"
                   render={(props) => (
                      <Admin
@@ -359,7 +270,7 @@ const App = (props) => {
    }
 
    return (
-      <ThemeProvider theme={!useTheme ? prins : dark}>
+      <ThemeProvider theme={!state.theme ? prins : dark}>
          <BrowserRouter basename='/'>
             {switchView()}
          </BrowserRouter>

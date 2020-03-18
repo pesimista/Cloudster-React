@@ -1,3 +1,17 @@
+//SVG
+import folder from './svg/folder.svg';
+import audio from './svg/Papirus-Team-Papirus-audio.svg';
+import compress from './svg/Papirus-Team-Papirus-compress.svg';
+import html from './svg/Papirus-Team-Papirus-html.svg';
+import pic from './svg/Papirus-Team-Papirus-ImageGeneric.svg';
+import iso from './svg/Papirus-Team-Papirus-iso.svg';
+import json from './svg/Papirus-Team-Papirus-json.svg';
+import Mimetypes from './svg/Papirus-Team-Papirus-Mimetypes-X-office-document.svg';
+import pdf from './svg/Papirus-Team-Papirus-pdf.svg';
+import video from './svg/Papirus-Team-Papirus-video.svg';
+import zerosize from './svg/Papirus-Team-Papirus-zerosize.svg';
+//SVG
+
 export const history = require("history").createBrowserHistory();
 
 export const handleFetch = (response) => {
@@ -9,6 +23,38 @@ export const handleFetch = (response) => {
             return Promise.reject(json);
       });
 };
+
+export const getIcon = (isFile, ext) => {
+   if (!isFile)
+      return folder;
+   switch (ext) {
+      case 'jpg':
+      case 'png':
+         return pic;
+      case 'mp3':
+      case 'wav':
+         return audio;
+      case 'mp4':
+      case 'mkv':
+         return video;
+      case 'rar':
+      case 'zip':
+         return compress;
+      case 'json':
+      case 'js':
+         return json;
+      case 'iso':
+         return iso;
+      case 'pdf':
+         return pdf;
+      case 'txt':
+         return Mimetypes;
+      case 'html':
+         return html;
+      default:
+         return zerosize;
+   }
+}//GetIcon
 
 /**
  * 

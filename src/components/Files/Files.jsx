@@ -12,6 +12,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { getIcon } from "../SF/helpers";
 
 const useStyles = makeStyles(theme => ({
 	popper: { zIndex: 10000 },
@@ -41,15 +42,14 @@ const reducer = (state, action) => {
 	return { ...state, ...action };
 };
 
-const Files = (props) => {
+const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...props}) => {
 	const classes = useStyles();
 	const history = useHistory();
 
 	const [state, update] = React.useReducer(reducer, initialState);
 	// const { state: globalState, dispatch } = useContext(saduwux);
 
-	const { index, handleClick, contextMenu } = props;
-	const { ino, name, ext, isFile, lastModified, size, nivel } = props.file;
+	const { index, updateFolder, updatePlayer } = props;
 
 	const anchorRef = React.useRef(null);
 	const prevOpen = React.useRef(state.open);
@@ -84,7 +84,7 @@ const Files = (props) => {
 	};
 
 	const modRep = id => {
-		props.changeRep(id);
+		updatePlayer(id);
 		history.push("/reproductor");
 	}; //changeRep
 
@@ -98,11 +98,10 @@ const Files = (props) => {
 		});
 	};
 
-	function handleListKeyDown(event) {
+	const handleListKeyDown = (event) => {
 		if (event.key === "Tab") {
 			event.preventDefault();
 			update({ open: true });
-			// setOpen(false);
 		}
 	}
 
@@ -111,11 +110,11 @@ const Files = (props) => {
 			key={index}
 			in
 			style={{ transformOrigin: "0 0 0" }}
-			{...(true ? { timeout: index * 100 } : {})}
+			{...{ timeout: index * 100 }}
 		>
 			<Paper color="primary" elevation={0} className={classes.paper}>
 				<React.Fragment>
-					<img src={props.getIcon(isFile, ext)} alt={ext} />
+					<img src={getIcon(isFile, ext)} alt={ext} />
 					<Typography
 						variant="body2"
 						className={props.useTheme ? classes.text : ""}
@@ -133,8 +132,8 @@ const Files = (props) => {
 	if (!isFile) {
 		return (
 			<Box
-				onClick={e => handleClick(ino)}
-				onContextMenu={e => contextMenu(e)}
+				onClick={() => updateFolder(ino)}
+				onContextMenu={e => e.preventDefault()}
 				textAlign="center"
 				width={80}
 				style={{ margin: "0px 5px 10px", cursor: "pointer" }}
@@ -155,7 +154,7 @@ const Files = (props) => {
 					aria-controls={state.open ? "menu-list-grow" : undefined}
 					aria-haspopup="true"
 					onClick={handleToggle}
-					onContextMenu={e => contextMenu(e)}
+					onContextMenu={e => e.preventDefault()}
 				>
 					{content}
 				</a>
@@ -212,7 +211,7 @@ const Files = (props) => {
 							<Grid item>
 								<div className={classes.image}>
 									<img
-										src={props.getIcon(isFile, ext)}
+										src={getIcon(isFile, ext)}
 										alt={ext}
 										width="164"
 										height="164"
