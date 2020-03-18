@@ -10,7 +10,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-//import { ArrowBack as ArrowBackIcon, Cached as CachedIcon, Home as HomeIcon, CloudUpload as CloudUploadIcon } from '@material-ui/icons';
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CachedIcon from "@material-ui/icons/Cached";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -46,46 +45,36 @@ const initialState = {
    fileField: '',
    fileFieldText: '',
    currentFile: 0,
-   files: []
+   files: [],
+   shouldUpdate: false
 }
 
 const reducer = (state, action) => {
+   if (action.type === 'shouldUpdate') {
+      return {
+         ...state
+         , shouldUpdate: !state.shouldUpdate
+         , open: true
+         , fileField: ''
+         , fileFieldText: ''
+      };
+   }
    return { ...state, ...action }
 };
-
-/**
- * Checks if the token inside the local storage is valid 
- * and if it is retrieves the user
- * @param {function} cb callback function
- */
-// const useInit = (cb) => {
-//    const didMount = React.useRef(false);
-
-//    React.useEffect(() => {
-//       if (!didMount.current) {
-//          cb();
-//          didMount.current = true;
-//       }
-//    });
-// }
 
 /**
  * asd
  * @param {object} params
  * @param {file[]} params.files
  */
-const Search = ({ files, ...props }) => {
+const Search = () => {
    const classes = useStyles();
    const history = useHistory();
    const [state, update] = React.useReducer(reducer, initialState);
    const { state: globalState, dispatch } = useContext(saduwux);
 
-   const [open, setOpen] = React.useState(false);
-   const [fileField, updateFileField] = React.useState("");
-   const [fileFieldText, updateFileFieldText] = React.useState("");
-
    React.useEffect(() => {
-      fetch(`/api/files/${globalState.folder}/files`, {
+      fetch(`http://localhost:1234/api/files/${globalState.folder}/files`, {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
@@ -95,22 +84,36 @@ const Search = ({ files, ...props }) => {
          .then(handleFetch)
          .then(
             response => update({ files: sort(response) })
-         ).catch(mistake => alert(mistake.message));
-   }, [globalState.folder]);
+         ).catch(mistake => console.log(`/api/files/${globalState.folder}/files`, mistake.message));
+   }, [globalState.folder, state.shouldUpdate]);
 
-   if (!globalState.user.id) return <Redirect to='/notlogged' />
 
+   if (!globalState.logStatus) {
+      return <Redirect to='/notlogged' />
+   }
+
+   /**--------------------- Navigators ----------------------*/
+   const goBack = () => {
+      if (globalState.history.length)
+         dispatch({ type: 'moveBack' });
+   }
    const updateFolder = (ino) => {
-      dispatch({ type: 'update', payload: { folder: ino } });
+      dispatch({ type: 'moveForward', payload: ino });
    }
    const updatePlayer = (ino) => {
       dispatch({ type: 'update', payload: { playing: ino } });
       history.push('/reproductor')
    }
+   const goHome = () => {
+      dispatch({ type: 'moveHome' });
+   }
+   /**--------------------- Navigators ----------------------*/
 
    const onChange = e => {
-      updateFileField(e.target);
-      updateFileFieldText(e.target.value);
+      update({
+         fileField: e.target,
+         fileFieldText: e.target.value
+      });
    };
 
    const handleClose = (event, reason) => {
@@ -119,22 +122,24 @@ const Search = ({ files, ...props }) => {
    };
 
    const uploadFile = () => {
-      if(!files[0]) return;
+      if (!state.files[0]) return;
       let formData = new FormData();
-      formData.append("file", fileField.files[0]);
-      fetch(`/api/file?whereTo=${files[0].dependency}`, {
+      formData.append("file", state.fileField.files[0]);
+      fetch(`http://localhost:1234/api/files/${globalState.folder}`, {
          method: "POST",
+         headers: {
+            'Authorization': localStorage.getItem('token')
+         },
          enctype: "multipart/form-data",
          body: formData
       })
          .then(res => res.json())
          .then(() => {
-            props.handleClick(files[0].dependency);
-            setOpen(true);
+            update({ type: 'shouldUpdate' });
          });
    };
 
-   const items = state.files.reduce((filtered, file, index) => {
+   const items = () => state.files.reduce((filtered, file, index) => {
       const regex = new RegExp(globalState.search, 'gi');
       if (!file.name.match(regex)) {
          return filtered;
@@ -146,7 +151,6 @@ const Search = ({ files, ...props }) => {
          key={index}
          file={file}
       />;
-
       return [...filtered, temp]
    }, []);
 
@@ -158,7 +162,7 @@ const Search = ({ files, ...props }) => {
                <IconButton
                   edge="start"
                   className={classes.menuButton}
-                  onClick={props.goBack}
+                  onClick={goBack}
                   color="inherit"
                   aria-label="menu"
                >
@@ -175,7 +179,7 @@ const Search = ({ files, ...props }) => {
                <IconButton
                   edge="start"
                   className={classes.menuButton}
-                  onClick={props.goHome}
+                  onClick={goHome}
                   color="inherit"
                   aria-label="menu"
                >
@@ -205,7 +209,7 @@ const Search = ({ files, ...props }) => {
                   id="filled-basic"
                   size="small"
                   variant="outlined"
-                  value={fileFieldText}
+                  value={state.fileFieldText}
                   InputProps={{
                      readOnly: true
                   }}
@@ -219,7 +223,7 @@ const Search = ({ files, ...props }) => {
             <div className={classes.toolbar} />
             <div className={classes.toolbar} />
             <Box className={classes.container}>
-               {items}
+               {items()}
             </Box>
          </Box>
          <Box>
@@ -228,7 +232,7 @@ const Search = ({ files, ...props }) => {
                   vertical: "bottom",
                   horizontal: "right"
                }}
-               open={open}
+               open={state.open}
                autoHideDuration={6000}
                onClose={handleClose}
             >
@@ -242,7 +246,6 @@ const Search = ({ files, ...props }) => {
       </React.Fragment>
    );
 };
-
 export default Search;
 
 const sort = (arr) => {

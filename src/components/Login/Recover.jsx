@@ -15,9 +15,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import React, { useContext, useReducer } from 'react';
-import { Link as RouterLink, useHistory, withRouter } from "react-router-dom";
+import { Link as RouterLink, useHistory, withRouter } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
-import { handleFetch } from "../SF/helpers";
+import { handleFetch } from '../SF/helpers';
 
 
 const useStyles = makeStyles(theme => ({
@@ -40,7 +40,10 @@ const useStyles = makeStyles(theme => ({
    },
 }));
 
-const reactLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
+const reactLink = React.forwardRef((props, ref) => 
+   <RouterLink innerRef={ref} {...props} />
+);
+reactLink.displayName = 'reactLink';
 
 const initialState = {
    activeStep: 0,
@@ -57,7 +60,7 @@ const reducer = (state, action) => {
    return { ...state, ...action }
 };
 
-const Recover = (props) => {
+const Recover = () => {
    const classes = useStyles();
    const steps = ['Nombre de Usuario', 'Preguntas Secretas', 'Nueva Contraseña'];
    const history = useHistory();
@@ -96,13 +99,13 @@ const Recover = (props) => {
       })
          .then(handleFetch)
          .then(data => {
-            localStorage.setItem("token", "bearer " + data.token);
+            localStorage.setItem('token', 'bearer ' + data.token);
             update({ 'activeStep': 2 })
          })
          .catch(e => alert(e));
    }
 
-   const changePassword = (e) => {
+   const changePassword = () => {
       if (state.password.length > 0 && state.password === state.password2) {
          fetch(`http://localhost:1234/api/users/${state.id_usuario}`, {
             method: 'PUT',
@@ -114,11 +117,11 @@ const Recover = (props) => {
          })
             .then(handleFetch)
             .then(data => {
-               dispatch({ type: "update", payload: { user: data.user } });
+               dispatch({ type: 'login', payload: { user: data.user } });
                localStorage.setItem('token', 'bearer ' + data.token);
                history.push('/busqueda');
             })
-            .catch(err => console.log("ERROR", err));
+            .catch(err => console.log('ERROR', err));
       }
    }
 
@@ -133,7 +136,7 @@ const Recover = (props) => {
    };
 
    const handleChange = (e) => {
-      update({ [e.target.name]: e.target.value.trim() });
+      update({ [e.target.name]: e.target.value });
    }
 
    /**
@@ -147,11 +150,11 @@ const Recover = (props) => {
                <FormControl>
                   <TextField
                      onChange={handleChange}
-                     name="user"
+                     name='user'
                      value={state.user}
-                     id="standard-name"
-                     label="Nombre de usuario"
-                     variant="outlined"
+                     id='standard-name'
+                     label='Nombre de usuario'
+                     variant='outlined'
                   />
                </FormControl>
 
@@ -161,21 +164,21 @@ const Recover = (props) => {
                <React.Fragment>
                   <TextField
                      onChange={handleChange}
-                     name="respuesta1"
+                     name='respuesta1'
                      value={state.respuesta1}
-                     id="outlined-basic"
-                     label="Respuesta #1"
+                     id='outlined-basic'
+                     label='Respuesta #1'
                      helperText={state.pregunta1}
-                     variant="outlined" />
+                     variant='outlined' />
                   <Box>
                      <TextField
                         onChange={handleChange}
-                        name="respuesta2"
+                        name='respuesta2'
                         value={state.respuesta2}
-                        id="outlined-basic"
-                        label="Respuesta #2"
+                        id='outlined-basic'
+                        label='Respuesta #2'
                         helperText={state.pregunta2}
-                        variant="outlined" />
+                        variant='outlined' />
                   </Box>
                </React.Fragment>
             );
@@ -184,22 +187,22 @@ const Recover = (props) => {
                <Box>
                   <TextField
                      onChange={handleChange}
-                     name="password"
+                     name='password'
                      value={state.password}
-                     id="outlined-password-input"
-                     label="Nueva contraseña"
-                     type="password"
-                     variant="outlined"
+                     id='outlined-password-input'
+                     label='Nueva contraseña'
+                     type='password'
+                     variant='outlined'
                   />
                   <Box>
                      <TextField
                         onChange={handleChange}
-                        name="password2"
+                        name='password2'
                         value={state.password2}
-                        id="outlined-password-input"
-                        label="Confirmar contraseña"
-                        type="password"
-                        variant="outlined"
+                        id='outlined-password-input'
+                        label='Confirmar contraseña'
+                        type='password'
+                        variant='outlined'
                      />
                   </Box>
                </Box>
@@ -210,9 +213,9 @@ const Recover = (props) => {
    }
 
    return (
-      <Box display='flex' textAlign="center" bgcolor="bg.main" width={1} justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
+      <Box display='flex' textAlign='center' bgcolor='bg.main' width={1} justifyContent='center' alignItems='center' style={{ height: '100vh' }}>
          <Card className={classes.root}>
-            <CardHeader title="Recuperar Contraseña" />
+            <CardHeader title='Recuperar Contraseña' />
             <Divider />
             <CardContent>
                <Box>
@@ -233,8 +236,8 @@ const Recover = (props) => {
                      Back
                   </Button>
                   <Button
-                     variant="contained"
-                     color="primary"
+                     variant='contained'
+                     color='primary'
                      disabled={
                         (state.activeStep === 0 && state.user.trim().length === 0) ||
                         (state.activeStep === 1 && state.respuesta1.trim().length === 0 && state.respuesta2.trim().length === 0) ||
@@ -252,8 +255,8 @@ const Recover = (props) => {
             </CardContent>
             <Divider />
             <CardActions>
-               <Box mx="auto">
-                  <Link component={reactLink} to='/login' underline='none' color="primary">
+               <Box mx='auto'>
+                  <Link component={reactLink} to='/login' underline='none' color='primary'>
                      <Button>
                         Volver a inicio de sesión
             </Button>

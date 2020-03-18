@@ -12,8 +12,6 @@ import video from './svg/Papirus-Team-Papirus-video.svg';
 import zerosize from './svg/Papirus-Team-Papirus-zerosize.svg';
 //SVG
 
-export const history = require("history").createBrowserHistory();
-
 export const handleFetch = (response) => {
    return response.json()
       .then(json => {

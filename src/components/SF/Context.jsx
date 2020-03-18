@@ -20,15 +20,16 @@ const initialValue = {
    },
    playing: 525906,
    folder: 0,
+   history: [],
    theme: false,
    search: '',
-   logStatus: 0
+   logStatus: 1
 };
 
 /** @params {logStatus} 
  * 0 logof 
  * 1 loging in
- * 2 log in
+ * 2 loged in
  * */
 
 /** Store */
@@ -42,12 +43,30 @@ const reducer = (state, action) => {
    switch (type) {
       case 'update': {
          const newState = { ...state, ...payload }
-         console.log(payload)
+         console.log(type, payload)
+         return newState;
+      }
+      case 'login': {
+         const newState = { ...state, ...payload, logStatus: 2 }
+         console.log(type, { ...payload, logStatus: 2 })
+         return newState;
+      }
+      case 'moveForward': {
+         const newState = { ...state, history: [...state.history, state.folder], folder: payload }
+         return newState;
+      }
+      case 'moveBack': {
+         const newState = { ...state };
+         newState.folder = state.history.pop();
+         return newState;
+      }
+      case 'moveHome': {
+         const newState = { ...state, history: [], folder: 0 };
          return newState;
       }
       case 'reset':
       default:
-         return initialValue;
+         return { ...initialValue, logStatus: 0 };
    }
 
 

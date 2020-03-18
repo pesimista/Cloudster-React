@@ -11,8 +11,9 @@ import Stepper from '@material-ui/core/Stepper';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from "@material-ui/core/TextField";
 import Typography from '@material-ui/core/Typography';
-import React, { useReducer } from 'react';
+import React, { useContext, useReducer } from 'react';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
+import { saduwux } from '../SF/Context';
 import { handleFetch, structuteChecker } from '../SF/helpers';
 import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
 
@@ -60,7 +61,10 @@ const useStyles = makeStyles(theme => ({
    },
 }));
 
-const reactLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
+const reactLink = React.forwardRef((props, ref) =>
+   <RouterLink innerRef={ref} {...props} />
+);
+reactLink.displayName = 'reactLink';
 
 const initialState = {
    open: false,
@@ -82,11 +86,12 @@ const reducer = (state, action) => {
    return { ...state, ...action };
 }
 
-const Register = (props) => {
+const Register = () => {
    let history = useHistory();
    const classes = useStyles();
 
    const [state, update] = useReducer(reducer, initialState);
+   const { dispatch } = useContext(saduwux);
 
    const questions = [
       { id: "1", pregunta: "Cuál es el nombre de tu mejor amigo?" },
@@ -126,7 +131,7 @@ const Register = (props) => {
          })
       }).then(handleFetch).then(
          data => {
-            localStorage.setItem("user", JSON.stringify(data.user));
+            dispatch({ type: 'login', payload: { user: data.user } });
             localStorage.setItem("token", 'bearer ' + data.token);
             update({
                userExist: false,
@@ -148,7 +153,6 @@ const Register = (props) => {
          return;
       }
       update({ open: false });
-      // setOpen(false);
    };
 
    const steps = ['Nombres y Contraseña', 'Preguntas Secretas', 'Nombre de usuario'];

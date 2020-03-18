@@ -1,3 +1,4 @@
+import CircularProgress from '@material-ui/core/CircularProgress';
 import green from '@material-ui/core/colors/green';
 import orange from '@material-ui/core/colors/orange';
 import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
@@ -15,7 +16,7 @@ import ProfileSettings from './components/Profile/ProfileSettings';
 import Register from './components/Register/Register';
 import Reproductor from './components/Reproductor/Reproductor';
 import { saduwux } from './components/SF/Context';
-import { handleFetch, history } from './components/SF/helpers';
+import { handleFetch } from './components/SF/helpers';
 import Sidebar from './components/Sidebar/Sidebar';
 import TopBar from './components/TopBar/TopBar';
 import Welcome from './components/Welcome/Welcome';
@@ -84,18 +85,18 @@ const App = () => {
          }).then(
             handleFetch
          ).then(
-            res => dispatch({ type: 'update', payload: { user: res } })
+            res => dispatch({ type: 'login', payload: { user: res } })
          ).catch(
             () => {
+               console.log('redirect')
                localStorage.clear();
-               history.push('/');
+               dispatch({ type: 'update', payload: { logStatus: 0 } });
             }
          )
       }
       else {
          dispatch({ type: 'update', payload: { logStatus: 0 } })
          localStorage.clear();
-         history.push('/');
       }
       // if (serverIp === "localhost") {
       //    fetch(`/api/dir`)
@@ -268,14 +269,28 @@ const App = () => {
          </div>
       )
    }
-
-   return (
-      <ThemeProvider theme={!state.theme ? prins : dark}>
-         <BrowserRouter basename='/'>
-            {switchView()}
-         </BrowserRouter>
-      </ThemeProvider>
-   );
+      
+   if (state.logStatus === 1) {
+      const tempStyle = {
+         minHeight: '100vh'
+         , minWidth: '100%'
+         , display: 'flex'
+         , justifyContent: 'center'
+         , alignItems: 'center'
+      };
+      return (
+         <div style={tempStyle}>
+            <CircularProgress size={100} thickness={5} />
+         </div>
+      );
+   } else
+      return (
+         <ThemeProvider theme={!state.theme ? prins : dark}>
+            <BrowserRouter basename='/'>
+               {switchView()}
+            </BrowserRouter>
+         </ThemeProvider>
+      );
 }
 
 export default App;

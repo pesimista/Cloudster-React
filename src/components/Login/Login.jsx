@@ -48,11 +48,12 @@ const reducer = (state, action) => {
    return { ...state, ...action };
 };
 
-const reactLink = React.forwardRef((props, ref) => (
+const reactLink = React.forwardRef((props, ref) => 
    <RouterLink innerRef={ref} {...props} />
-));
+);
+reactLink.displayName = 'reactLink';
 
-const Login = props => {
+const Login = () => {
    const history = useHistory();
    const classes = useStyles();
    const preventDefault = event => event.preventDefault();
@@ -78,7 +79,7 @@ const Login = props => {
          .then(handleFetch)
          .then(data => {
             localStorage.setItem("token", "bearer " + data.token);
-            dispatch({ type: "update", payload: { user: data.user } });
+            dispatch({ type: "login", payload: { user: data.user } });
             update({ open: true });
             setTimeout(() => {
                history.push("/busqueda");
