@@ -48,7 +48,7 @@ const reducer = (state, action) => {
    return { ...state, ...action };
 };
 
-const reactLink = React.forwardRef((props, ref) => 
+const reactLink = React.forwardRef((props, ref) =>
    <RouterLink innerRef={ref} {...props} />
 );
 reactLink.displayName = 'reactLink';

@@ -73,7 +73,7 @@ const Search = () => {
    const [state, update] = React.useReducer(reducer, initialState);
    const { state: globalState, dispatch } = useContext(saduwux);
 
-   React.useEffect(() => { 
+   React.useEffect(() => {
       fetch(`/api/files/${globalState.folder}/files`, {
          method: 'GET',
          headers: {
@@ -122,7 +122,7 @@ const Search = () => {
    };
 
    const uploadFile = () => {
-      if (!state.fileField.files[0]) {console.log('Something is missing'); return;};
+      if (!state.fileField.files[0]) { console.log('Something is missing'); return; }
       console.log('Uploading file');
       let formData = new FormData();
       formData.append("file", state.fileField.files[0]);
