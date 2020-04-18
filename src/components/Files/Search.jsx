@@ -73,8 +73,8 @@ const Search = () => {
    const [state, update] = React.useReducer(reducer, initialState);
    const { state: globalState, dispatch } = useContext(saduwux);
 
-   React.useEffect(() => {
-      fetch(`http://localhost:1234/api/files/${globalState.folder}/files`, {
+   React.useEffect(() => { 
+      fetch(`/api/files/${globalState.folder}/files`, {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ const Search = () => {
       if (!state.files[0]) return;
       let formData = new FormData();
       formData.append("file", state.fileField.files[0]);
-      fetch(`http://localhost:1234/api/files/${globalState.folder}`, {
+      fetch(`/api/files/${globalState.folder}`, {
          method: "POST",
          headers: {
             'Authorization': localStorage.getItem('token')
@@ -189,11 +189,10 @@ const Search = () => {
                   Puedes acceder desde {window.location.origin}
                </Typography>
                <input
-                  accept="image/*"
+                  accept="*"
                   className={classes.input}
                   id="text-button-file"
                   type="file"
-                  multiple
                   onChange={e => onChange(e)}
                />
                <label htmlFor="text-button-file">

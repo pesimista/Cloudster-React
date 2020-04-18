@@ -76,7 +76,7 @@ const App = () => {
       const token = localStorage.getItem('token');
       if (token) {
          dispatch({ type: 'update', payload: { logStatus: 1 } })
-         fetch(`http://localhost:1234/api/users/token`, {
+         fetch(`/api/users/token`, {
             method: 'GET',
             headers: {
                'Content-Type': 'application/json',

@@ -70,7 +70,7 @@ const Recover = () => {
 
    const handleUsername = () => {
       if (state.user.trim().length === 0) return
-      fetch(`http://localhost:1234/api/users/${state.user}/questions`)
+      fetch(`/api/users/${state.user}/questions`)
          .then(handleFetch)
          .then(data => {
             console.log('asd');
@@ -89,7 +89,7 @@ const Recover = () => {
       if (state.respuesta1.trim().length === 0 || state.respuesta2.trim().length === 0)
          return;
 
-      fetch(`http://localhost:1234/api/users/${state.id_usuario}/questions`, {
+      fetch(`/api/users/${state.id_usuario}/questions`, {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify({
@@ -107,7 +107,7 @@ const Recover = () => {
 
    const changePassword = () => {
       if (state.password.length > 0 && state.password === state.password2) {
-         fetch(`http://localhost:1234/api/users/${state.id_usuario}`, {
+         fetch(`/api/users/${state.id_usuario}`, {
             method: 'PUT',
             headers: {
                'Content-Type': 'application/json',

@@ -89,7 +89,7 @@ const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...
 	}; //changeRep
 
 	const download = ino => {
-		fetch(`http://localhost:1234/api/files/${ino}/download`, {
+		fetch(`/api/files/${ino}/download`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",

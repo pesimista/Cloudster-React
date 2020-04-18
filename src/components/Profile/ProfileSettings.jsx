@@ -134,7 +134,7 @@ const ProfileSettings = props => {
          alert('Marico las contraseñas no coinciden');
          return;
       }
-      fetch(`http://localhost:1234/api/users/${user.id}`, {
+      fetch(`/api/users/${user.id}`, {
          method: "PUT",
          headers: {
             "Content-Type": "application/json",
