@@ -42,7 +42,7 @@ const reducer = (state, action) => {
 	return { ...state, ...action };
 };
 
-const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...props}) => {
+const Files = ({file: { ino, name, ext, isFile, lastChanged, size, nivel }, ...props}) => {
 	const classes = useStyles();
 	const history = useHistory();
 
@@ -50,7 +50,6 @@ const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...
 	// const { state: globalState, dispatch } = useContext(saduwux);
 
 	const { index, updateFolder, updatePlayer } = props;
-
 	const anchorRef = React.useRef(null);
 	const prevOpen = React.useRef(state.open);
 
@@ -99,7 +98,7 @@ const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...
 	};
 
 	const handleListKeyDown = (event) => {
-		if (event.key === "Tab") {
+		if (event.index === "Tab") {
 			event.preventDefault();
 			update({ open: true });
 		}
@@ -110,7 +109,7 @@ const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...
 			key={index}
 			in
 			style={{ transformOrigin: "0 0 0" }}
-			{...{ timeout: index * 100 }}
+			{...{ timeout:  index * 100 }}
 		>
 			<Paper color="primary" elevation={0} className={classes.paper}>
 				<React.Fragment>
@@ -220,10 +219,10 @@ const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...
 							</Grid>
 							<Grid item xs={12} sm container>
 								<Grid item xs container direction="row" spacing={2}>
-									<Grid item xs="12">
+									<Grid item xs={12}>
 										<Typography variant="body2" color="textSecondary">
 											Nombre:
-                              </Typography>
+                              			</Typography>
 										<Typography gutterBottom variant="subtitle1">
 											{name}
 										</Typography>
@@ -231,27 +230,27 @@ const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...
 									<Grid item xs>
 										<Typography variant="body2" color="textSecondary">
 											Extensión:
-                              </Typography>
+                              			</Typography>
 										<Typography gutterBottom variant="subtitle1">
 											{ext}
 										</Typography>
 										<Typography variant="body2" color="textSecondary">
 											Última modificación:
-                              </Typography>
+                              			</Typography>
 										<Typography gutterBottom variant="subtitle1">
-											{lastModified}
+											{lastChanged}
 										</Typography>
 									</Grid>
 									<Grid item xs>
 										<Typography variant="body2" color="textSecondary">
 											Tamaño:
-                              </Typography>
+                              			</Typography>
 										<Typography gutterBottom variant="subtitle1">
 											{size}
 										</Typography>
 										<Typography variant="body2" color="textSecondary">
 											Nivel
-                              </Typography>
+                              			</Typography>
 										<Typography gutterBottom variant="subtitle1">
 											{nivel}
 										</Typography>
