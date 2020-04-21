@@ -238,7 +238,7 @@ const Files = ({file: { ino, name, ext, isFile, lastChanged, size, nivel }, ...p
 											Última modificación:
                               			</Typography>
 										<Typography gutterBottom variant="subtitle1">
-											{lastChanged}
+											{new Date(lastChanged).toLocaleString('es-VE')}
 										</Typography>
 									</Grid>
 									<Grid item xs>
