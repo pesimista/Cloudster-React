@@ -127,8 +127,11 @@ const Search = () => {
    };
 
    const uploadFile = () => {
-      if (!state.fileField.files[0]) { console.log('Something is missing'); return; }
-      console.log('Uploading file');
+      if (!state.fileField.files[0]) {
+         console.log("Something is missing");
+         return;
+      }
+      console.log("Uploading file");
       let formData = new FormData();
       formData.append("file", state.fileField.files[0]);
       fetch(`/api/files/${globalState.folder}`, {
