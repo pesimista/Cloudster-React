@@ -35,8 +35,9 @@ const useStyles = makeStyles(theme => ({
 const reactLink = React.forwardRef((props, ref) => (
    <RouterLink innerRef={ref} {...props} />
 ));
+reactLink.displayName = "reactLink";
 
-const Profile = props => {
+const Profile = () => {
    const classes = useStyles();
 
    // const { nombre, nivel, desde, usuario } = props.user;
@@ -49,13 +50,14 @@ const Profile = props => {
 
    return (
       <Box
+         component="main"
          display="flex"
          width={1}
          textAlign="center"
          bgcolor="bg.main"
          justifyContent="center"
          alignItems="center"
-         style={{ height: "100vh" }}
+         className="min-h100"
       >
          <Card className={classes.card}>
             <CardHeader title="Perfil" />

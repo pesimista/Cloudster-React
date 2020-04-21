@@ -35,14 +35,47 @@ const useStyles = makeStyles(theme => ({
 
 const initialState = {
 	open: false,
-	openModal: false
+	openModal: false,
+	progress: null,
+	total: null
 };
 
 const reducer = (state, action) => {
-	return { ...state, ...action };
+	switch (action.type) {
+		case 'start': {
+			return {
+				...state,
+				progress: 0,
+				total: action.total
+			};
+		}
+		case 'add': {
+			const received = state.progress + action.progress;
+			console.log(`
+			Received ${received} bytes of ${state.total} 
+				${(received * 100 / state.total).toFixed(2)}%
+			`);
+			return {
+				...state,
+				progress: received,
+			};
+		}
+		case 'end': {
+			return {
+				...state,
+				progress: 0,
+				total: 0
+			};
+		}
+
+		default: {
+			return { ...state, ...action };
+		}
+	}
+
 };
 
-const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...props}) => {
+const Files = ({ file: { ino, name, ext, isFile, lastModified, size, nivel }, ...props }) => {
 	const classes = useStyles();
 	const history = useHistory();
 
@@ -88,14 +121,37 @@ const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...
 		history.push("/reproductor");
 	}; //changeRep
 
-	const download = ino => {
-		fetch(`/api/files/${ino}/download`, {
+	const download = async (ino, filename) => {
+		const response = await fetch(`/api/files/${ino}/download`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
 				Authorization: localStorage.getItem("token")
 			}
 		});
+		const reader = response.body.getReader();
+		const chunks = [];
+
+		update({ type: 'start', total: +response.headers.get('Content-Length') });
+		// eslint-disable-next-line no-constant-condition
+		while (true) {
+			const { done, value } = await reader.read();
+
+			if (done) {
+				break;
+			}
+			chunks.push(value);
+			update({ type: 'add', progress: value.length })
+		}
+
+		const blob = new Blob(chunks);
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = filename;
+		document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+		a.click();
+		a.remove();  //afterwards we remove the element again     
 	};
 
 	const handleListKeyDown = (event) => {
@@ -121,7 +177,7 @@ const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...
 						style={{ overflowWrap: "break-word" }}
 					>
 						{name.length > 30
-							? name.substring(0, 27) + "..." + ext
+							? name.substring(0, 27).trim() + "..." + ext
 							: name}
 					</Typography>
 				</React.Fragment>
@@ -183,7 +239,7 @@ const Files = ({file: { ino, name, ext, isFile, lastModified, size, nivel }, ...
 										id="menu-list-grow"
 										onKeyDown={handleListKeyDown}
 									>
-										<MenuItem onClick={() => download(ino)}>
+										<MenuItem onClick={() => download(ino, name)}>
 											Descargar
                               </MenuItem>
 										<MenuItem onClick={() => modRep(ino)}>

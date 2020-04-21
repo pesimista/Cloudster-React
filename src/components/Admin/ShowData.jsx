@@ -31,7 +31,7 @@ import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
 
 
 
-function TabPanel(props) {
+const TabPanel = (props) => {
    const { children, value, index, ...other } = props;
 
    return (
@@ -47,35 +47,31 @@ function TabPanel(props) {
       </Typography>
    );
 }
-
 TabPanel.propTypes = {
    children: PropTypes.node,
    index: PropTypes.any.isRequired,
    value: PropTypes.any.isRequired,
 };
-
-function a11yProps(index) {
+/** Propiedades de las pestañas */
+const tabProps = index => {
    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
+      id: `tab-${index}`,
+      'aria-controls': `tabpanel-${index}`,
    };
 }
 
 const drawerWidth = 51;
 
 const useStyles = makeStyles(theme => ({
-   root: {
-      flexGrow: 1,
-   },
-   table: {
-      minWidth: 650,
-   },
+   root: { flexGrow: 1 },
+   table: { minWidth: 650 },
+   a: { color: '#228dff' },
+   text: { color: '#FFF' },
+   toolbar: theme.mixins.toolbar,
    appBar: {
       width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
+      marginLeft: drawerWidth
    },
-   toolbar: theme.mixins.toolbar,
-
    useDark: {
       flexGrow: 1,
       backgroundColor: '#393d46',
@@ -104,27 +100,17 @@ const useStyles = makeStyles(theme => ({
          color: 'rgba(255,255,255,0.26)'
       }
    },
-   a: {
-      color: '#228dff',
-   },
-   text: {
-      color: '#FFF'
-   },
 }));
 
-const useStyles1 = makeStyles(theme => ({
+const useOtherStyles = makeStyles(theme => ({
    root: {
       flexShrink: 0,
       marginLeft: theme.spacing(2.5),
    },
 }));
 
-const BootstrapInput = withStyles(theme => ({
-   root: {
-      'label + &': {
-         marginTop: theme.spacing(3),
-      },
-   },
+const bootstrapInput = withStyles(theme => ({
+   root: { 'label + &': { marginTop: theme.spacing(3) } },
    input: {
       borderRadius: 4,
       position: 'relative',
@@ -153,16 +139,13 @@ const BootstrapInput = withStyles(theme => ({
    },
 }))(InputBase);
 
-const ColorCircularProgress = withStyles({
-   root: {
-      color: '#00695c',
-   },
+const colorCircularProgress = withStyles({
+   root: { color: '#00695c' }
 })(CircularProgress);
 
-function TablePaginationActions(props) {
-   const classes = useStyles1();
+const TablePaginationActions = ({ count, page, rowsPerPage, onChangePage }) => {
+   const classes = useOtherStyles();
    const theme = useTheme();
-   const { count, page, rowsPerPage, onChangePage } = props;
 
    const handleFirstPageButtonClick = event => {
       onChangePage(event, 0);
@@ -185,8 +168,7 @@ function TablePaginationActions(props) {
          <IconButton
             onClick={handleFirstPageButtonClick}
             disabled={page === 0}
-            aria-label="first page"
-         >
+            aria-label="first page">
             {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
          </IconButton>
          <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
@@ -195,15 +177,13 @@ function TablePaginationActions(props) {
          <IconButton
             onClick={handleNextButtonClick}
             disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-            aria-label="next page"
-         >
+            aria-label="next page">
             {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
          </IconButton>
          <IconButton
             onClick={handleLastPageButtonClick}
             disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-            aria-label="last page"
-         >
+            aria-label="last page">
             {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
          </IconButton>
       </div>
@@ -320,7 +300,7 @@ const ShowData = (props) => {
                   labelId="demo-customized-select-label"
                   id="demo-customized-select"
                   onChange={(e) => changeNivelFile(value.id, e.target)}
-                  input={<BootstrapInput />}
+                  input={<bootstrapInput />}
                   defaultValue={value.nivel}
                >
                   <MenuItem value={1}>1</MenuItem>
@@ -350,7 +330,7 @@ const ShowData = (props) => {
       : props.userList
    ).map((value) => {
       return (
-         <TableRow key={value.id}>
+         <TableRow  key={value.id}>
             <TableCell>{value.id}</TableCell>
             <TableCell>{value.usuario}</TableCell>
             <TableCell align="right">
@@ -358,7 +338,7 @@ const ShowData = (props) => {
                   labelId="demo-customized-select-label"
                   id="demo-customized-select"
                   onChange={(e) => changeNivelUser(value.id, e.target)}
-                  input={<BootstrapInput />}
+                  input={<bootstrapInput />}
                   defaultValue={value.nivel}
                >
                   <MenuItem value={1}>1</MenuItem>
@@ -430,16 +410,20 @@ const ShowData = (props) => {
          <Box className={!props.useTheme ? classes.root : classes.useDark}>
             <AppBar className={classes.appBar} position="fixed" color="secondary">
                <div className={classes.toolbar} />
-               <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" variant='fullWidth'>
-                  <Tab label="Archivos" {...a11yProps(0)} />
-                  <Tab label="Usuarios" {...a11yProps(1)} />
+               <Tabs value={value} onChange={handleChange} aria-label="tabs" variant='fullWidth'>
+                  <Tab label="Archivos" {...tabProps(0)} />
+                  <Tab label="Usuarios" {...tabProps(1)} />
                </Tabs>
             </AppBar>
+
             <div className={classes.toolbar} />
+
             <Toolbar variant="dense" />
+
             <TabPanel value={value} index={0}>
                {showFiles}
             </TabPanel>
+
             <TabPanel value={value} index={1}>
                {showUsers}
             </TabPanel>
@@ -461,6 +445,7 @@ const ShowData = (props) => {
                   />
                </Snackbar>
             </Box>
+
             <TablePagination
                className={!props.useTheme ? null : classes.useDark}
                rowsPerPageOptions={[10, 25, 50]}
@@ -472,13 +457,14 @@ const ShowData = (props) => {
                onChangeRowsPerPage={handleChangeRowsPerPage}
                ActionsComponent={TablePaginationActions}
             />
+
          </Box>
       );
    }
    else return (
       <Box display="flex" width={1} textAlign="center" justifyContent="center" alignItems="center" style={{ height: '86.5vh' }}>
          <Typography className={props.useTheme ? classes.text : ''}>
-            <ColorCircularProgress size={30} thickness={5} />
+            <colorCircularProgress size={30} thickness={5} />
          </Typography>
       </Box>)
 }
