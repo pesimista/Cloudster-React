@@ -1,11 +1,8 @@
 import Box from "@material-ui/core/Box";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import Grid from "@material-ui/core/Grid";
-//import { Grow, Paper, makeStyles, MenuItem, Popper, ClickAwayListener, MenuList } from '@material-ui/core';
 import Grow from "@material-ui/core/Grow";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
-import Modal from "@material-ui/core/Modal";
 import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import { makeStyles } from "@material-ui/core/styles";
@@ -14,57 +11,58 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { getIcon } from "../SF/helpers";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
 	popper: { zIndex: 10000 },
 	text: { color: "white" },
 	image: { width: 164, height: 164 },
 	paper: {
 		margin: theme.spacing(1),
-		backgroundColor: "inherit"
+		backgroundColor: "inherit",
 	},
 	paperMod: {
 		padding: theme.spacing(2),
-		margin: "auto", maxWidth: 700
+		margin: "auto",
+		maxWidth: 700,
 	},
 	modal: {
 		display: "flex",
 		alignItems: "center",
-		justifyContent: "center"
-	}
+		justifyContent: "center",
+	},
 }));
 
 const initialState = {
 	open: false,
 	openModal: false,
 	progress: null,
-	total: null
+	total: null,
 };
 
 const reducer = (state, action) => {
 	switch (action.type) {
-		case 'start': {
+		case "start": {
 			return {
 				...state,
 				progress: 0,
-				total: action.total
+				total: action.total,
 			};
 		}
-		case 'add': {
+		case "add": {
 			const received = state.progress + action.progress;
 			console.log(`
 			Received ${received} bytes of ${state.total} 
-				${(received * 100 / state.total).toFixed(2)}%
+				${((received * 100) / state.total).toFixed(2)}%
 			`);
 			return {
 				...state,
 				progress: received,
 			};
 		}
-		case 'end': {
+		case "end": {
 			return {
 				...state,
 				progress: 0,
-				total: 0
+				total: 0,
 			};
 		}
 
@@ -72,20 +70,26 @@ const reducer = (state, action) => {
 			return { ...state, ...action };
 		}
 	}
-
 };
 
-const Files = ({ file: { ino, name, ext, isFile, lastModified, lastChanged, size, nivel }, ...props }) => {
+const Files = ({
+	file,
+	...props
+}) => {
 	const classes = useStyles();
 	const history = useHistory();
+
+	const { ino, name, ext, isFile } = file;
 
 	const [state, update] = React.useReducer(reducer, initialState);
 	// const { state: globalState, dispatch } = useContext(saduwux);
 
 	const { index, updateFolder, updatePlayer } = props;
-
 	const anchorRef = React.useRef(null);
 	const prevOpen = React.useRef(state.open);
+	const nameToShow = name.length > 30
+		? name.substring(0, 27).trim() + "..." + ext
+		: name;
 
 	React.useEffect(() => {
 		if (prevOpen.current && !state.open) {
@@ -98,25 +102,19 @@ const Files = ({ file: { ino, name, ext, isFile, lastModified, lastChanged, size
 		update({ open: !state.open });
 	};
 
-	const handleClose = event => {
+	const handleClose = (event) => {
 		if (anchorRef.current && anchorRef.current.contains(event.target)) {
 			return;
 		}
 		update({ open: false });
 	};
+
 	const handleOpenModal = () => {
-		update({
-			open: false,
-			openModal: true
-		});
+		update({ open: false });
+		props.openModal(file)
 	};
 
-	const handleCloseModal = () => {
-		update({ openModal: false });
-		// setOpenModal(false);
-	};
-
-	const modRep = id => {
+	const modRep = (id) => {
 		updatePlayer(id);
 		history.push("/reproductor");
 	}; //changeRep
@@ -126,13 +124,13 @@ const Files = ({ file: { ino, name, ext, isFile, lastModified, lastChanged, size
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
-				Authorization: localStorage.getItem("token")
-			}
+				Authorization: localStorage.getItem("token"),
+			},
 		});
 		const reader = response.body.getReader();
 		const chunks = [];
 
-		update({ type: 'start', total: +response.headers.get('Content-Length') });
+		update({ type: "start", total: +response.headers.get("Content-Length") });
 		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			const { done, value } = await reader.read();
@@ -141,185 +139,101 @@ const Files = ({ file: { ino, name, ext, isFile, lastModified, lastChanged, size
 				break;
 			}
 			chunks.push(value);
-			update({ type: 'add', progress: value.length })
+			update({ type: "add", progress: value.length });
 		}
 
 		const blob = new Blob(chunks);
 		const url = window.URL.createObjectURL(blob);
-		const a = document.createElement('a');
+		const a = document.createElement("a");
 		a.href = url;
 		a.download = filename;
 		document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
 		a.click();
-		a.remove();  //afterwards we remove the element again     
+		a.remove(); //afterwards we remove the element again
 	};
 
 	const handleListKeyDown = (event) => {
-		if (event.key === "Tab") {
+		if (event.index === "Tab") {
 			event.preventDefault();
 			update({ open: true });
 		}
-	}
+	};
 
 	const content = (
-		<Grow
-			key={index}
-			in
-			style={{ transformOrigin: "0 0 0" }}
-			{...{ timeout: index * 100 }}
-		>
-			<Paper color="primary" elevation={0} className={classes.paper}>
-				<React.Fragment>
-					<img src={getIcon(isFile, ext)} alt={ext} />
-					<Typography
-						variant="body2"
-						className={props.useTheme ? classes.text : ""}
-						style={{ overflowWrap: "break-word" }}
-					>
-						{name.length > 30
-							? name.substring(0, 27).trim() + "..." + ext
-							: name}
-					</Typography>
-				</React.Fragment>
-			</Paper>
-		</Grow>
+		<Paper color="primary" elevation={0} className={classes.paper}>
+			<img src={getIcon(isFile, ext)} alt={ext} />
+			<Typography
+				variant="body2"
+				className={props.useTheme ? classes.text : ""}
+				style={{ overflowWrap: "break-word" }}>
+				{nameToShow}
+			</Typography>
+		</Paper>
 	);
 
 	if (!isFile) {
 		return (
 			<Box
 				onClick={() => updateFolder(ino)}
-				onContextMenu={e => e.preventDefault()}
+				onContextMenu={(e) => e.preventDefault()}
 				textAlign="center"
 				width={80}
-				style={{ margin: "0px 5px 10px", cursor: "pointer" }}
-			>
+				style={{ margin: "0px 5px 10px", cursor: "pointer" }}>
 				{content}
 			</Box>
 		);
-	} else {
-		return (
-			<Box
-				textAlign="center"
-				width={80}
-				style={{ margin: "0px 5px 10px", cursor: "pointer" }}
-			>
-				{/* eslint-disable-next-line */}
-				<a
-					ref={anchorRef}
-					aria-controls={state.open ? "menu-list-grow" : undefined}
-					aria-haspopup="true"
-					onClick={handleToggle}
-					onContextMenu={e => e.preventDefault()}
-				>
-					{content}
-				</a>
-				<Popper
-					className={classes.popper}
-					open={state.open}
-					anchorEl={anchorRef.current}
-					role={undefined}
-					transition
-					disablePortal
-				>
-					{({ TransitionProps, placement }) => (
-						<Grow
-							{...TransitionProps}
-							style={{
-								transformOrigin:
-									placement === "bottom"
-										? "center top"
-										: "center bottom"
-							}}
-						>
-							<Paper>
-								<ClickAwayListener onClickAway={handleClose}>
-									<MenuList
-										autoFocusItem={state.open}
-										id="menu-list-grow"
-										onKeyDown={handleListKeyDown}
-									>
-										<MenuItem onClick={() => download(ino, name)}>
-											Descargar
-                              </MenuItem>
-										<MenuItem onClick={() => modRep(ino)}>
-											Reproducir
-                              </MenuItem>
-										<MenuItem onClick={handleOpenModal}>
-											Información
-                              </MenuItem>
-									</MenuList>
-								</ClickAwayListener>
-							</Paper>
-						</Grow>
-					)}
-				</Popper>
-				<Modal
-					aria-labelledby="simple-modal-title"
-					aria-describedby="simple-modal-description"
-					open={state.openModal}
-					className={classes.modal}
-					onClose={handleCloseModal}
-				>
-					{/*-------------------------GRID----------------------------*/}
-					<Paper className={classes.paperMod}>
-						<Grid container spacing={2}>
-							<Grid item>
-								<div className={classes.image}>
-									<img
-										src={getIcon(isFile, ext)}
-										alt={ext}
-										width="164"
-										height="164"
-									/>
-								</div>
-							</Grid>
-							<Grid item xs={12} sm container>
-								<Grid item xs container direction="row" spacing={2}>
-									<Grid item xs="12">
-										<Typography variant="body2" color="textSecondary">
-											Nombre:
-                              </Typography>
-										<Typography gutterBottom variant="subtitle1">
-											{name}
-										</Typography>
-									</Grid>
-									<Grid item xs>
-										<Typography variant="body2" color="textSecondary">
-											Extensión:
-                              </Typography>
-										<Typography gutterBottom variant="subtitle1">
-											{ext}
-										</Typography>
-										<Typography variant="body2" color="textSecondary">
-											Última modificación:
-                              </Typography>
-										<Typography gutterBottom variant="subtitle1">
-											{(lastModified ? new Date(lastModified) : new Date(lastChanged)).toLocaleString('es-VE')}
-										</Typography>
-									</Grid>
-									<Grid item xs>
-										<Typography variant="body2" color="textSecondary">
-											Tamaño:
-                              </Typography>
-										<Typography gutterBottom variant="subtitle1">
-											{size}
-										</Typography>
-										<Typography variant="body2" color="textSecondary">
-											Nivel
-                              </Typography>
-										<Typography gutterBottom variant="subtitle1">
-											{nivel}
-										</Typography>
-									</Grid>
-								</Grid>
-							</Grid>
-						</Grid>
-					</Paper>
-				</Modal>
-			</Box>
-		);
-	}
+	} else return (
+		<Box
+			textAlign="center"
+			width={80}
+			style={{ margin: "0px 5px 10px", cursor: "pointer" }}>
+			<a
+				ref={anchorRef}
+				aria-controls={state.open ? "menu-list-grow" : undefined}
+				aria-haspopup="true"
+				onClick={handleToggle}
+				onContextMenu={(e) => e.preventDefault()}>
+				{content}
+			</a>
+			<Popper
+				className={classes.popper}
+				open={state.open}
+				anchorEl={anchorRef.current}
+				role={undefined}
+				transition
+				disablePortal>
+				{({ TransitionProps, placement }) => (
+					<Grow
+						{...TransitionProps}
+						style={{
+							transformOrigin:
+								placement === "bottom"
+									? "center top"
+									: "center bottom",
+						}}>
+						<Paper>
+							<ClickAwayListener onClickAway={handleClose}>
+								<MenuList
+									autoFocusItem={state.open}
+									id="menu-list-grow"
+									onKeyDown={handleListKeyDown}>
+									<MenuItem onClick={() => download(ino, name)}>
+										Descargar
+									</MenuItem>
+									<MenuItem onClick={() => modRep(ino)}>
+										Reproducir
+									</MenuItem>
+									<MenuItem onClick={() => handleOpenModal()}>
+										Información
+									</MenuItem>
+								</MenuList>
+							</ClickAwayListener>
+						</Paper>
+					</Grow>
+				)}
+			</Popper>
+		</Box>
+	);
 };
 
 export default Files;
