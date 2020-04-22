@@ -113,5 +113,4 @@ export const structuteChecker = (item, keys) => {
 /**
  * Milcelaneos
  * Hacer que el reproductor funcione en segundo plano
- * Subir archivos en un modal
  */

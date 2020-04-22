@@ -8,6 +8,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import WifiIcon from '@material-ui/icons/Wifi';
+import CloudIcon from '@material-ui/icons/Cloud';
+
+
 import Image from 'material-ui-image';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -16,7 +19,8 @@ import View from "../SF/Media/intropag.png";
 const useStyles = makeStyles(() => ({
    appBar: {
       top: 'auto',
-   },
+      bottom: 0,
+    },
 }));
 
 const reactLink = React.forwardRef((props, ref) =>
@@ -53,7 +57,7 @@ const Welcome = () => {
                   fontSize="h2.fontSize"
                   fontWeight="fontWeightBold"
                   lineHeight={2}>
-                  <WifiIcon
+                  <CloudIcon
                      color='primary'
                      fontSize="inherit"
                   />
