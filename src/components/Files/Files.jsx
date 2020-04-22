@@ -75,7 +75,7 @@ const reducer = (state, action) => {
 
 };
 
-const Files = ({ file: { ino, name, ext, isFile, lastModified, size, nivel }, ...props }) => {
+const Files = ({ file: { ino, name, ext, isFile, lastModified, lastChanged, size, nivel }, ...props }) => {
 	const classes = useStyles();
 	const history = useHistory();
 
@@ -295,7 +295,7 @@ const Files = ({ file: { ino, name, ext, isFile, lastModified, size, nivel }, ..
 											Última modificación:
                               </Typography>
 										<Typography gutterBottom variant="subtitle1">
-											{lastModified}
+											{(lastModified ? new Date(lastModified) : new Date(lastChanged)).toLocaleString('es-VE')}
 										</Typography>
 									</Grid>
 									<Grid item xs>
