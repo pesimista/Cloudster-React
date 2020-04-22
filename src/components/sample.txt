@@ -1,0 +1,118 @@
+import React from 'react';
+
+const  = () => {
+	return(
+		.
+	)
+}
+
+export default ;
+
+import React, { Component } from 'react';
+
+class  extends Component {
+	render(){
+		return(
+			
+		)
+	}
+}
+
+export default ;
+
+button 
+
+<form class="back">
+ 
+  <input type="text" name="search" class="extand ">
+  <span class="fa fa-search searchicon" aria-hidden="true"> 
+</span>
+</form>
+
+
+.back {
+  padding: 0.5%;
+  background: #10314c;
+}
+
+.searchicon {
+  float: left;
+  margin-top: -20px;
+  position: relative;
+  pointer-events: none;
+  top: 26px;
+  left: 8px;
+  color: white;
+  z-index: 2;
+}
+
+.extand {
+  width: 2.4%;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background: #10314c;
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  -webkit-transition: width 0.4s ease-in-out;
+  transition: width 0.4s ease-in-out;
+}
+
+.extand:focus {
+  width: 50%;
+  background: white;
+}
+.extand:focus + span{
+  display:none;
+}
+
+var addMenu;
+
+componentWillMount: function() {
+    addMenu = new nw.Menu();
+    addMenu.append(new nw.MenuItem({
+        label: 'doSomething',
+        click: function() {
+            // doSomething
+        }
+    }));
+},
+
+contextMenu: function(e) {
+    e.preventDefault();
+    addMenu.popup(e.clientX, e.clientY);
+},
+
+render: function(){
+    return <button onClick={this.handleClick} onContextMenu={this.contextMenu}>SomethingUseful</button>
+}
+
+In render you can pass a function to onContextMenu for when a right click occurs for this react component.
+
+
+var Hello = React.createClass({
+    contextMenu: function(e) {
+        e.preventDefault();
+        // Do something here....
+        alert('right click');
+    },
+    
+    handleClick: function(e) {
+        alert('left click');
+    },
+
+    render: function() {
+        return <button onClick={this.handleClick} onContextMenu={this.contextMenu}>SomethingUseful</button>;
+    }
+});
+
+React.render(<Hello name="World" />, document.getElementById('container'));
+
+
+
+<script src="https://facebook.github.io/react/js/jsfiddle-integration.js"></script>
+
+<div id="container">
+    <!-- This element's contents will be replaced with your component. -->
+</div>

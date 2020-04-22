@@ -13,52 +13,48 @@ import FolderIcon from '@material-ui/icons/Folder';
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
+import SvgIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { saduwux } from "../SF/Context";
 
 const drawerWidth = 51;
-const routes = [`/busqueda`, `/reproductor`, `/perfil`, `/admin`];
+const routes = [`/busqueda`, `/reproductor`, `/perfil`, `/admin/files`];
+const routesComponents = [FolderIcon, PlayCircleFilledIcon, AccountCircleIcon, SettingsIcon];
 
-const reactLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
+const reactLink = React.forwardRef((props, ref) =>
+   <RouterLink innerRef={ref} {...props} />
+);
+reactLink.displayName = 'reactLink';
 
 const useStyles = makeStyles(theme => ({
+   grow: { flexGrow: 1 },
+   drawerPaper: { width: drawerWidth, position: 'static'},
+   flexColumn: { justifyContent: 'space-between' },
+   toolbar: theme.mixins.toolbar,
    drawer: {
       flexShrink: 0,
       width: drawerWidth,
-      '& .MuiListItemIcon-root': {
-         minWidth: '0'
-      },
+      '& .MuiListItemIcon-root': { minWidth: '0' },
       '& .MuiListItem-gutters': {
          paddingLeft: 8,
          paddingRight: 8
       },
    },
-   grow: {
-      flexGrow: 1,
-   },
-   drawerPaper: {
-      width: drawerWidth,
-   },
-   toolbar: theme.mixins.toolbar,
    useDark: {
-      '& .MuiListItemIcon-root': {
-         color: 'white',
-      },
-      '& .MuiDrawer-paper': {
-         backgroundColor: '#252525',
-      },
+      '& .MuiListItemIcon-root': { color: 'white' },
+      '& .MuiDrawer-paper': { backgroundColor: '#252525' },
    },
 }));
 
-const Sidebar = (props) => {
+const Sidebar = () => {
    const classes = useStyles();
    const location = useLocation();
 
-   const [selectedIndex, setSelectedIndex] = React.useState(1);
+   const [selectedIndex, setSelectedIndex] = React.useState(0);
    const { state: globalState, dispatch } = React.useContext(saduwux);
 
    React.useEffect(() => {
-      let x = routes.indexOf(location.pathname) + 1;
+      let x = routes.indexOf(location.pathname);
       setSelectedIndex(x)
    }, [location.pathname])
 
@@ -68,47 +64,41 @@ const Sidebar = (props) => {
    };
 
    return (
-      <Box className={globalState.theme ? classes.useDark : ''}>
+      <Box component="aside" className={globalState.theme ? classes.useDark : ''}>
          <Drawer
-            className={classes.drawer}
+            className={`${classes.drawer} min-h100`}
             color="primary.main"
             variant="permanent"
             classes={{
-               paper: classes.drawerPaper,
+               paper: `${classes.drawerPaper} flex-column ${classes.flexColumn} min-h100`,
             }}
          >
-            <div className={classes.toolbar} />
             <List>
-               <ListItem button component={reactLink} to='/busqueda'
-                  selected={selectedIndex === 1}
-               >
-                  <ListItemIcon><FolderIcon fontSize="large" /></ListItemIcon>
-               </ListItem>
-               <Divider />
-               <ListItem button component={reactLink} to='/reproductor'
-                  selected={selectedIndex === 2}
-               >
-                  <ListItemIcon ><PlayCircleFilledIcon fontSize="large" /></ListItemIcon>
-               </ListItem>
-               <Divider />
-               <ListItem button component={reactLink} to='/perfil'
-                  selected={selectedIndex === 3}
-               >
-                  <ListItemIcon ><AccountCircleIcon fontSize="large" /></ListItemIcon>
-               </ListItem>
-               <Divider />
-               {globalState.user.nivel >= 5 ?
-                  <ListItem button component={reactLink} to='/admin'
-                     selected={selectedIndex === 4}
-                  >
-                     <ListItemIcon ><SettingsIcon fontSize="large" /></ListItemIcon>
-                  </ListItem> : ''}
-               <Divider />
+               {
+                  routes.reduce((prev, route, index) => {
+                     if (index === 4 && globalState.user.nivel < 5) return prev;
+                     const fragment = (
+                        <React.Fragment key={index}>
+                           <ListItem button component={reactLink} to={route} selected={selectedIndex === index}>
+                              <ListItemIcon>
+                                 <SvgIcon fontSize="large" component={routesComponents[index]} />
+                                 {/* <FolderIcon /> */}
+                              </ListItemIcon>
+                           </ListItem>
+                           <Divider />
+                        </React.Fragment>
+                     );
+                     prev.push(fragment);
+                     return prev;
+                  }, [])
+               }
             </List>
-            <div className={classes.grow} />
+            
             <List>
                <ListItem button component={reactLink} to='/' onClick={signout}>
-                  <ListItemIcon ><ExitToAppIcon fontSize="large" /></ListItemIcon>
+                  <ListItemIcon>
+                     <ExitToAppIcon fontSize="large" />
+                  </ListItemIcon>
                </ListItem>
             </List>
          </Drawer>

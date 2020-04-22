@@ -1,12 +1,14 @@
+import './App.css';
+import React, { useContext } from 'react';
+
+/** Material */
 import CircularProgress from '@material-ui/core/CircularProgress';
 import green from '@material-ui/core/colors/green';
 import orange from '@material-ui/core/colors/orange';
 import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
-import React, { useContext } from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import './App.css';
-// import Admin from './components/Admin/Admin';
-import Err from './components/Err/Err';
+
+/** Componentes */
 import RequireLogin from './components/Err/RequireLogin';
 import Search from './components/Files/Search';
 import Login from './components/Login/Login';
@@ -15,20 +17,24 @@ import Profile from './components/Profile/Profile';
 import ProfileSettings from './components/Profile/ProfileSettings';
 import Register from './components/Register/Register';
 import Reproductor from './components/Reproductor/Reproductor';
-import { saduwux } from './components/SF/Context';
-import { handleFetch } from './components/SF/helpers';
 import Sidebar from './components/Sidebar/Sidebar';
 import TopBar from './components/TopBar/TopBar';
 import Welcome from './components/Welcome/Welcome';
+import NotFound from './components/Err/NotFound';
+import Admin from './components/Admin/Admin';
+
+/** Auxiliares */
+import { saduwux } from './components/SF/Context';
+import { handleFetch } from './components/SF/helpers';
 
 const useStyles = makeStyles(theme => ({
-   root: {
-      display: 'flex',
-   }, theme: {
-      backgroundColor: theme.palette.background.default, color: theme.palette.text.primary,
-   }, toolbar: theme.mixins.toolbar, useDark: {
-      display: 'flex', backgroundColor: '#393d46'
-   }
+   toolbar: theme.mixins.toolbar,
+   main: { display: 'flex', minWidth: '100%', flexGrow: 1, position: 'relaive'},
+   theme: {
+      backgroundColor: theme.palette.background.default, color: theme.palette.text.primary
+   }, useDark: {
+      backgroundColor: '#393d46'
+   },
 }));
 
 const prins = createMuiTheme({
@@ -231,45 +237,30 @@ const App = () => {
 
    const switchView = () => {
       return (
-         <div className={!state.theme ? classes.root : classes.useDark}>
-            <Route path={["/Perfil", "/Configuracion", "/Busqueda", "/transfers", "/reproductor", "/Admin"]} component={Sidebar} />
-            <Route path={["/Perfil", "/Configuracion", "/Busqueda", "/transfers", "/reproductor", "/Admin"]} component={TopBar} />
-            <Switch>
-               <Route exact path="/" component={Welcome} />
-               <Route exact path="/login" component={Login} />
-               <Route exact path="/recover" component={Recover} />
-               <Route exact path="/register" component={Register} />
-               <Route exact path="/reproductor" component={Reproductor} />
-               <Route exact path="/notlogged" component={RequireLogin} />
-               <Route exact path="/busqueda"
-                  render={() => (
-                     <Search
-                        goBack={goBack}
-                        goHome={goHome}
-                     />
-                  )}
-               />
-               <Route exact path="/perfil" component={Profile} />
-               <Route exact path="/configuracion" component={ProfileSettings} />
+         <div className={`${state.theme ? classes.useDark : ''} min-h100 flex-column`}>
+            <Route path={["/perfil", "/configuracion", "/busqueda", "/transfers", "/reproductor", "/admin"]} component={TopBar} />
+            <div className={classes.main} >
+               <Route path={["/perfil", "/configuracion", "/busqueda", "/transfers", "/reproductor", "/admin"]} component={Sidebar} />
+               <Switch>
+                  <Route exact path="/" component={Welcome} />
+                  <Route exact path="/login" component={Login} />
+                  <Route exact path="/recover" component={Recover} />
+                  <Route exact path="/register" component={Register} />
+                  <Route exact path="/reproductor" render={() => <div></div>} />
+                  <Route exact path="/notlogged" component={RequireLogin} />
+                  <Route exact path="/busqueda" component={Search} />
+                  <Route exact path="/perfil" component={Profile} />
+                  <Route exact path="/configuracion" component={ProfileSettings} />
+                  <Route path="/admin" component={Admin} />
+                  <Route component={NotFound} />
+               </Switch>
+               <Route path={["/perfil", "/configuracion", "/busqueda", "/transfers", "/reproductor", "/admin"]} component={Reproductor} />
 
-               {/* <Route exact path="/admin"
-                  render={(props) => (
-                     <Admin
-                        useTheme={useTheme}
-                        userId={user.id}
-                        modifySearch={modifySearch}
-                        getIcon={getIcon}
-                        searchFileField={searchFileField}
-                        searchUserField={searchUserField}
-                     />
-                  )}
-               /> */}
-               <Route component={Err} />
-            </Switch>
+            </div>
          </div>
       )
    }
-      
+
    if (state.logStatus === 1) {
       const tempStyle = {
          minHeight: '100vh'

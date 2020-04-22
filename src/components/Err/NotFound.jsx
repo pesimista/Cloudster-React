@@ -6,26 +6,30 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
-	root: {
-	  padding: theme.spacing(3, 2),
-	},
-  }));
+	root: { padding: theme.spacing(3, 2) },
+}));
 
-const Err = () => {
+const NotFound = () => {
 	const classes = useStyles();
 
-	return(
-		<Box textAlign="center" bgcolor="bg.main" display="flex" width={1} justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
+	return (
+		<Box textAlign="center"
+			bgcolor="bg.main"
+			display="flex"
+			width={1}
+			justifyContent="center"
+			alignItems="center"
+			style={{ minHeight: '100vh' }}>
 			<Paper className={classes.root}>
 				<Typography variant="h5" component="h3">
-				Lo sentimos!
+					Lo sentimos!
 				</Typography>
 				<Typography component="p">
-				La página que estás buscando no existe.
+					La página que estás buscando no existe.
 				</Typography>
 			</Paper>
 		</Box>
 	)
 }
 
-export default Err;
+export default NotFound;

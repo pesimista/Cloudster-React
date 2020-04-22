@@ -9,24 +9,27 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import WifiIcon from '@material-ui/icons/Wifi';
 import Image from 'material-ui-image';
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link as RouterLink, Redirect } from 'react-router-dom';
+import { saduwux } from '../SF/Context';
 import View from "../SF/Media/intropag.png";
 
 const useStyles = makeStyles(() => ({
-   appBar: {
-      top: 'auto',
-   },
+   appBar: { top: 'auto' }
 }));
 
-const reactLink = React.forwardRef((props, ref) =>
-   <RouterLink innerRef={ref} {...props} />
+const reactLink = React.forwardRef(
+   (props, ref) => <RouterLink innerRef={ref} {...props} />
 );
 reactLink.displayName = 'reactLink';
 
 const Welcome = () => {
    const classes = useStyles();
-   return (
+   const { state: { logStatus } } = useContext(saduwux);
+   
+   if (logStatus === 2) {
+      return <Redirect to='/busqueda' />
+   } else return (
       <Box bgcolor="bg.main" width={1}>
          <AppBar position="static">
             <Toolbar>

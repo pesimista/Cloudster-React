@@ -15,7 +15,7 @@ import { useLocation } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
 	grow: { flexGrow: 1, },
-	appBar: { zIndex: theme.zIndex.drawer + 1 },
+	appBar: { zIndex: theme.zIndex.drawer + 1, maxHeight: '64px', position: 'static' },
 	menuButton: { marginRight: theme.spacing(2) },
 	inputRoot: { color: 'inherit' },
 	title: {
@@ -58,13 +58,14 @@ const useStyles = makeStyles(theme => ({
 
 const routes = [`/busqueda`, `/admin`]
 
-const TopBar = (props) => {
+const TopBar = () => {
 	const classes = useStyles();
 	const location = useLocation();
 
 	const { state: { search, theme, user: { usuario } }, dispatch } = useContext(saduwux);
 
 	const handleCheck = (event) => dispatch({ type: 'update', payload: { theme: event.target.checked } });
+	const clean = () => dispatch({ type: 'clean' });
 
 	const searchBar = (
 		<div className={classes.search}>
@@ -81,6 +82,7 @@ const TopBar = (props) => {
 				value={search}
 				onChange={(e) => dispatch({ type: 'update', payload: { search: e.target.value } })}
 			/>
+			<button onClick={() => clean()}>A</button>
 		</div>
 	)
 

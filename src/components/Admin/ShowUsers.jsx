@@ -1,30 +1,29 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import IconButton from '@material-ui/core/IconButton';
+import InputBase from '@material-ui/core/InputBase';
+import MenuItem from '@material-ui/core/MenuItem';
+import Paper from '@material-ui/core/Paper';
+import Select from '@material-ui/core/Select';
+import Snackbar from '@material-ui/core/Snackbar';
+import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
 //import { withStyles, makeStyles, TableContainer, Table, TableHead, TableRow, TableCell, Paper, TableBody, MenuItem, Select, InputBase, IconButton } from '@material-ui/core';
 import TableContainer from '@material-ui/core/TableContainer';
-import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
-import Paper from '@material-ui/core/Paper';
-import TableBody from '@material-ui/core/TableBody';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
-import Select from '@material-ui/core/Select';
-import InputBase from '@material-ui/core/InputBase';
-import Box from '@material-ui/core/Box';
-import {withStyles, makeStyles, useTheme } from '@material-ui/core/styles';
-import Snackbar from '@material-ui/core/Snackbar';
-import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
-
+import TableRow from '@material-ui/core/TableRow';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
+import PropTypes from 'prop-types';
+import React from 'react';
+import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
+
 
 const useStyles = makeStyles({
   table: {
@@ -35,24 +34,24 @@ const useStyles = makeStyles({
       backgroundColor: '#424242',
       color: 'white'
     },
-    '& .MuiTableCell-body':{
+    '& .MuiTableCell-body': {
       backgroundColor: '#393d46',
       color: 'white'
     },
-    '& .MuiSelect-select:focus':{
+    '& .MuiSelect-select:focus': {
       backgroundColor: 'rgba(255,255,255,.75)'
     },
-    '& .MuiTablePagination-toolbar':{
+    '& .MuiTablePagination-toolbar': {
       backgroundColor: '#393d46',
-      color:'white'
+      color: 'white'
     },
-    '& .MuiSelect-icon':{
-      color:'white'
+    '& .MuiSelect-icon': {
+      color: 'white'
     },
-    '& .MuiIconButton-root':{
+    '& .MuiIconButton-root': {
       color: 'rgba(255,255,255,0.54)'
     },
-    '& .MuiIconButton-root.Mui-disabled':{
+    '& .MuiIconButton-root.Mui-disabled': {
       color: 'rgba(255,255,255,0.26)'
     }
   },
@@ -174,24 +173,23 @@ const ShowUsers = (props) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = React.useState(false);
-  const [displayMessage, updateMessage ] = React.useState('');
+  const [displayMessage, updateMessage] = React.useState('');
 
   const changeNivel = (fileId, target) => {
     fetch(`/api/update/usuario?nivel=true`, {
       method: 'post',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id: fileId,
         newNivel: target.value
       })
-    }).then( res => res.json() )
-    .then( data => {
-      if(data.response ===  "oll korrect")
-      {
-        updateMessage('Nivel modificado satisfactoriamente!')
-        setOpen(true);
-      }
-    })
+    }).then(res => res.json())
+      .then(data => {
+        if (data.response === "oll korrect") {
+          updateMessage('Nivel modificado satisfactoriamente!')
+          setOpen(true);
+        }
+      })
   }
 
   const handleClose = (event, reason) => {
@@ -211,25 +209,22 @@ const ShowUsers = (props) => {
   };
 
   const deleteUser = (userid, nivel) => {
-    if(userid !== props.userId && nivel<5 )
-    {
+    if (userid !== props.userId && nivel < 5) {
       fetch(`/api/users/${userid}`, {
         method: 'delete'
-      }).then( res => res.json() )
-      .then( data => {
-        if(data.response ===  "oll korrect")
-        {
-          props.fetchUsers();
-          updateMessage('Usuario eliminado satisfactoriamente!')
-          setOpen(true);
-        }
-      })
+      }).then(res => res.json())
+        .then(data => {
+          if (data.response === "oll korrect") {
+            props.fetchUsers();
+            updateMessage('Usuario eliminado satisfactoriamente!')
+            setOpen(true);
+          }
+        })
     }
-    else if(nivel === 5)
-    {
+    else if (nivel === 5) {
       alert('No puedes eliminar a otro administrados');
     }
-    else{
+    else {
       alert('No puedes eliminar tu propio usuario');
     }
   };
@@ -237,13 +232,12 @@ const ShowUsers = (props) => {
   const users = (rowsPerPage > 0
     ? props.userList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
     : props.userList
-  ).map( (value) =>
-    {
-      return (
-        <TableRow key={value.id}>
-          <TableCell>{value.id}</TableCell>
-          <TableCell>{value.usuario}</TableCell>
-          <TableCell align="right">
+  ).map((value) => {
+    return (
+      <TableRow key={value.id}>
+        <TableCell>{value.id}</TableCell>
+        <TableCell>{value.usuario}</TableCell>
+        <TableCell align="right">
           <Select
             labelId="demo-customized-select-label"
             id="demo-customized-select"
@@ -257,68 +251,124 @@ const ShowUsers = (props) => {
             <MenuItem value={4}>4</MenuItem>
             <MenuItem value={5}>5</MenuItem>
           </Select>
-          
-          </TableCell>
-          <TableCell align="right">{value.desde}</TableCell>
-          <TableCell align="right">{value.nombre}</TableCell>
-          <TableCell align="right">
-            <IconButton onClick={() => deleteUser(value.id, value.nivel)} aria-label="delete">
-              <DeleteIcon />
-            </IconButton>
-          </TableCell>
-        </TableRow>
-      )
-    });
 
-  return(
+        </TableCell>
+        <TableCell align="right">{value.desde}</TableCell>
+        <TableCell align="right">{value.nombre}</TableCell>
+        <TableCell align="right">
+          <IconButton onClick={() => deleteUser(value.id, value.nivel)} aria-label="delete">
+            <DeleteIcon />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+    )
+  });
+
+  return (
     <div>
-    <TableContainer component={Paper}>
-      <Table className={!props.useTheme ? classes.table : classes.useDark} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Nombre de usuaio</TableCell>
-            <TableCell align="right">Nivel</TableCell>
-            <TableCell align="right">Desde</TableCell>
-            <TableCell align="right">Nombre</TableCell>
-            <TableCell align="right">Eliminar</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {users}
-        </TableBody>
-      </Table>
-      <Box>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={open}
-          autoHideDuration={6000}
-          onClose={handleClose}
-        >
-          <MySnackbarContentWrapper
+      <TableContainer component={Paper}>
+        <Table className={!props.useTheme ? classes.table : classes.useDark} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Nombre de usuaio</TableCell>
+              <TableCell align="right">Nivel</TableCell>
+              <TableCell align="right">Desde</TableCell>
+              <TableCell align="right">Nombre</TableCell>
+              <TableCell align="right">Eliminar</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users}
+          </TableBody>
+        </Table>
+        <Box>
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            open={open}
+            autoHideDuration={6000}
             onClose={handleClose}
-            variant="success"
-            message={displayMessage}
-          />
-        </Snackbar>
-      </Box>
-    </TableContainer>
-    <TablePagination
-    className={!props.useTheme ? null : classes.useDark}
-    rowsPerPageOptions={[10, 25, 50]}
-    component="div"
-    count={props.userList.length}
-    rowsPerPage={rowsPerPage}
-    page={page}
-    onChangePage={handleChangePage}
-    onChangeRowsPerPage={handleChangeRowsPerPage}
-    ActionsComponent={TablePaginationActions}
+          >
+            <MySnackbarContentWrapper
+              onClose={handleClose}
+              variant="success"
+              message={displayMessage}
+            />
+          </Snackbar>
+        </Box>
+      </TableContainer>
+      <TablePagination
+        className={!props.useTheme ? null : classes.useDark}
+        rowsPerPageOptions={[10, 25, 50]}
+        component="div"
+        count={props.userList.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+        ActionsComponent={TablePaginationActions}
       />
     </div>
   );
 }
+
+// const showUsers = (
+//   <TableContainer component={Paper} color="primary">
+//      <Table className={!props.useTheme ? classes.table : classes.useDark} aria-label="simple table">
+//         <TableHead>
+//            <TableRow>
+//               <TableCell>ID</TableCell>
+//               <TableCell>Nombre de usuaio</TableCell>
+//               <TableCell align="right">Nivel</TableCell>
+//               <TableCell align="right">Desde</TableCell>
+//               <TableCell align="right">Nombre</TableCell>
+//               <TableCell align="right">Eliminar</TableCell>
+//            </TableRow>
+//         </TableHead>
+//         <TableBody>
+//            {users}
+//         </TableBody>
+//      </Table>
+//   </TableContainer>
+// )
+
+// const users = (rowsPerPage > 0
+//   ? props.userList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+//   : props.userList
+// ).map((value) => {
+//   return (
+//      <TableRow key={value.id}>
+//         <TableCell>{value.id}</TableCell>
+//         <TableCell>{value.usuario}</TableCell>
+//         <TableCell align="right">
+//            <Select
+//               labelId="demo-customized-select-label"
+//               id="demo-customized-select"
+//               onChange={(e) => changeNivelUser(value.id, e.target)}
+//               input={<BootstrapInput />}
+//               defaultValue={value.nivel}
+//            >
+//               <MenuItem value={1}>1</MenuItem>
+//               <MenuItem value={2}>2</MenuItem>
+//               <MenuItem value={3}>3</MenuItem>
+//               <MenuItem value={4}>4</MenuItem>
+//               <MenuItem value={5}>5</MenuItem>
+//            </Select>
+
+//         </TableCell>
+//         <TableCell align="right">{value.desde}</TableCell>
+//         <TableCell align="right">{value.nombre}</TableCell>
+//         <TableCell align="right">
+//            <IconButton onClick={() => deleteUser(value.id, value.nivel)} aria-label="delete">
+//               <DeleteIcon />
+//            </IconButton>
+//         </TableCell>
+//      </TableRow>
+//   )
+// }
+// );
 
 export default ShowUsers;
