@@ -12,25 +12,27 @@ import CloudIcon from '@material-ui/icons/Cloud';
 
 
 import Image from 'material-ui-image';
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link as RouterLink, Redirect } from 'react-router-dom';
+import { saduwux } from '../SF/Context';
 import View from "../SF/Media/intropag.png";
 
 const useStyles = makeStyles(() => ({
-   appBar: {
-      top: 'auto',
-      bottom: 0,
-    },
+   appBar: { top: 'auto' }
 }));
 
-const reactLink = React.forwardRef((props, ref) =>
-   <RouterLink innerRef={ref} {...props} />
+const reactLink = React.forwardRef(
+   (props, ref) => <RouterLink innerRef={ref} {...props} />
 );
 reactLink.displayName = 'reactLink';
 
 const Welcome = () => {
    const classes = useStyles();
-   return (
+   const { state: { logStatus } } = useContext(saduwux);
+
+   if (logStatus === 2) {
+      return <Redirect to='/busqueda' />
+   } else return (
       <Box bgcolor="bg.main" width={1}>
          <AppBar position="static">
             <Toolbar>
@@ -59,8 +61,7 @@ const Welcome = () => {
                   lineHeight={2}>
                   <CloudIcon
                      color='primary'
-                     fontSize="inherit"
-                  />
+                     fontSize="inherit"/>
               Cloudster
             </Box>
                <Box fontSize="h4.fontSize">Una forma sencilla de compartir tus archivos sin limites de plataforma.</Box>

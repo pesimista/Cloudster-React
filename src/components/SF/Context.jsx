@@ -64,12 +64,14 @@ const reducer = (state, action) => {
          const newState = { ...state, history: [], folder: 0 };
          return newState;
       }
+      case 'clean': {
+         const newState = { ...state, search: ''};
+         return newState;
+      }
       case 'reset':
       default:
          return { ...initialValue, logStatus: 0 };
    }
-
-
 };
 
 /** Store provider */

@@ -1,4 +1,4 @@
-import {  PieChart, Pie, Cell, Tooltip, Label, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Label, Legend } from 'recharts';
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -26,31 +26,32 @@ import IconButton from "@material-ui/core/IconButton";
 import FolderIcon from '@material-ui/icons/Folder';
 
 const useStyles = makeStyles(theme => ({
-   card: { 
+   card: {
       minWidth: 300,
       margin: 5
-    },
-    list: {
+   },
+   list: {
       overflow: 'auto',
       maxHeight: 300,
-    },
+   },
    avatar: { backgroundColor: green[500] },
 }));
 
 const reactLink = React.forwardRef((props, ref) => (
    <RouterLink innerRef={ref} {...props} />
 ));
+reactLink.displayName = "reactLink";
 
 function generate(element) { // Método para mostrar unos cuantos "archivos" de prueba
-   return [0, 1, 2, 3, 4, 5, 6,7,8,9,10].map((value) =>
-     React.cloneElement(element, {
-       key: value,
-     }),
+   return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) =>
+      React.cloneElement(element, {
+         key: value,
+      }),
    );
- }
+}
 
 
- 
+
 
 /*
 const initialState = {
@@ -58,7 +59,7 @@ const initialState = {
 } 
 */
 
-const Profile = props => {
+const Profile = () => {
    const classes = useStyles();
 
    /*          Algo así para buscar los archivos subidos por el usuario
@@ -79,7 +80,7 @@ const Profile = props => {
 
    /* const toFolder = () => {  //// Método para llevar al folder en el que se encuentra el archivo en el Search
 
-   }*/ 
+   }*/
 
    /*const getFiles = () => state.files.something((file, index) => {  ///// Método para mostrar los archivos subidos por el usuario
       const temp = <ListItem>
@@ -121,85 +122,85 @@ const Profile = props => {
       { name: 'mp3', value: 200 },
    ];
 
-   const result = data.reduce((totalValue, data) => totalValue + data.value,0); // Suma de todos los archivos
-      
+   const result = data.reduce((totalValue, data) => totalValue + data.value, 0); // Suma de todos los archivos
+
    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']; // Colores para el chart
 
    return (
       <Box
+         component="main"
+         display="flex"
          width={1}
          textAlign="center"
          bgcolor="bg.main"
-      >
+         justifyContent="center"
+         alignItems="center"
+         className="min-h100">
          <Toolbar></Toolbar>
          <Grid
             container
             alignItems="center"
-            style={{ height: "95vh" }}
-         >
-            <Grid 
-               item 
-               xs 
-               justify="center" 
-               container
-            >
+            style={{ height: "95vh" }}>
+            <Grid
+               item
+               xs
+               justify="center"
+               container>
                <Grid item>
                   <Card className={classes.card}>
-                  <CardHeader title="Perfil" />
-                  <Divider />
-                  <CardContent>
-                     <Typography variant="h3">
-                        {user.usuario}
-                     </Typography>
-                     <Box m={0.5}>
-                        <Box display="flex" justifyContent="center">
-                           <Avatar className={classes.avatar}>{user.nivel}</Avatar>
+                     <CardHeader title="Perfil" />
+                     <Divider />
+                     <CardContent>
+                        <Typography variant="h3">
+                           {user.usuario}
+                        </Typography>
+                        <Box m={0.5}>
+                           <Box display="flex" justifyContent="center">
+                              <Avatar className={classes.avatar}>{user.nivel}</Avatar>
+                           </Box>
+                           <Typography color="textSecondary">
+                              Nivel de jerarquía
+                        </Typography>
                         </Box>
-                        <Typography color="textSecondary">
-                        Nivel de jerarquía
-                        </Typography>
-                     </Box>
-                     <Divider />
-                     <Box m={0.5}>
-                        <Typography>
-                           {user.nombre} {user.apellido}
-                        </Typography>
-                        <Typography>
-                        Miembro desde: {user.desde}
-                        </Typography>
-                     </Box>
-                     <Divider />
-                     <Box m={0.5}>
-                        <Typography>
-                           Espacio en el servidor: 154.20 MB {/* something.espacioEnServidor*/}
-                        </Typography>
-                        <Typography>
-                           Total de archivos subidos: {result}
-                        </Typography>
-                     </Box>
-                     <Divider/>
-                  </CardContent>
-                  <CardActions>
-                     <Box mx="auto">
-                        <Link
-                           component={reactLink}
-                           to="/configuracion"
-                           underline="none"
-                        >
-                           <Button variant="contained" color="primary">
-                              Configuración
+                        <Divider />
+                        <Box m={0.5}>
+                           <Typography>
+                              {user.nombre} {user.apellido}
+                           </Typography>
+                           <Typography>
+                              Miembro desde: {user.desde}
+                           </Typography>
+                        </Box>
+                        <Divider />
+                        <Box m={0.5}>
+                           <Typography>
+                              Espacio en el servidor: 154.20 MB {/* something.espacioEnServidor*/}
+                           </Typography>
+                           <Typography>
+                              Total de archivos subidos: {result}
+                           </Typography>
+                        </Box>
+                        <Divider />
+                     </CardContent>
+                     <CardActions>
+                        <Box mx="auto">
+                           <Link
+                              component={reactLink}
+                              to="/configuracion"
+                              underline="none">
+                              <Button variant="contained" color="primary">
+                                 Configuración
                            </Button>
-                        </Link>
-                     </Box>
-                  </CardActions>
-               </Card>
+                           </Link>
+                        </Box>
+                     </CardActions>
+                  </Card>
                </Grid>
             </Grid>
-            <Grid 
-               item 
-               container 
-               xs 
-            >
+            <Grid
+               item
+               container
+               xs>
                <Grid item >
                   <Card className={classes.card}>
                      <CardHeader title="Archivos Subidos" />
@@ -210,15 +211,15 @@ const Profile = props => {
                            {generate(
                               <ListItem>
                                  <ListItemIcon>
-                                    <FolderIcon/>
+                                    <FolderIcon />
                                  </ListItemIcon>
                                  <ListItemText
-                                 primary="Single-line item"
-                                 secondary={null}
+                                    primary="Single-line item"
+                                    secondary={null}
                                  />
                                  <ListItemSecondaryAction>
                                     <IconButton edge="end">
-                                       <FolderIcon/>
+                                       <FolderIcon />
                                     </IconButton>
                                  </ListItemSecondaryAction>
                               </ListItem>
@@ -230,20 +231,19 @@ const Profile = props => {
                      <CardHeader title="Tipos de Archivos" />
                      <Divider />
                      <CardContent>
-                        <PieChart width={450} height={300} style={{fontFamily: 'sans-serif'}}>
+                        <PieChart width={450} height={300} style={{ fontFamily: 'sans-serif' }}>
                            <Pie
-                           data={data}
-                           cx={200}
-                           cy={150}
-                           label
-                           innerRadius={100}
-                           outerRadius={120}
-                           fill="#8884d8"
-                           paddingAngle={5}
-                           dataKey="value"
-                           isAnimationActive={false}
-                           >
-                              <Label value={result} style={{fontSize: '1.5rem'}} offset={0} position="center" />
+                              data={data}
+                              cx={200}
+                              cy={150}
+                              label
+                              innerRadius={100}
+                              outerRadius={120}
+                              fill="#8884d8"
+                              paddingAngle={5}
+                              dataKey="value"
+                              isAnimationActive={false}>
+                              <Label value={result} style={{ fontSize: '1.5rem' }} offset={0} position="center" />
                               {
                                  data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
                               }

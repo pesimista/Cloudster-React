@@ -22,6 +22,27 @@ export const handleFetch = (response) => {
       });
 };
 
+/**
+ * Converts the bytes into its correspoding unit in terms of space
+ * @param {number} size full size
+ * @returns {string} the size
+ */
+export const parseSize = (size) => {
+   if (size < 1024)
+      return `${size.toFixed(2)} Bytes`;
+
+   size = size / 1024;
+   if (size < 1024)
+      return `${size.toFixed(2)} KB`
+
+   size = size / 1024;
+   if (size < 1024)
+      return `${size.toFixed(2)} MB`
+
+   size = size / 1024;
+   return `${size.toFixed(2)} GB`
+}
+
 export const getIcon = (isFile, ext) => {
    if (!isFile)
       return folder;
@@ -93,7 +114,7 @@ export const structuteChecker = (item, keys) => {
 /**
  * Usuario:
  * Añadir chart con los tipos de archivos subidos por el usuario
- * Añadir archicos subidos por el usuario
+ * Añadir archivos subidos por el usuario
  * Uso total del servidor
  *
  * Backend

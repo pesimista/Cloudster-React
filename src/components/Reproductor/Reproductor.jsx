@@ -6,32 +6,40 @@ import Typography from "@material-ui/core/Typography";
 import React, { useContext } from "react";
 import Iframe from "react-iframe";
 import { saduwux } from "../SF/Context";
+import { useLocation } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
    root: {
       padding: theme.spacing(3, 2)
    },
+   hiden: {
+      display: 'none'
+      // position: 'absolute',
+      // bottom: '0',
+      // left: '51px',
+      // minHeight: '40px',
+      // height: '40px',
+      // maxHeight: '40px',
+      // width: 'calc(100% - 51px)'
+   },
    toolbar: theme.mixins.toolbar
 }));
+const route = window.location.hostname.replace(/(:)\d/g, '');
 
-const Reproductor = props => {
+const Reproductor = () => {
    const classes = useStyles();
    const { state: { playing } } = useContext(saduwux);
+   const location = useLocation();
 
-   // if (!user.id)
-   //    return <Redirect to="/notlogged" />;
-
-   console.log('Rendering');
+   const show = location.pathname === "/reproductor";
 
    if (playing) {
       return (
-         <Box width={1} style={{ height: "100vh" }}>
-            <div style={{ display: "flex", flexDirection: "column", height: "100%" }} >
-
-               <div className={classes.toolbar} />
+         <Box width={1} className={`${!show ? classes.hiden : 'min-h100'}`} >
+            <div className="flex-column min-h100" >
                <div style={{ flexGrow: "1", overflow: "auto", width: "100%" }}>
                   <Iframe
-                     url={`http://localhost:1234/api/files/${playing}/watch?token=${localStorage.getItem('token')?.replace(/[Bb]earer /, '')}`}
+                     url={`http://${route}:1234/api/files/${playing}/watch?token=${localStorage.getItem('token')?.replace(/[Bb]earer /, '')}`}
                      height="100%"
                      width="100%"
                      allow="fullscreen"
@@ -39,7 +47,7 @@ const Reproductor = props => {
                   />
                </div>
             </div>
-         </Box>
+         </Box >
       );
    } else {
       return (
