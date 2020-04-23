@@ -8,6 +8,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import WifiIcon from '@material-ui/icons/Wifi';
+import CloudIcon from '@material-ui/icons/Cloud';
+
+
 import Image from 'material-ui-image';
 import React, { useContext } from 'react';
 import { Link as RouterLink, Redirect } from 'react-router-dom';
@@ -26,7 +29,7 @@ reactLink.displayName = 'reactLink';
 const Welcome = () => {
    const classes = useStyles();
    const { state: { logStatus } } = useContext(saduwux);
-   
+
    if (logStatus === 2) {
       return <Redirect to='/busqueda' />
    } else return (
@@ -56,10 +59,9 @@ const Welcome = () => {
                   fontSize="h2.fontSize"
                   fontWeight="fontWeightBold"
                   lineHeight={2}>
-                  <WifiIcon
+                  <CloudIcon
                      color='primary'
-                     fontSize="inherit"
-                  />
+                     fontSize="inherit"/>
               Cloudster
             </Box>
                <Box fontSize="h4.fontSize">Una forma sencilla de compartir tus archivos sin limites de plataforma.</Box>

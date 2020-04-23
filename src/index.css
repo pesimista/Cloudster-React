@@ -34,3 +34,8 @@ iframe html body {
    flex-direction: column;
    justify-content: flex-start;
 }
+
+html, body, #StoreProvider, #app, #app>div {
+  height: 100%;
+  overflow: hidden
+}
