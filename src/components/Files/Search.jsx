@@ -2,6 +2,7 @@
  * @typedef {import('../SF/typedefs.jsx').file} file
  * @typedef {import('../SF/typedefs.jsx').searchState} initialState
  * @typedef {import('../SF/typedefs.jsx').inputFile} inputFile
+ * * @typedef {import('../SF/typedefs.jsx').context} context
  */
 import AppBar from "@material-ui/core/AppBar";
 import Box from "@material-ui/core/Box";
@@ -93,6 +94,7 @@ const Search = () => {
    const classes = useStyles();
    const history = useHistory();
    const [state, update] = React.useReducer(reducer, initialState);
+   /**@type {context} */
    const { state: globalState, dispatch } = useContext(saduwux);
 
    React.useEffect(() => {

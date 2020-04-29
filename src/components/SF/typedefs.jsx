@@ -35,22 +35,50 @@ export const doc = {};
  * @property {string} search - id de la seguda pregunta secreta
  */
 
+ /**
+ * @typedef context
+ * @type {object}
+ * @property {store} state - self explanatory
+ * @property {Function} dispatch - self explanatory
+ */
+
 /**
  * @typedef file
  * @type {object}
  * @property {number} [id] -
- * @property {number} in -
- * @property {string} nam -
+ * @property {number} ino -
+ * @property {string} name -
  * @property {string} [url] -
- * @property {string} ex -
- * @property {boolean} isFil -
- * @property {boolean} availabl -
+ * @property {string} ext -
+ * @property {boolean} isFile -
+ * @property {boolean} available -
  * @property {string} [lastModified] -
  * @property {string} [lastChanged] -
  * @property {string} [lastAccessed] -
- * @property {string} birthtim -
- * @property {number} fullSiz -
- * @property {string} siz -
+ * @property {string} birthtime -
+ * @property {number} fullSize -
+ * @property {string} size -
  * @property {number} [dependency] -
- * @property {number} nive -
+ * @property {number} nivel -
+ */
+
+/**
+ * @typedef searchState
+ * @type {object}
+ * @property {boolean} open i have no idea what it opens
+ * @property {string} message some message
+ * @property {file} fileForModal The file data to be displayed by the modal
+ * @property {boolean} uploadModal Whether or not the upload modal should be open
+ * @property {file[]} files  The files in the selected directory
+ * @property {boolean} shouldUpdate Helper to update after uploading a file
+ */
+
+/**
+ * @typedef inputFile
+ * @type {object}
+ * @property {string} fileField
+ * @property {string} fileFieldName
+ * @property {string} originalName
+ * @property {string} ext
+ * @property {number} folder
  */

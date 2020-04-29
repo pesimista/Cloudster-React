@@ -1,3 +1,6 @@
+/**
+ * @typedef {import('../SF/typedefs.jsx').inputFile} inputFile
+ */
 //SVG
 import folder from './svg/folder.svg';
 import audio from './svg/Papirus-Team-Papirus-audio.svg';
@@ -13,13 +16,12 @@ import zerosize from './svg/Papirus-Team-Papirus-zerosize.svg';
 //SVG
 
 export const handleFetch = (response) => {
-   return response.json()
-      .then(json => {
-         if (response.ok)
-            return json;
-         else
-            return Promise.reject(json);
-      });
+   return response.json().then(json => {
+      if (response.ok)
+         return json;
+      else
+         return Promise.reject(json);
+   });
 };
 
 /**
@@ -85,30 +87,55 @@ export const getIcon = (isFile, ext) => {
  * @param {string} keys.type
  */
 export const structuteChecker = (item, keys) => {
-   return keys.every(
-      key => {
-         console.log(key);
-         const { name, required, type, length } = key;
+   return keys.every(key => {
+      console.log(key);
+      const { name, required, type, length } = key;
 
-         if (required && !item[name]) {
-            console.log(item);
-            console.log('Missing required ' + name + ' ' + item[name])
-            return false;
-         }
-
-         if (type && typeof item[name] !== type) {
-            console.log('Type doesnt match ' + name)
-            return false;
-         }
-
-         if (length && item[name].length < length) {
-            console.log('length ' + name)
-            return false;
-         }
-
-         return true;
+      if (required && !item[name]) {
+         console.log(item);
+         console.log('Missing required ' + name + ' ' + item[name])
+         return false;
       }
+
+      if (type && typeof item[name] !== type) {
+         console.log('Type doesnt match ' + name)
+         return false;
+      }
+
+      if (length && item[name].length < length) {
+         console.log('length ' + name)
+         return false;
+      }
+
+      return true;
+   }
    )
+};
+
+/**
+* @param {inputFile} data The data to be posted
+* @param {Function} onSuccess funtion to be called when the fecth has concluded successfully
+* @param {Function} onError throw and error
+*/
+export const postFile = (data, onSuccess, onError) => {
+   if (!data.fileField || isNaN(data.folder)) return;
+
+   let formData = new FormData();
+   formData.append("file", data.fileField);
+   formData.append("name", data.fileFieldName);
+
+   fetch(`/api/files/${data.folder}`, {
+      method: "POST",
+      headers: {
+         Authorization: localStorage.getItem("token"),
+      },
+      enctype: "multipart/form-data",
+      body: formData,
+   }).then(
+      handleFetch
+   ).then(
+      onSuccess
+   ).catch(onError);
 };
 
 /**

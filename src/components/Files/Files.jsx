@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 		alignItems: "center",
 		justifyContent: "center",
 	},
+	file: { margin: "0px 5px 10px", cursor: "pointer" }
 }));
 
 const initialState = {
@@ -85,7 +86,7 @@ const Files = ({
 	const [state, update] = React.useReducer(reducer, initialState);
 	// const { state: globalState, dispatch } = useContext(saduwux);
 
-	const { index, updateFolder, updatePlayer } = props;
+	const { updateFolder, updatePlayer } = props;
 	const anchorRef = React.useRef(null);
 	const prevOpen = React.useRef(state.open);
 	const nameToShow = name.length > 30
@@ -174,20 +175,21 @@ const Files = ({
 
 	if (!isFile) {
 		return (
-			<Box
-				onClick={() => updateFolder(ino)}
-				onContextMenu={(e) => e.preventDefault()}
-				textAlign="center"
-				width={80}
-				style={{ margin: "0px 5px 10px", cursor: "pointer" }}>
-				{content}
-			</Box>
+			<Grid item xs={4} sm={3} md={2} lg={1} className={classes.modal} >
+				<Box
+					onClick={() => updateFolder(ino)}
+					onContextMenu={(e) => e.preventDefault()}
+					textAlign="center"
+					className={classes.file}>
+					{content}
+				</Box>
+			</Grid>
 		);
 	} else return (
 		<Grid item xs={4} sm={3} md={2} lg={1}>
 			<Box
 				textAlign="center"
-				style={{ margin: "0px 5px 10px", cursor: "pointer" }}>
+				className={classes.file}>
 				<a
 					ref={anchorRef}
 					aria-controls={state.open ? "menu-list-grow" : undefined}

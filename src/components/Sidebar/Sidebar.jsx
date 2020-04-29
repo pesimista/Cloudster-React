@@ -81,7 +81,6 @@ const Sidebar = () => {
                            <ListItem button component={reactLink} to={route} selected={selectedIndex === index}>
                               <ListItemIcon>
                                  <SvgIcon fontSize="large" component={routesComponents[index]} />
-                                 {/* <FolderIcon /> */}
                               </ListItemIcon>
                            </ListItem>
                            <Divider />
