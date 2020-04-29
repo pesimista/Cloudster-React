@@ -1,11 +1,15 @@
 /**
  * @typedef {import('../SF/typedefs.jsx').file} file
+ * @typedef {import('../SF/typedefs.jsx').searchState} initialState
+ * @typedef {import('../SF/typedefs.jsx').inputFile} inputFile
  */
-import { LinearProgress } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import Snackbar from "@material-ui/core/Snackbar";
 import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -13,10 +17,11 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CachedIcon from "@material-ui/icons/Cached";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import HomeIcon from "@material-ui/icons/Home";
+import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { saduwux } from "../SF/Context";
-import { handleFetch } from "../SF/helpers";
+import { handleFetch, postFile } from "../SF/helpers";
 import Files from "./Files";
 import FileInfoModal from "./Modals/FileInfoModal";
 import UploadFileModal from "./Modals/UploadFileModal";
@@ -25,14 +30,10 @@ const useStyles = makeStyles((theme) => ({
    root: { flexGrow: 1 },
    title: { flexGrow: 1, textAlign: "center" },
    input: { display: "none" },
-   toolbar: { maxHeight: "64px", position: "static" },
    container: {
       display: "flex",
       flexWrap: "wrap",
       flexGrow: 1,
-   },
-   menuButton: {
-      marginRight: theme.spacing(2),
    },
    modal: {
       display: "flex",
@@ -45,14 +46,33 @@ const useStyles = makeStyles((theme) => ({
       maxWidth: 700,
       textAlign: "center",
    },
+   sectionDesktop: {
+      [theme.breakpoints.down('xs')]: {
+         display: 'none',
+      },
+   },
+   sectionMobile: {
+      [theme.breakpoints.down('xs')]: {
+         textAlign: 'center',
+         '& .MuiIconButton-edgeStart': {
+            margin: 0
+         }
+      },
+   }
 }));
 
+const Alert = (props) => {
+   return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+/** @type {initialState} */
 const initialState = {
+   open: false,
+   message: '',
    fileForModal: '',
-   files: null,
    uploadModal: false,
-   shouldUpdate: false,
-   currentFile: 0,
+   files: null,
+   shouldUpdate: false
 };
 
 const reducer = (state, action) => {
@@ -62,16 +82,13 @@ const reducer = (state, action) => {
          shouldUpdate: !state.shouldUpdate,
          uploadModal: false,
          fileModal: '',
+         open: action.open,
+         message: action.message ? action.message : ''
       };
    }
    return { ...state, ...action };
 };
 
-/**
- * asd
- * @param {object} params
- * @param {file[]} params.files
- */
 const Search = () => {
    const classes = useStyles();
    const history = useHistory();
@@ -125,126 +142,148 @@ const Search = () => {
    };
 
    /**
-    * 
-    * @param {Object} data la informacion provemiente del dialog
-    * @param {string} data.fileField
-    * @param {string} data.fileFieldName
-    * @param {string} data.originalName
-    * @param {string} data.ext
+    * Toggle the upload modal,
+    * if closing and data was retrieved it's sent to the server
+    * @param {inputFile} data la informacion provemiente del dialog
     * @param {boolean} closing si se está cerrando desde el dialog
     */
    const handleUploadModal = (data, closing = false) => {
       if (!data && !closing) update({ uploadModal: true });
+
       else if (data)
-         uploadFile(data);
+         uploadFile({ ...data, folder: globalState.folder });
+
       if (closing) update({ uploadModal: false });
    };
 
-   /**
-    * 
-    * @param {Object} data The data to be posted
-    * @param {string} data.fileField
-    * @param {string} data.fileFieldName
-    * @param {string} data.ext
+   /** Closes the snackbar
+    * @param {object} event
+    * @param {string} reason
     */
-   const uploadFile = (data) => {
-      if (!data.fileField) return;
-
-      let formData = new FormData();
-      formData.append("file", data.fileField);
-      formData.append("name", data.fileFieldName);
-
-      fetch(`/api/files/${globalState.folder}`, {
-         method: "POST",
-         headers: {
-            Authorization: localStorage.getItem("token"),
-         },
-         enctype: "multipart/form-data",
-         body: formData,
-      }).then(
-         handleFetch
-      ).then((res) => {
-         update({ type: "shouldUpdate" });
-         alert(res.message)
-      }).catch((mistake) => {
-         console.log(
-            `/api/files/${globalState.folder}/files`
-         );
-         alert(mistake.message)
-      });
+   const handleClose = (event, reason) => {
+      if (reason === 'clickaway') return;
+      update({ open: false });
    };
 
-   const items = () => state.files.reduce(
-      (filtered, file, index) => {
-         const regex = new RegExp(globalState.search, "gi");
-         if (!file.name.match(regex)) {
-            return filtered;
-         }
-         const temp = (
-            <Files
-               openModal={handleFileModal}
-               useTheme={globalState.theme}
-               updatePlayer={updatePlayer}
-               updateFolder={updateFolder}
-               key={index}
-               file={file} />
-         );
-         return [...filtered, temp];
-      }, []
-   );
+   /**
+    * @param {inputFile} fileToPost The data to be posted
+    */
+   const uploadFile = (fileToPost) => {
+      const onSuccess = () => update({
+         type: "shouldUpdate", open: true, message: 'Archivo subido satisfactoriamente!'
+      });
+
+      const onError = (mistake) => {
+         console.log(`/api/files/${globalState.folder}/files`);
+         update({ open: true, message: mistake.message });
+      }
+      postFile(
+         fileToPost,
+         onSuccess,
+         onError
+      );
+   };
+
+   const items = () => {
+      const regex = new RegExp(globalState.search, "gi");
+      return state.files.reduce(
+         (filtered, file, index) => {
+            if (!file.name.match(regex)) {
+               return filtered;
+            }
+            const temp = (
+               <Files
+                  openModal={handleFileModal}
+                  useTheme={globalState.theme}
+                  updatePlayer={updatePlayer}
+                  updateFolder={updateFolder}
+                  key={index}
+                  file={file} />
+            );
+            return [...filtered, temp];
+         }, []
+      )
+   };
 
    return (
       <main className={`${classes.root} flex-column min-h100`}>
-         <Box bgcolor="bg.main" className="min-h100" width={1}>
+         <Box width={1}>
             <AppBar position="static" component="div" color="secondary">
-               <Toolbar variant="dense" className={classes.toolBar}>
-                  <IconButton
-                     edge="start"
-                     className={classes.menuButton}
-                     onClick={goBack}
-                     color="inherit"
-                     aria-label="menu">
-                     <ArrowBackIcon />
-                  </IconButton>
-                  <IconButton
-                     edge="start"
-                     className={classes.menuButton}
-                     color="inherit"
-                     aria-label="menu">
-                     <CachedIcon />
-                  </IconButton>
-                  <IconButton
-                     edge="start"
-                     className={classes.menuButton}
-                     onClick={goHome}
-                     color="inherit"
-                     aria-label="menu">
-                     <HomeIcon />
-                  </IconButton>
-                  <Typography variant="h6" className={classes.title}>
-                     Puedes acceder desde {window.location.origin}
-                  </Typography>
-                  <Button
-                     color="inherit"
-                     startIcon={<CloudUploadIcon />}
-                     component="span"
-                     onClick={() => handleUploadModal()}>
-                     Subir
-                  </Button>
+               <Toolbar variant="dense">
+                  <Grid container alignItems="center">
+                     <Grid className={classes.sectionMobile} container item xs={12} sm={2} md={3} lg={1}>
+                        <Grid item xs={4} >
+                           <IconButton
+                              edge="start"
+                              onClick={goBack}
+                              color="inherit"
+                              aria-label="menu">
+                              <ArrowBackIcon />
+                           </IconButton>
+                        </Grid>
+                        <Grid item xs={4}>
+                           <IconButton
+                              edge="start"
+                              color="inherit"
+                              aria-label="menu"
+                              onClick={() => update({ type: "shouldUpdate" })}
+                           >
+                              <CachedIcon />
+                           </IconButton>
+                        </Grid>
+                        <Grid item xs={4}>
+                           <IconButton
+                              edge="start"
+                              onClick={goHome}
+                              color="inherit"
+                              aria-label="menu">
+                              <HomeIcon />
+                           </IconButton>
+                        </Grid>
+                     </Grid>
+                     <Grid item className={classes.sectionDesktop} sm={8} md={7} lg={10}>
+                        <Box display="flex">
+                           <Typography variant="h6" className={classes.title}>
+                              Puedes acceder desde {window.location.origin}
+                           </Typography>
+                        </Box>
+                     </Grid>
+                     <Grid item className={classes.sectionDesktop} sm={2} md={2} lg={1} style={{ textAlign: 'end' }}>
+                        <Button
+                           color="inherit"
+                           startIcon={<CloudUploadIcon />}
+                           component="span"
+                           onClick={() => handleUploadModal()}>
+                           Subir
+                     </Button>
+                     </Grid>
+                  </Grid>
                </Toolbar>
             </AppBar>
             {!state.files || state.shouldUpdate ? <LinearProgress /> : ""}
-            <Box className={classes.container}>
+            <Grid container>
                {state.files ? items() : ""}
-            </Box>
+            </Grid>
          </Box>
          <FileInfoModal open={!!state.fileForModal} file={state.fileForModal} handleClose={handleFileModal} />
          <UploadFileModal open={state.uploadModal} handleClose={handleUploadModal} />
+         <Snackbar
+            anchorOrigin={{
+               vertical: "bottom",
+               horizontal: "right"
+            }}
+            open={state.open}
+            onClose={handleClose}
+            autoHideDuration={3000}
+         >
+            <Alert onClose={handleClose} severity="success">
+               {state.message}
+            </Alert>
+         </Snackbar>
       </main>
    );
 };
 export default Search;
-
 
 
 const sort = (arr) => {

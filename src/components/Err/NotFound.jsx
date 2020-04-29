@@ -13,13 +13,13 @@ const NotFound = () => {
 	const classes = useStyles();
 
 	return (
-		<Box textAlign="center"
-			bgcolor="bg.main"
+		<Box 
+			textAlign="center"
 			display="flex"
 			width={1}
 			justifyContent="center"
 			alignItems="center"
-			style={{ minHeight: '100vh' }}>
+			className="min-h100">
 			<Paper className={classes.root}>
 				<Typography variant="h5" component="h3">
 					Lo sentimos!

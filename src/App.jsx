@@ -18,6 +18,7 @@ import ProfileSettings from './components/Profile/ProfileSettings';
 import Register from './components/Register/Register';
 import Reproductor from './components/Reproductor/Reproductor';
 import Sidebar from './components/Sidebar/Sidebar';
+import Bottombar from './components/Sidebar/Bottombar';
 import TopBar from './components/TopBar/TopBar';
 import Welcome from './components/Welcome/Welcome';
 import NotFound from './components/Err/NotFound';
@@ -35,17 +36,84 @@ const useStyles = makeStyles(theme => ({
    }, useDark: {
       backgroundColor: '#393d46'
    },
+   desktopBar: {
+      display: 'none',
+      [theme.breakpoints.up('sm')]: {
+         display: 'flex',
+      },
+   },
+   mobileBar: {
+      display: 'flex',
+      [theme.breakpoints.up('sm')]: {
+         display: 'none',
+      },
+   },
 }));
 
 const prins = createMuiTheme({
+   typography:{
+      h2: {
+         fontSize: '3.75rem',
+         fontWeight: 300,
+         lineHeight: 1.2,
+         letterSpacing: '-0.00833em',
+         fontFamily: ["Roboto", "Helvetica", "Arial", 'sans-serif'],
+         '@media (min-width:600px)': {
+            fontSize: '3.75rem',
+         },
+         '@media (min-width:0px)': {
+         fontSize: '3.25rem',
+         },
+      },
+      h4: {
+         fontSize: '2.15rem',
+         fontWeight: 400,
+         lineHeight: 1.235,
+         letterSpacing: '0.00735em',
+         fontFamily: ["Roboto", "Helvetica", "Arial", 'sans-serif'],
+         '@media (min-width:600px)': {
+            fontSize: '2.15rem',
+            },
+            '@media (min-width:0px)': {
+            fontSize: '1.75rem',
+         },
+      },
+   },
    palette: {
-      primary: { main: green[400], dark: '#424242' },
-      secondary: { main: orange[400], dark: '#252525' },
+      primary: { main: green[500] },
+      secondary: { main: orange[400] },
       textPrimary: { main: '#FFF' },
-      bg: { main: orange[50] },
    },
 });
 const dark = createMuiTheme({
+   typography:{
+      h2: {
+         fontSize: '3.75rem',
+         fontWeight: 300,
+         lineHeight: 1.2,
+         letterSpacing: '-0.00833em',
+         fontFamily: ["Roboto", "Helvetica", "Arial", 'sans-serif'],
+         '@media (min-width:600px)': {
+            fontSize: '3.75rem',
+         },
+         '@media (min-width:0px)': {
+         fontSize: '3.25rem',
+         },
+      },
+      h4: {
+         fontSize: '2.15rem',
+         fontWeight: 400,
+         lineHeight: 1.235,
+         letterSpacing: '0.00735em',
+         fontFamily: ["Roboto", "Helvetica", "Arial", 'sans-serif'],
+         '@media (min-width:600px)': {
+            fontSize: '2.15rem',
+            },
+         '@media (min-width:0px)': {
+            fontSize: '1.75rem',
+         },
+      },
+   },
    palette: {
       primary: { main: '#424242' },
       secondary: { main: '#252525' },
@@ -53,6 +121,7 @@ const dark = createMuiTheme({
       bg: { main: '#393d46' },
    },
 });
+ 
 
 /**
  * Checks if the token inside the local storage is valid 
@@ -240,7 +309,7 @@ const App = () => {
          <div className={`${state.theme ? classes.useDark : ''} min-h100 flex-column`}>
             <Route path={["/perfil", "/configuracion", "/busqueda", "/transfers", "/reproductor", "/admin"]} component={TopBar} />
             <div className={classes.main} >
-               <Route path={["/perfil", "/configuracion", "/busqueda", "/transfers", "/reproductor", "/admin"]} component={Sidebar} />
+               <div className={classes.desktopBar}> <Route  path={["/perfil", "/configuracion", "/busqueda", "/transfers", "/reproductor", "/admin"]} component={Sidebar} /> </div>
                <Switch>
                   <Route exact path="/" component={Welcome} />
                   <Route exact path="/login" component={Login} />
@@ -251,12 +320,12 @@ const App = () => {
                   <Route exact path="/busqueda" component={Search} />
                   <Route exact path="/perfil" component={Profile} />
                   <Route exact path="/configuracion" component={ProfileSettings} />
-                  <Route path="/admin" component={Admin} />
+                  {/*<Route path="/admin" component={Admin} />*/}
                   <Route component={NotFound} />
                </Switch>
                <Route path={["/perfil", "/configuracion", "/busqueda", "/transfers", "/reproductor", "/admin"]} component={Reproductor} />
-
             </div>
+         <div className={classes.mobileBar}>  <Route  path={["/perfil", "/configuracion", "/busqueda", "/transfers", "/reproductor", "/admin"]} component={Bottombar} /> </div>
          </div>
       )
    }

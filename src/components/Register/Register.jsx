@@ -8,48 +8,26 @@ import Step from '@material-ui/core/Step';
 import StepContent from '@material-ui/core/StepContent';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
+import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from "@material-ui/core/TextField";
 import Typography from '@material-ui/core/Typography';
+import IconButton from "@material-ui/core/IconButton";
+import CloudIcon from '@material-ui/icons/Cloud';
 import React, { useContext, useReducer } from 'react';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, structuteChecker } from '../SF/helpers';
 import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
+import Container from '@material-ui/core/Container';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles(theme => ({
-   root: {
-      '& .MuiTextField-root': {
-         margin: theme.spacing(1),
-         width: 350,
-      },
-      '& .MuiFormHelperText-contained': {
-         marginTop: '4px',
-         textAlign: 'center'
-      },
-      '& .MuiFormHelperText-contained:Empty': {
-         minHeight: '12px'
-      }
-   },
-   root2: {
-      [theme.breakpoints.up('md')]: {
-         width: '50%'
-      },
-      [theme.breakpoints.up('lg')]: {
-         width: '70%'
-      },
-      [theme.breakpoints.up('xl')]: {
-         width: '50%'
-      },
-   },
    button: {
       marginTop: theme.spacing(1),
       marginRight: theme.spacing(1),
    },
-   actionsContainer: {
-      marginBottom: theme.spacing(2),
-   },
-   resetContainer: {
+   pdd: {
       padding: theme.spacing(3),
    },
    formControl: {
@@ -66,8 +44,13 @@ const reactLink = React.forwardRef((props, ref) =>
 );
 reactLink.displayName = 'reactLink';
 
+function Alert(props) {
+   return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 const initialState = {
    open: false,
+   message:'',
    activeStep: 0,
    nombre: "",
    apellido: "",
@@ -116,7 +99,7 @@ const Register = () => {
       if (!structuteChecker(state, keys))
          return;
 
-      fetch('http://localhost:6969/api/users', {
+      fetch('http://localhost:1234/api/users', {
          method: 'post',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify({
@@ -135,7 +118,8 @@ const Register = () => {
             localStorage.setItem("token", 'bearer ' + data.token);
             update({
                userExist: false,
-               open: true
+               open: true,
+               message: 'Inicio de sesión exitoso!'
             });
 
             setTimeout(() => {
@@ -144,7 +128,7 @@ const Register = () => {
          }
       ).catch(err => {
          console.log(err);
-         update({ activeStep: 2 });
+         update({ activeStep: 2, open: true, message: err.message });
       });
    }
 
@@ -166,8 +150,6 @@ const Register = () => {
       }
       else
          update({ [e.target.name]: e.target.value });
-
-      console.log(e.target.name, e.target.value);
    }
 
    const mapPreguntas = questions.map(item => {
@@ -178,110 +160,122 @@ const Register = () => {
       switch (step) {
          case 0:
             return (
-               <Box display='flex' justifyContent="center" flexWrap="wrap">
-                  <Box className={classes.root}>
+               <Grid container spacing={1}>
+                  <Grid item xs={12} md={6}>
                      <TextField
                         onChange={handleChange}
                         name="nombre"
                         value={state.nombre}
-                        id="outlined-basic"
-                        label="Nombre" variant="outlined"
+                        id="nombre"
+                        label="Nombre" 
+                        variant="outlined"
                         helperText='El nombre debe contener al menos 2 catacteres'
+                        fullWidth
                      />
-                     <Box>
-                        <TextField
-                           onChange={handleChange}
-                           name="apellido"
-                           value={state.apellido}
-                           id="outlined-basic"
-                           label="Apellido"
-                           variant="outlined"
-                           helperText='El apellido debe contener al menos 2 catacteres'
-                        />
-                     </Box>
-                  </Box>
-                  <Box>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                     <TextField
+                        onChange={handleChange}
+                        name="apellido"
+                        value={state.apellido}
+                        id="apellido"
+                        label="Apellido"
+                        variant="outlined"
+                        helperText='El apellido debe contener al menos 2 catacteres'
+                        fullWidth
+                     />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
                      <TextField
                         onChange={handleChange}
                         name="password"
                         value={state.password}
                         type="password"
-                        id="outlined-password-input"
+                        id="password"
                         label="Contraseña"
                         variant="outlined"
                         helperText='La contraseña debe contener al menos 6 catacteres'
+                        fullWidth
                      />
-                     <Box>
-                        <TextField
-                           onChange={handleChange}
-                           name="password2"
-                           value={state.password2}
-                           type="password"
-                           error={state.password2.length > 2 && state.password !== state.password2}
-                           helperText={state.password2.length > 2 && state.password !== state.password2 ? "Las contraseñas no coinciden" : ' '}
-                           label="Confirmar contraseña"
-                           variant="outlined" />
-                     </Box>
-                  </Box>
-               </Box>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                     <TextField
+                        onChange={handleChange}
+                        name="password2"
+                        value={state.password2}
+                        type="password"
+                        id="password2"
+                        label="Confirmar contraseña"
+                        variant="outlined" 
+                        fullWidth
+                        error={state.password2.length > 2 && state.password !== state.password2}
+                        helperText={state.password2.length > 2 && state.password !== state.password2 ? "Las contraseñas no coinciden" : ' '}
+                        />
+                  </Grid>
+               </Grid>
             );
          case 1:
             return (
-               <Box display='flex' justifyContent="center" flexWrap="wrap">
-                  <Box>
+               <Grid container spacing={1}>
+                  <Grid item xs={12} md={6}>
                      <TextField
                         id="outlined-select-currency"
                         select
                         onChange={handleChange}
                         name="pregunta1"
-                        helperText={state.pregunta1 === state.pregunta2 ? 'Las preguntas no pueden ser iguales' : ' '}
-                        error={state.pregunta1 === state.pregunta2}
+                        helperText={state.pregunta1 == state.pregunta2 ? 'Las preguntas no pueden ser iguales' : ''}
+                        error={state.pregunta1 == state.pregunta2}
                         value={state.pregunta1}
                         label="Primera pregunta"
                         variant="outlined"
+                        fullWidth
                      >
                         {mapPreguntas}
                      </TextField>
-                     <Box>
-                        <TextField
-                           onChange={handleChange}
-                           name="respuesta1"
-                           value={state.respuesta1}
-                           id="outlined-basic"
-                           label="Respuesta"
-                           variant="outlined" />
-                     </Box>
-                  </Box>
-                  <Box>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                     <TextField
+                        onChange={handleChange}
+                        name="respuesta1"
+                        value={state.respuesta1}
+                        id="outlined-basic"
+                        label="Respuesta"
+                        variant="outlined" 
+                        fullWidth
+                     />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
                      <TextField
                         id="outlined-select-currency"
                         select
                         label="Segunda pregunta"
                         onChange={handleChange}
                         name="pregunta2"
-                        helperText={state.pregunta1 === state.pregunta2 ? 'Las preguntas no pueden ser iguales' : ' '}
-                        error={state.pregunta1 === state.pregunta2}
+                        helperText={state.pregunta1 == state.pregunta2 ? 'Las preguntas no pueden ser iguales' : ''}
+                        error={state.pregunta1 == state.pregunta2}
                         value={state.pregunta2}
                         variant="outlined"
+                        fullWidth
                      >
                         {mapPreguntas}
                      </TextField>
-                     <Box>
-                        <TextField
-                           onChange={handleChange}
-                           name="respuesta2"
-                           value={state.respuesta2}
-                           id="outlined-basic"
-                           label="Respuesta"
-                           variant="outlined"
-                        />
-                     </Box>
-                  </Box>
-               </Box>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                     <TextField
+                        onChange={handleChange}
+                        name="respuesta2"
+                        value={state.respuesta2}
+                        id="outlined-basic"
+                        label="Respuesta"
+                        variant="outlined"
+                        fullWidth
+                     />
+                  </Grid>
+               </Grid>
             );
          case 2:
             return (
-               <Box display='flex' justifyContent="center" flexWrap="wrap">
+               <Grid item xs={12} md={6}>
                   <TextField
                      onChange={handleChange}
                      name="user"
@@ -290,84 +284,98 @@ const Register = () => {
                      error={state.userExist}
                      id="outlined-basic"
                      label="Nombre de usuario"
-                     variant="outlined" />
-               </Box>
+                     variant="outlined"
+                     fullWidth
+                     />
+               </Grid>
             )
          default:
             return 'Paso no existente';
       }
    }
    return (
-      <Box className={classes.root} bgcolor="bg.main" width={1} display="flex" justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
-         <div className={classes.root2} >
-            <Stepper activeStep={state.activeStep} orientation="vertical">
-               {steps.map((label, index) => (
-                  <Step key={label}>
-                     <StepLabel>{label}</StepLabel>
-                     <StepContent>
-                        <Typography component={'span'}>{getStepContent(index)}</Typography>
-                        <div className={classes.actionsContainer}>
-                           <div style={{ display: 'flex', justifyContent: 'center' }}>
-                              <Button
-                                 disabled={state.activeStep === 0}
-                                 onClick={handleBack}
-                                 className={classes.button}
-                              >
-                                 Volver
-                              </Button>
-                              <Button
-                                 disabled={
-                                    (index === 0 &&
-                                       (state.nombre.length < 2 ||
-                                          state.apellido.length < 2 ||
-                                          state.password.length < 6 ||
-                                          state.password !== state.password2)
-                                    ) ||
-                                    (index === 1 && (state.respuesta1.length < 3 || state.respuesta2.length < 3)) ||
-                                    (index === 2 && state.user.length < 3)
-                                 }
-                                 variant="contained"
-                                 color="primary"
-                                 onClick={handleClick}
-                                 className={classes.button}
-                              >
-                                 {state.activeStep === (steps.length - 1) ? 'Registrarse' : 'Siguiente'}
-                              </Button>
-                           </div>
-                        </div>
-                     </StepContent>
-                  </Step>
-               ))}
-            </Stepper>
-            <Box>
-               <Snackbar
-                  anchorOrigin={{
-                     vertical: 'bottom',
-                     horizontal: 'left',
-                  }}
-                  open={state.open}
-                  autoHideDuration={6000}
+      <Container component="main" maxWidth="lg">
+         <Box textAlign='center'>
+            <Link 
+               component={reactLink}
+               to="/"
+            >
+               <IconButton>
+                  <CloudIcon 
+                     color='primary'
+                     style={{ fontSize: '4rem' }}
+                     />
+               </IconButton>
+            </Link>
+            <Typography component="h1" variant="h5">
+            Registrarse
+            </Typography>
+         </Box>
+         <Stepper activeStep={state.activeStep} orientation="vertical">
+            {steps.map((label, index) => (
+               <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                  <StepContent>
+                     <Typography component={'span'}>{getStepContent(index)}</Typography>
+                     <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <Button
+                           disabled={state.activeStep === 0}
+                           onClick={handleBack}
+                           className={classes.button}
+                        >
+                           Volver
+                        </Button>
+                        <Button
+                           disabled={
+                              (index === 0 &&
+                                 (state.nombre.length < 2 ||
+                                    state.apellido.length < 2 ||
+                                    state.password.length < 6 ||
+                                    state.password !== state.password2)
+                              ) ||
+                              (index === 1 && (state.respuesta1.length < 3 || state.respuesta2.length < 3)) ||
+                              (index === 2 && state.user.length < 3)
+                           }
+                           variant="contained"
+                           color="primary"
+                           onClick={handleClick}
+                           className={classes.button}
+                        >
+                           {state.activeStep === (steps.length - 1) ? 'Registrarse' : 'Siguiente'}
+                        </Button>
+                     </div>
+                  </StepContent>
+               </Step>
+            ))}
+         </Stepper>
+         <Box>
+            <Snackbar
+               anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+               }}
+               open={state.open}
+               autoHideDuration={6000}
+               onClose={handleClose}
+            >
+               <MySnackbarContentWrapper
                   onClose={handleClose}
-               >
-                  <MySnackbarContentWrapper
-                     onClose={handleClose}
-                     variant="success"
-                     message="Registro exitoso!"
-                  />
-               </Snackbar>
-            </Box>
-            <Paper square elevation={0} className={classes.resetContainer}>
-               <Typography>
-                  Ya tienes cuenta?
-        </Typography>
-               <Link component={reactLink} to='/login'>
-                  <Button className={classes.button}>
-                     Inicia Sesión!
-            </Button>
-               </Link>
-            </Paper>
-         </div>
-      </Box>
+                  variant="success"
+                  message="Registro exitoso!"
+               />
+            </Snackbar>
+         </Box>
+         <Paper square elevation={0} className={classes.pdd}>
+            <Typography>
+               Ya tienes cuenta?
+            </Typography>
+            <Link component={reactLink} to='/login'>
+               <Button className={classes.button}>
+                  Inicia Sesión!
+               </Button>
+            </Link>
+         </Paper>
+      </Container>
    )
 }
 

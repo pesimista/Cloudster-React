@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
    },
    paperMod: {
       padding: theme.spacing(2),
-      margin: "auto",
       maxWidth: 700,
       textAlign: "center",
    }
@@ -50,7 +49,7 @@ const reducer = (state, action) => {
 const UploadFileModal = ({ open, handleClose }) => {
    const classes = useStyles();
    const [state, update] = useReducer(reducer, initialState);
-   const cleanState = () => update({ fileFieldName: state.originalName });
+   const cleanState = () => update({ fileFieldName: state.originalName, fileField: null });
 
    const onChange = e => {
       let _ext = path.extname(e.target.files[0].name);
@@ -67,7 +66,7 @@ const UploadFileModal = ({ open, handleClose }) => {
    else return (
       <Dialog open={open} className={classes.modal} onClose={() => handleClose('', true)}>
          <DialogTitle id="file-dialog-title" className={classes.title}>
-            Información del archivo
+            {!state.fileField ? 'Selecciona un archivo...' : "Información del archivo"}
          </DialogTitle>
          <Paper className={classes.paperMod}>
             <Grid>
@@ -112,7 +111,7 @@ const ModalContent = (props) => {
                </Typography>
                <TextField
                   fullWidth
-                  defaultValue={state.originalName}
+                  defaultValue={state.fileFieldName}
                   variant="outlined"
                   style={{textAlign: 'center'}}
                   onChange={(e) => update({ fileFieldName: e.target.value })} />
@@ -137,7 +136,7 @@ const ModalContent = (props) => {
       );
    } else return (
       <Grid item container xs={12} justify="center">
-         <Grid item>
+         <Grid item xs={12}>
             <input
                accept="/*"
                onChange={(e) => onChange(e)}
@@ -152,9 +151,6 @@ const ModalContent = (props) => {
                   <BackupIcon style={{ fontSize: 164 }} />
                </IconButton>
             </label>
-         </Grid>
-         <Grid item xs={12}>
-            <Typography> Seleccionar un archivo </Typography>
          </Grid>
       </Grid>
    );

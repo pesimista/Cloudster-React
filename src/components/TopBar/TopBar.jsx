@@ -8,16 +8,24 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import SearchIcon from '@material-ui/icons/Search';
-import WifiIcon from '@material-ui/icons/Wifi';
+import FilterDramaIcon from '@material-ui/icons/FilterDrama';
 import React, { useContext } from 'react';
 import { saduwux } from "../SF/Context";
 import { useLocation } from 'react-router-dom'
+import { Link as RouterLink, useHistory } from "react-router-dom";
+import Link from "@material-ui/core/Link";
+import Box from "@material-ui/core/Box";
+
 
 const useStyles = makeStyles(theme => ({
 	grow: { flexGrow: 1, },
 	appBar: { zIndex: theme.zIndex.drawer + 1, maxHeight: '64px', position: 'static' },
 	menuButton: { marginRight: theme.spacing(2) },
 	inputRoot: { color: 'inherit' },
+	icon: {
+		margin: 0,
+		[theme.breakpoints.down('xs')]: { marginRight: theme.spacing(2) },
+	},
 	title: {
 		display: 'none',
 		[theme.breakpoints.up('sm')]: { display: 'block' },
@@ -56,7 +64,12 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-const routes = [`/busqueda`, `/admin`]
+const routes = [`/busqueda`, `/admin`];
+
+const reactLink = React.forwardRef((props, ref) => 
+   <RouterLink innerRef={ref} {...props} />
+);
+reactLink.displayName = 'reactLink';
 
 const TopBar = () => {
 	const classes = useStyles();
@@ -82,23 +95,26 @@ const TopBar = () => {
 				value={search}
 				onChange={(e) => dispatch({ type: 'update', payload: { search: e.target.value } })}
 			/>
-			<button onClick={() => clean()}>A</button>
 		</div>
 	)
 
 	return (
 		<AppBar className={classes.appBar} position="fixed">
 			<Toolbar>
-				<WifiIcon />
-				<Typography className={classes.title} variant="h5" noWrap>
+				<FilterDramaIcon className={classes.icon} />
+				<Typography className={routes.includes(location.pathname) ? classes.title : searchBar} variant="h5" noWrap>
 					Cloudster
-          </Typography>
+          		</Typography>
 				{routes.includes(location.pathname) ? searchBar : ''}
 				<div className={classes.grow} />
-				<AccountCircle />
-				<Typography>
-					{usuario}
-				</Typography>
+				<Link component={reactLink} to='/Perfil' color="inherit" underline='none'>
+					<Box display={{ xs: 'none', sm: 'flex' }}>
+						<AccountCircle />
+						<Typography>
+							{usuario}
+						</Typography>
+					</Box>
+				</Link>
 				<Switch
 					checked={theme}
 					onChange={handleCheck}

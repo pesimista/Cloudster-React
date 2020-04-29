@@ -8,6 +8,7 @@ import Popper from "@material-ui/core/Popper";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
+import Grid from "@material-ui/core/Grid";
 import { useHistory } from "react-router-dom";
 import { getIcon } from "../SF/helpers";
 
@@ -183,56 +184,57 @@ const Files = ({
 			</Box>
 		);
 	} else return (
-		<Box
-			textAlign="center"
-			width={80}
-			style={{ margin: "0px 5px 10px", cursor: "pointer" }}>
-			<a
-				ref={anchorRef}
-				aria-controls={state.open ? "menu-list-grow" : undefined}
-				aria-haspopup="true"
-				onClick={handleToggle}
-				onContextMenu={(e) => e.preventDefault()}>
-				{content}
-			</a>
-			<Popper
-				className={classes.popper}
-				open={state.open}
-				anchorEl={anchorRef.current}
-				role={undefined}
-				transition
-				disablePortal>
-				{({ TransitionProps, placement }) => (
-					<Grow
-						{...TransitionProps}
-						style={{
-							transformOrigin:
-								placement === "bottom"
-									? "center top"
-									: "center bottom",
-						}}>
-						<Paper>
-							<ClickAwayListener onClickAway={handleClose}>
-								<MenuList
-									autoFocusItem={state.open}
-									id="menu-list-grow"
-									onKeyDown={handleListKeyDown}>
-									<MenuItem onClick={() => download(ino, name)}>
-										Descargar
-									</MenuItem>
-									<MenuItem onClick={() => modRep(ino)}>
-										Reproducir
-									</MenuItem>
-									<MenuItem onClick={() => handleOpenModal()}>
-										Información
-									</MenuItem>
-								</MenuList>
-							</ClickAwayListener>
-						</Paper>
-					</Grow>
-				)}
-			</Popper>
-		</Box>
+		<Grid item xs={4} sm={3} md={2} lg={1}>
+			<Box
+				textAlign="center"
+				style={{ margin: "0px 5px 10px", cursor: "pointer" }}>
+				<a
+					ref={anchorRef}
+					aria-controls={state.open ? "menu-list-grow" : undefined}
+					aria-haspopup="true"
+					onClick={handleToggle}
+					onContextMenu={(e) => e.preventDefault()}>
+					{content}
+				</a>
+				<Popper
+					className={classes.popper}
+					open={state.open}
+					anchorEl={anchorRef.current}
+					role={undefined}
+					transition
+					disablePortal>
+					{({ TransitionProps, placement }) => (
+						<Grow
+							{...TransitionProps}
+							style={{
+								transformOrigin:
+									placement === "bottom"
+										? "center top"
+										: "center bottom",
+							}}>
+							<Paper>
+								<ClickAwayListener onClickAway={handleClose}>
+									<MenuList
+										autoFocusItem={state.open}
+										id="menu-list-grow"
+										onKeyDown={handleListKeyDown}>
+										<MenuItem onClick={() => download(ino, name)}>
+											Descargar
+										</MenuItem>
+										<MenuItem onClick={() => modRep(ino)}>
+											Reproducir
+										</MenuItem>
+										<MenuItem onClick={() => handleOpenModal()}>
+											Información
+										</MenuItem>
+									</MenuList>
+								</ClickAwayListener>
+							</Paper>
+						</Grow>
+					)}
+				</Popper>
+			</Box>
+		</Grid>
 	);
 };
 
