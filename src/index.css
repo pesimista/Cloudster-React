@@ -37,5 +37,4 @@ iframe html body {
 
 html, body, #StoreProvider, #app, #app>div {
   height: 100%;
-  overflow: hidden
 }

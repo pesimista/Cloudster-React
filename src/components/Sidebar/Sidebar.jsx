@@ -7,13 +7,13 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import { makeStyles } from '@material-ui/core/styles';
+import SvgIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FolderIcon from '@material-ui/icons/Folder';
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
-import SvgIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { saduwux } from "../SF/Context";
 
@@ -71,8 +71,7 @@ const Sidebar = () => {
             variant="permanent"
             classes={{
                paper: `${classes.drawerPaper} flex-column ${classes.flexColumn} min-h100`,
-            }}
-         >
+            }}>
             <List>
                {
                   routes.reduce((prev, route, index) => {
