@@ -48,12 +48,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const initialState = {
-   open: false,
    fileForModal: '',
+   files: null,
    uploadModal: false,
-   fileField: '',
-   fileFieldName: '',
-   ext: '',
+   shouldUpdate: false,
    currentFile: 0,
 };
 
@@ -62,10 +60,6 @@ const reducer = (state, action) => {
       return {
          ...state,
          shouldUpdate: !state.shouldUpdate,
-         open: false,
-         fileField: "",
-         ext: "",
-         fileFieldName: "",
          uploadModal: false,
          fileModal: '',
       };
@@ -91,15 +85,15 @@ const Search = () => {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("token"),
          },
-      })
-         .then(handleFetch)
-         .then((response) => update({ files: sort(response) }))
-         .catch((mistake) =>
-            console.log(
-               `/api/files/${globalState.folder}/files`,
-               mistake.message
-            )
-         );
+      }).then(
+         handleFetch
+      ).then((response) => update({ files: sort(response) })
+      ).catch((mistake) =>
+         console.log(
+            `/api/files/${globalState.folder}/files`,
+            mistake.message
+         )
+      );
    }, [globalState.folder, state.shouldUpdate]);
 
    if (!globalState.logStatus) {
@@ -239,7 +233,7 @@ const Search = () => {
                   </Button>
                </Toolbar>
             </AppBar>
-            {!state.files ? <LinearProgress /> : ""}
+            {!state.files || state.shouldUpdate ? <LinearProgress /> : ""}
             <Box className={classes.container}>
                {state.files ? items() : ""}
             </Box>
