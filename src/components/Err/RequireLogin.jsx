@@ -30,12 +30,11 @@ const RequireLogin = () => {
 	return (
 		<Box
 			textAlign="center"
-			bgcolor="bg.main"
 			display="flex"
 			width={1}
 			justifyContent="center"
 			alignItems="center"
-			style={{ minHeight: '100vh' }}>
+			className="min-h100">
 			<Card className={classes.card}>
 				<CardContent>
 					<Typography variant="h5" component="h2">

@@ -1,29 +1,31 @@
-import { PieChart, Pie, Cell, Tooltip, Label, Legend } from 'recharts';
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
-import Toolbar from "@material-ui/core/Toolbar";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import { green } from "@material-ui/core/colors";
+import Container from "@material-ui/core/Container";
 import Divider from "@material-ui/core/Divider";
+import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
 import Link from "@material-ui/core/Link";
-//import { Link, Avatar, makeStyles, Card, CardContent, Typography, CardActions, Button, CardHeader, Divider, Box } from '@material-ui/core';
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import React, { useContext } from "react";
-import { Link as RouterLink, Redirect } from "react-router-dom";
-import { saduwux } from "../SF/Context";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import IconButton from "@material-ui/core/IconButton";
+import ListItemText from "@material-ui/core/ListItemText";
+//import { Link, Avatar, makeStyles, Card, CardContent, Typography, CardActions, Button, CardHeader, Divider, Box } from '@material-ui/core';
+import { makeStyles } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import FolderIcon from '@material-ui/icons/Folder';
+import React, { useContext } from "react";
+import { Link as RouterLink, Redirect } from "react-router-dom";
+import { Cell, Label, Legend, Pie, PieChart } from 'recharts';
+import { saduwux } from "../SF/Context";
 
 const useStyles = makeStyles(theme => ({
    card: {
@@ -61,6 +63,7 @@ const initialState = {
 
 const Profile = () => {
    const classes = useStyles();
+   const matches = useMediaQuery(theme => theme.breakpoints.up('sm'));
 
    /*          Algo así para buscar los archivos subidos por el usuario
    React.useEffect(() => {
@@ -129,23 +132,20 @@ const Profile = () => {
    return (
       <Box
          component="main"
-         display="flex"
          width={1}
          textAlign="center"
-         bgcolor="bg.main"
-         justifyContent="center"
-         alignItems="center"
-         className="min-h100">
-         <Toolbar></Toolbar>
-         <Grid
+         className="min-h100"
+      >
+         <Container fixed disableGutters maxWidth="md">
+            <Grid
             container
-            alignItems="center"
-            style={{ height: "95vh" }}>
+            alignItems="center">
             <Grid
                item
                xs
                justify="center"
-               container>
+               container
+            >
                <Grid item>
                   <Card className={classes.card}>
                      <CardHeader title="Perfil" />
@@ -200,8 +200,9 @@ const Profile = () => {
             <Grid
                item
                container
-               xs>
-               <Grid item >
+               xs
+            >
+               <Grid item xs={12}>
                   <Card className={classes.card}>
                      <CardHeader title="Archivos Subidos" />
                      <Divider />
@@ -227,20 +228,24 @@ const Profile = () => {
                         </List>
                      </CardContent>
                   </Card>
+               </Grid>
+               <Grid item  xs={12}>
                   <Card className={classes.card}>
                      <CardHeader title="Tipos de Archivos" />
                      <Divider />
+                     
                      <CardContent>
-                        <PieChart width={450} height={300} style={{ fontFamily: 'sans-serif' }}>
+                        
+                        <PieChart width={matches ? 400 : 300 } height={300} style={{ fontFamily: 'sans-serif' }}>
                            <Pie
                               data={data}
-                              cx={200}
-                              cy={150}
+                              cx={'50%'}
+                              cy={'50%'}
                               label
-                              innerRadius={100}
-                              outerRadius={120}
+                              innerRadius={'68.9656%'}
+                              outerRadius={'80%'}
                               fill="#8884d8"
-                              paddingAngle={5}
+                              paddingAngle={3}
                               dataKey="value"
                               isAnimationActive={false}>
                               <Label value={result} style={{ fontSize: '1.5rem' }} offset={0} position="center" />
@@ -248,13 +253,17 @@ const Profile = () => {
                                  data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
                               }
                            </Pie>
-                           <Legend layout={'vertical'} verticalAlign={'middle'} align={'left'} />
+                           <Legend layout={matches ? 'vertical' : 'horizontal'} verticalAlign={matches ? 'middle' : 'bottom'} align={matches ? 'left' : 'center'} />
                         </PieChart>
                      </CardContent>
                   </Card>
                </Grid>
             </Grid>
          </Grid>
+         </Container>
+         <Box display={{ xs: 'flex', sm: 'none' }}>
+            <Toolbar variant="dense"/>
+         </Box>
       </Box>
    );
 };

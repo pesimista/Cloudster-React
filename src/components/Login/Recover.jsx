@@ -1,11 +1,9 @@
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
+import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
-import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
+import IconButton from "@material-ui/core/IconButton";
 import Link from '@material-ui/core/Link';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -14,19 +12,20 @@ import { makeStyles } from '@material-ui/core/styles';
 //import { TextField, Card, CardContent, CardActions, Link, Divider, CardHeader, Box, StepLabel, Stepper, Typography, Step, makeStyles, Button, FormControl } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import CloudIcon from '@material-ui/icons/Cloud';
 import React, { useContext, useReducer } from 'react';
 import { Link as RouterLink, useHistory, withRouter } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch } from '../SF/helpers';
 
 
+
 const useStyles = makeStyles(theme => ({
-   root: {
-      minWidth: '40%',
-      '& .MuiTextField-root': {
-         margin: theme.spacing(1),
-         width: 300,
-      },
+   marginTop: {
+      marginTop: theme.spacing(8),
+    },
+   form: {
+   marginTop: theme.spacing(1),
    },
    button: {
       marginRight: theme.spacing(1),
@@ -147,40 +146,48 @@ const Recover = () => {
       switch (step) {
          case 0:
             return (
-               <FormControl>
-                  <TextField
-                     onChange={handleChange}
-                     name='user'
-                     value={state.user}
-                     id='standard-name'
-                     label='Nombre de usuario'
-                     variant='outlined'
-                  />
-               </FormControl>
-
+               <TextField
+                  onChange={handleChange}
+                  name='user'
+                  value={state.user}
+                  id='standard-name'
+                  label='Nombre de usuario'
+                  variant='outlined'
+                  margin="normal"
+                  required
+                  fullWidth
+                  autoFocus
+               />
             );
          case 1:
             return (
-               <React.Fragment>
+               <Box>
                   <TextField
                      onChange={handleChange}
                      name='respuesta1'
                      value={state.respuesta1}
-                     id='outlined-basic'
+                     id='respuesta1'
                      label='Respuesta #1'
                      helperText={state.pregunta1}
-                     variant='outlined' />
-                  <Box>
-                     <TextField
-                        onChange={handleChange}
-                        name='respuesta2'
-                        value={state.respuesta2}
-                        id='outlined-basic'
-                        label='Respuesta #2'
-                        helperText={state.pregunta2}
-                        variant='outlined' />
-                  </Box>
-               </React.Fragment>
+                     variant='outlined' 
+                     margin="normal"
+                     required
+                     fullWidth
+                     autoFocus
+                  />
+                  <TextField
+                     onChange={handleChange}
+                     name='respuesta2'
+                     value={state.respuesta2}
+                     id='outlined-basic'
+                     label='Respuesta #2'
+                     helperText={state.pregunta2}
+                     variant='outlined' 
+                     margin="normal"
+                     required
+                     fullWidth
+                  />
+               </Box>
             );
          case 2:
             return (
@@ -193,18 +200,23 @@ const Recover = () => {
                      label='Nueva contraseña'
                      type='password'
                      variant='outlined'
+                     margin="normal"
+                     required
+                     fullWidth
+                     autoFocus
                   />
-                  <Box>
-                     <TextField
-                        onChange={handleChange}
-                        name='password2'
-                        value={state.password2}
-                        id='outlined-password-input'
-                        label='Confirmar contraseña'
-                        type='password'
-                        variant='outlined'
-                     />
-                  </Box>
+                  <TextField
+                     onChange={handleChange}
+                     name='password2'
+                     value={state.password2}
+                     id='outlined-password-input'
+                     label='Confirmar contraseña'
+                     type='password'
+                     variant='outlined'
+                     margin="normal"
+                     fullWidth
+                     required
+                  />
                </Box>
             );
          default:
@@ -213,58 +225,78 @@ const Recover = () => {
    }
 
    return (
-      <Box display='flex' textAlign='center' bgcolor='bg.main' width={1} justifyContent='center' alignItems='center' style={{ height: '100vh' }}>
-         <Card className={classes.root}>
-            <CardHeader title='Recuperar Contraseña' />
-            <Divider />
-            <CardContent>
-               <Box>
-                  <Typography component={'span'} className={classes.instructions}>{getStepContent(state.activeStep)}</Typography>
-
-                  <Stepper activeStep={state.activeStep} alternativeLabel>
-                     {steps.map(label => (
-                        <Step key={label}>
-                           <StepLabel>{label}</StepLabel>
-                        </Step>
-                     ))}
-                  </Stepper>
-                  <Button
-                     disabled={state.activeStep === 0}
-                     onClick={handleBack}
-                     className={classes.backButton}
-                  >
-                     Back
-                  </Button>
-                  <Button
-                     variant='contained'
+      <Container component="main" maxWidth="sm"> 
+         <Box className={classes.marginTop} display="flex" flexDirection="column" alignItems="center" textAlign="center">
+            <Link to="/" component={reactLink} >
+               <IconButton>
+                  <CloudIcon 
                      color='primary'
-                     disabled={
-                        (state.activeStep === 0 && state.user.trim().length === 0) ||
-                        (state.activeStep === 1 && state.respuesta1.trim().length === 0 && state.respuesta2.trim().length === 0) ||
-                        (state.activeStep === 2 &&
-                           (
-                              (state.password.trim().length === 0 || state.password2.trim().length === 0) || /* Si alguno esta vacio */
-                              (state.password !== state.password2) /* asd */
-                           )
+                     style={{ fontSize: '4rem' }}
+                     />
+               </IconButton>
+            </Link>
+            <Typography component="h1" variant="h5">
+               Recuperar Contraseña
+            </Typography>
+            <Box className={classes.form} width="75%">
+               <Divider />
+               <Typography component={'span'} className={classes.instructions}>{getStepContent(state.activeStep)}</Typography>
+            </Box>
+            <Box width={1}>
+               <Stepper activeStep={state.activeStep} alternativeLabel>
+                  {steps.map(label => (
+                     <Step key={label}>
+                        <StepLabel>{label}</StepLabel>
+                     </Step>
+                  ))}
+               </Stepper>
+               <Button
+                  disabled={state.activeStep === 0}
+                  onClick={handleBack}
+                  className={classes.backButton}
+               >
+                  Volver
+               </Button>
+               <Button
+                  variant='contained'
+                  color='primary'
+                  disabled={
+                     (state.activeStep === 0 && state.user.trim().length === 0) ||
+                     (state.activeStep === 1 && state.respuesta1.trim().length === 0 && state.respuesta2.trim().length === 0) ||
+                     (state.activeStep === 2 &&
+                        (
+                           (state.password.trim().length === 0 || state.password2.trim().length === 0) || /* Si alguno esta vacio */
+                           (state.password !== state.password2) /* asd */
                         )
-                     }
-                     onClick={handleNext}>
-                     {state.activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                  </Button>
-               </Box>
-            </CardContent>
-            <Divider />
-            <CardActions>
-               <Box mx='auto'>
-                  <Link component={reactLink} to='/login' underline='none' color='primary'>
-                     <Button>
-                        Volver a inicio de sesión
-            </Button>
+                     )
+                  }
+                  onClick={handleNext}>
+                  {state.activeStep === steps.length - 1 ? 'Aceptar' : 'Siguiente'}
+               </Button>
+            </Box>
+            
+            
+         </Box>
+         <Grid container>
+               <Grid item xs>
+                  <Link
+                     component={reactLink}
+                     to="/login"
+                     color="secondary"
+                  >
+                     Volver a inicio de sesión
                   </Link>
-               </Box>
-            </CardActions>
-         </Card>
-      </Box>
+               </Grid>
+               <Grid item>
+                  <Link
+                     component={reactLink}
+                     to="/register"
+                  >
+                     Registrarse
+                  </Link>
+               </Grid>
+            </Grid>
+      </Container>
    );
 }
 

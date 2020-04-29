@@ -1,11 +1,13 @@
 /**
  * @typedef {import('../SF/typedefs.jsx').file} file
  */
-import { LinearProgress } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import Snackbar from "@material-ui/core/Snackbar";
 import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -13,6 +15,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CachedIcon from "@material-ui/icons/Cached";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import HomeIcon from "@material-ui/icons/Home";
+import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { saduwux } from "../SF/Context";
@@ -25,14 +28,10 @@ const useStyles = makeStyles((theme) => ({
    root: { flexGrow: 1 },
    title: { flexGrow: 1, textAlign: "center" },
    input: { display: "none" },
-   toolbar: { maxHeight: "64px", position: "static" },
    container: {
       display: "flex",
       flexWrap: "wrap",
       flexGrow: 1,
-   },
-   menuButton: {
-      marginRight: theme.spacing(2),
    },
    modal: {
       display: "flex",
@@ -45,10 +44,28 @@ const useStyles = makeStyles((theme) => ({
       maxWidth: 700,
       textAlign: "center",
    },
+   sectionDesktop: {
+      [theme.breakpoints.down('xs')]: {
+         display: 'none',
+      },
+   },
+   sectionMobile: {
+      [theme.breakpoints.down('xs')]: { 
+          textAlign: 'center',
+          '& .MuiIconButton-edgeStart': {
+             margin: 0
+          }
+      },
+  }
 }));
+
+function Alert(props) {
+   return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const initialState = {
    open: false,
+   message:'',
    fileForModal: '',
    uploadModal: false,
    fileField: '',
@@ -93,7 +110,7 @@ const Search = () => {
          },
       })
          .then(handleFetch)
-         .then((response) => update({ files: sort(response) }))
+         .then((response) => dispatch({ type: 'update', payload: { files: sort(response) } }))
          .catch((mistake) =>
             console.log(
                `/api/files/${globalState.folder}/files`,
@@ -146,6 +163,14 @@ const Search = () => {
       if (closing) update({ uploadModal: false });
    };
 
+   const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      update({ open: false });
+    };
+
    /**
     * 
     * @param {Object} data The data to be posted
@@ -171,16 +196,16 @@ const Search = () => {
          handleFetch
       ).then((res) => {
          update({ type: "shouldUpdate" });
-         alert(res.message)
+         update({ open: true, message: 'Archivo subido satisfactoriamente!' });
       }).catch((mistake) => {
          console.log(
             `/api/files/${globalState.folder}/files`
          );
-         alert(mistake.message)
+         update({ open: true, message: mistake.message });
       });
    };
 
-   const items = () => state.files.reduce(
+   const items = () => globalState.files.reduce(
       (filtered, file, index) => {
          const regex = new RegExp(globalState.search, "gi");
          if (!file.name.match(regex)) {
@@ -201,51 +226,82 @@ const Search = () => {
 
    return (
       <main className={`${classes.root} flex-column min-h100`}>
-         <Box bgcolor="bg.main" className="min-h100" width={1}>
+         <Box  width={1}>
             <AppBar position="static" component="div" color="secondary">
-               <Toolbar variant="dense" className={classes.toolBar}>
-                  <IconButton
-                     edge="start"
-                     className={classes.menuButton}
-                     onClick={goBack}
-                     color="inherit"
-                     aria-label="menu">
-                     <ArrowBackIcon />
-                  </IconButton>
-                  <IconButton
-                     edge="start"
-                     className={classes.menuButton}
-                     color="inherit"
-                     aria-label="menu">
-                     <CachedIcon />
-                  </IconButton>
-                  <IconButton
-                     edge="start"
-                     className={classes.menuButton}
-                     onClick={goHome}
-                     color="inherit"
-                     aria-label="menu">
-                     <HomeIcon />
-                  </IconButton>
-                  <Typography variant="h6" className={classes.title}>
-                     Puedes acceder desde {window.location.origin}
-                  </Typography>
-                  <Button
-                     color="inherit"
-                     startIcon={<CloudUploadIcon />}
-                     component="span"
-                     onClick={() => handleUploadModal()}>
-                     Subir
-                  </Button>
+               <Toolbar variant="dense"> 
+               <Grid container alignItems="center">
+                  <Grid className={classes.sectionMobile} container item xs={12} sm={2} md={3} lg={1}>
+                     <Grid item xs={4} >
+                        <IconButton
+                           edge="start"
+                           onClick={goBack}
+                           color="inherit"
+                           aria-label="menu">
+                           <ArrowBackIcon />
+                        </IconButton>
+                     </Grid>
+                     <Grid item xs={4}>
+                        <IconButton
+                           edge="start"
+                           color="inherit"
+                           aria-label="menu"
+                           onClick={() => update({ type: "shouldUpdate" })}
+                           >
+                           <CachedIcon />
+                        </IconButton>
+                     </Grid>
+                     <Grid item xs={4}>
+                        <IconButton
+                           edge="start"
+                           onClick={goHome}
+                           color="inherit"
+                           aria-label="menu">
+                           <HomeIcon />
+                        </IconButton>
+                     </Grid>
+                  </Grid>
+                  <Grid item className={classes.sectionDesktop} sm={8} md={7} lg={10}>
+                     <Box display="flex">
+                     <Typography variant="h6" className={classes.title}>
+                        Puedes acceder desde {window.location.origin}
+                     </Typography>
+                     </Box>
+                  </Grid>
+                  <Grid item className={classes.sectionDesktop} sm={2} md={2} lg={1} style={{textAlign: 'end'}}>
+                     <Button
+                        color="inherit"
+                        startIcon={<CloudUploadIcon />}
+                        component="span"
+                        onClick={() => handleUploadModal()}>
+                        Subir
+                     </Button>
+                  </Grid>
+               </Grid>
                </Toolbar>
             </AppBar>
-            {!state.files ? <LinearProgress /> : ""}
-            <Box className={classes.container}>
-               {state.files ? items() : ""}
-            </Box>
+            {!globalState.files ? <LinearProgress /> : ""}
+            <Grid container>
+               {globalState.files ? items() : ""}
+            </Grid>
+         </Box>
+         <Box display={{ xs: 'flex', sm: 'none' }}>
+            <Toolbar variant="dense"/>
          </Box>
          <FileInfoModal open={!!state.fileForModal} file={state.fileForModal} handleClose={handleFileModal} />
          <UploadFileModal open={state.uploadModal} handleClose={handleUploadModal} />
+         <Snackbar 
+            anchorOrigin={{
+               vertical: "bottom",
+               horizontal: "right"
+            }}
+            open={state.open} 
+            onClose={handleClose}
+            autoHideDuration={3000}
+         >
+            <Alert onClose={handleClose} severity="success">
+               {state.message}
+            </Alert>
+         </Snackbar>
       </main>
    );
 };
