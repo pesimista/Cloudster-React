@@ -14,7 +14,7 @@ import CloudIcon from '@material-ui/icons/Cloud';
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext, useReducer } from 'react';
-import { Link as RouterLink, Redirect, useHistory  } from 'react-router-dom';
+import { Link as RouterLink, Redirect, useHistory } from 'react-router-dom';
 import { handleFetch } from "../SF/helpers";
 import { saduwux } from '../SF/Context';
 
@@ -22,45 +22,45 @@ import { saduwux } from '../SF/Context';
 const useStyles = makeStyles((theme) => ({
    grow: {
       flexGrow: 1,
-    },
+   },
    root: {
       height: '100vh',
-    },
+   },
    image: {
       backgroundImage: 'url(https://source.unsplash.com/random)', //"url(" + View + ")",
       backgroundRepeat: 'no-repeat',
       backgroundColor:
-        theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+         theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-    },
-    form: {
+   },
+   form: {
       marginTop: theme.spacing(8),
-      },
+   },
    sectionDesktop: {
       display: 'none',
       [theme.breakpoints.up('sm')]: {
          display: 'flex',
       },
-      },
+   },
    sectionMobile: {
       display: 'flex',
       [theme.breakpoints.up('sm')]: {
          display: 'none',
       },
    },
-    paper: {
+   paper: {
       margin: theme.spacing(8, 4),
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-    },
-    submit: {
+   },
+   submit: {
       margin: theme.spacing(3, 0, 2),
-      },
-   appBar: { 
-      top: 'auto', 
-      bottom: 0, 
+   },
+   appBar: {
+      top: 'auto',
+      bottom: 0,
    }
 }));
 
@@ -69,52 +69,14 @@ const reactLink = React.forwardRef(
 );
 reactLink.displayName = 'reactLink';
 
-function Alert(props) {
+const Alert = (props) => {
    return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-/*
-<AppBar>
-            <Toolbar>
-               <Container maxWidth='lg'>
-                  <Link component={reactLink} to='/login' underline='none'>
-                     <Button size="large">
-                        <Typography  fontWeight="fontWeightBold">Iniciar Sesión</Typography>
-                     </Button>
-                  </Link>
-                  <Link component={reactLink} to='/register' underline='none'>
-                     <Button size="large">
-                        <Typography  fontWeight="fontWeightBold">Registrarse</Typography>
-                     </Button>
-                  </Link>
-               </Container>
-            </Toolbar>
-         </AppBar>
-
-
-
-
-
-         <Typography component={'span'} align="center">
-                     <Box
-                        color="secondary.main"
-                        fontSize="h2.fontSize"
-                        fontWeight="fontWeightBold"
-                        lineHeight={2}
-                        className={classes.form}
-                        >
-                        <CloudIcon
-                           color='primary'
-                           fontSize="inherit"/>
-                        Cloudster
-                     </Box>
-                     <Box fontSize="h4.fontSize">Una forma sencilla de compartir tus archivos sin limites de plataforma.</Box>
-                  </Typography>
-         */
 
 const initialState = {
    open: false,
-   message:'',
+   message: '',
    logedIn: false,
    signInUser: "",
    signInPassword: "",
@@ -153,7 +115,6 @@ const Welcome = () => {
          .then(data => {
             localStorage.setItem("token", "bearer " + data.token);
             dispatch({ type: "login", payload: { user: data.user } });
-            update({ open: true, message: 'Inicio de sesión exitoso!' });
             setTimeout(() => {
                history.push("/busqueda");
             }, 500);
@@ -165,9 +126,9 @@ const Welcome = () => {
 
    const handleClose = (event, reason) => {
       if (reason === 'clickaway') {
-        return;
+         return;
       }
-  
+
       update({ open: false });
    };
 
@@ -180,44 +141,44 @@ const Welcome = () => {
                <Container maxWidth='lg' className={classes.sectionDesktop}>
                   <Link component={reactLink} to='/login' underline='none'>
                      <Button size="large">
-                        <Typography  fontWeight="fontWeightBold">Iniciar Sesión</Typography>
+                        <Typography fontWeight="fontWeightBold">Iniciar Sesión</Typography>
                      </Button>
                   </Link>
                   <Link component={reactLink} to='/register' underline='none'>
                      <Button size="large">
-                        <Typography  fontWeight="fontWeightBold">Registrarse</Typography>
+                        <Typography fontWeight="fontWeightBold">Registrarse</Typography>
                      </Button>
                   </Link>
                </Container>
                <div className={classes.grow} />
                <Link className={classes.sectionMobile} component={reactLink} to='/register' underline='none'>
-                     <Button size="large">
-                        <Typography  fontWeight="fontWeightBold">Registrarse</Typography>
-                     </Button>
-                  </Link>
+                  <Button size="large">
+                     <Typography fontWeight="fontWeightBold">Registrarse</Typography>
+                  </Button>
+               </Link>
             </Toolbar>
          </AppBar>
          <Grid container component="main" className={classes.root}>
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-                  <Typography component={'span'} align="center" variant="h2">
-                     <Box
-                        color="secondary.main"
-                        className={classes.form}
-                        >
-                        <CloudIcon
-                           color='primary'
-                           fontSize="inherit"/>
+               <Typography component={'span'} align="center" variant="h2">
+                  <Box
+                     color="secondary.main"
+                     className={classes.form}
+                  >
+                     <CloudIcon
+                        color='primary'
+                        fontSize="inherit" />
                         Cloudster
                      </Box>
-                     <Typography variant="h4">Una forma sencilla de compartir tus archivos sin limites de plataforma.</Typography>
-                     <Box display={{ xs: 'block', sm: 'none' }}>
-                        <Link component={reactLink} to='/login' underline='none'>
-                           <Button size="large" color="primary" variant="contained">
-                              Iniciar Sesión
+                  <Typography variant="h4">Una forma sencilla de compartir tus archivos sin limites de plataforma.</Typography>
+                  <Box display={{ xs: 'block', sm: 'none' }}>
+                     <Link component={reactLink} to='/login' underline='none'>
+                        <Button size="large" color="primary" variant="contained">
+                           Iniciar Sesión
                            </Button>
-                        </Link>
-                     </Box>
-                  </Typography>
+                     </Link>
+                  </Box>
+               </Typography>
                <Box display={{ xs: 'none', sm: 'block' }}>
                   <Container maxWidth={'xs'}>
                      <TextField
@@ -257,27 +218,27 @@ const Welcome = () => {
                         Iniciar Sesión
                      </Button>
                      <Link
-                     component={reactLink}
-                     to="/recover"
-                     color="secondary"
-                  >
-                     Olvidé mi contraseña
+                        component={reactLink}
+                        to="/recover"
+                        color="secondary"
+                     >
+                        Olvidé mi contraseña
                   </Link>
                   </Container>
                </Box>
             </Grid>
             <Grid item xs={false} sm={4} md={7} className={classes.image} />
          </Grid>
-         <Snackbar 
+         <Snackbar
             anchorOrigin={{
                vertical: "bottom",
                horizontal: "left"
             }}
-            open={state.open} 
+            open={state.open}
             onClose={handleClose}
             autoHideDuration={6000}
          >
-            <Alert onClose={handleClose} severity="success">
+            <Alert onClose={handleClose} severity="error">
                {state.message}
             </Alert>
          </Snackbar>

@@ -27,9 +27,12 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import PropTypes from 'prop-types';
 import React from 'react';
-import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
 
+import MuiAlert from '@material-ui/lab/Alert';
 
+const Alert = (props) => {
+   return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const TabPanel = (props) => {
    const { children, value, index, ...other } = props;
@@ -218,6 +221,7 @@ const ShowData = (props) => {
             if (data.response === "oll korrect") {
                updateMessage('Nivel modificado satisfactoriamente!')
                setOpen(true);
+               //update({ open: true, message: "Nivel modificado satisfactoriamente!", severity: 'success' });
             }
          })
    }
@@ -235,6 +239,7 @@ const ShowData = (props) => {
             if (data.response === "oll korrect") {
                updateMessage('Nivel modificado satisfactoriamente!')
                setOpen(true);
+               //update({ open: true, message: "Nivel modificado satisfactoriamente!", severity: 'success' });
             }
          })
    }
@@ -249,6 +254,7 @@ const ShowData = (props) => {
                   props.fetchUsers();
                   updateMessage('Usuario eliminado satisfactoriamente!')
                   setOpen(true);
+                  //update({ open: true, message: "Usuario eliminado satisfactoriamente!", severity: 'success' });
                }
             })
       }
@@ -438,11 +444,9 @@ const ShowData = (props) => {
                   autoHideDuration={6000}
                   onClose={handleClose}
                >
-                  <MySnackbarContentWrapper
-                     onClose={handleClose}
-                     variant="success"
-                     message={displayMessage}
-                  />
+                  <Alert onClose={handleClose} severity="success">
+                     {displayMessage}
+                  </Alert>
                </Snackbar>
             </Box>
 

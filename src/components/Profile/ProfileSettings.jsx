@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
       maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
-    },
+   },
    tabs: {
       borderRight: `1px solid ${theme.palette.divider}`
    },
@@ -59,44 +59,44 @@ function Alert(props) {
 
 const ExpansionPanel = withStyles({
    root: {
-     border: '1px solid rgba(0, 0, 0, .125)',
-     boxShadow: 'none',
-     '&:not(:last-child)': {
-       borderBottom: 0,
-     },
-     '&:before': {
-       display: 'none',
-     },
-     '&$expanded': {
-       margin: 'auto',
-     },
+      border: '1px solid rgba(0, 0, 0, .125)',
+      boxShadow: 'none',
+      '&:not(:last-child)': {
+         borderBottom: 0,
+      },
+      '&:before': {
+         display: 'none',
+      },
+      '&$expanded': {
+         margin: 'auto',
+      },
    },
    expanded: {},
- })(MuiExpansionPanel);
+})(MuiExpansionPanel);
 
- const ExpansionPanelSummary = withStyles({
+const ExpansionPanelSummary = withStyles({
    root: {
-     backgroundColor: 'rgba(0, 0, 0, .03)',
-     borderBottom: '1px solid rgba(0, 0, 0, .125)',
-     marginBottom: -1,
-     minHeight: 56,
-     '&$expanded': {
-       minHeight: 56,
-     },
+      backgroundColor: 'rgba(0, 0, 0, .03)',
+      borderBottom: '1px solid rgba(0, 0, 0, .125)',
+      marginBottom: -1,
+      minHeight: 56,
+      '&$expanded': {
+         minHeight: 56,
+      },
    },
    content: {
-     '&$expanded': {
-       margin: '12px 0',
-     },
+      '&$expanded': {
+         margin: '12px 0',
+      },
    },
    expanded: {},
- })(MuiExpansionPanelSummary);
- 
- const ExpansionPanelDetails = withStyles((theme) => ({
+})(MuiExpansionPanelSummary);
+
+const ExpansionPanelDetails = withStyles((theme) => ({
    root: {
-     padding: theme.spacing(2),
+      padding: theme.spacing(2),
    },
- }))(MuiExpansionPanelDetails);
+}))(MuiExpansionPanelDetails);
 
 const questions = [
    { id: "1", pregunta: "¿Cuál es el nombre de tu mejor amigo?" },
@@ -137,7 +137,7 @@ function a11yProps(index) {
 const initialState = {
    open: false,
    value: 0,
-   message:'',
+   message: '',
    expanded: 'panel1',
    nombre: "",
    apellido: "",
@@ -229,140 +229,140 @@ const ProfileSettings = props => {
    });
 
    const content = <React.Fragment>
-               <TabPanel value={state.value} index={0}>
-                  <Grid container>
-                     <Grid xs={12}>
-                        <TextField
-                           onChange={e => update({ nombre: e.target.value })}
-                           defaultValue={user.nombre}
-                           id="outlined-basic"
-                           label="Nombre"
-                           variant="outlined"
-                           fullWidth
-                           margin="normal"
-                        />
-                     </Grid>
-                     <Grid xs={12}>
-                        <TextField
-                           onChange={e => update({ apellido: e.target.value })}
-                           defaultValue={user.apellido}
-                           id="outlined-basic"
-                           label="Apellido"
-                           variant="outlined"
-                           fullWidth
-                           margin="normal"
-                        />
-                     </Grid>
-                  </Grid>
-               </TabPanel>
-               <TabPanel value={state.value} index={1}>
-                  <Grid container>
-                     <Grid xs={12}>
-                        <TextField
-                           onChange={e => updatePassword0(e.target.value)}
-                           id="outlined-password-input"
-                           label="Contraseña actual"
-                           variant="outlined"
-                           fullWidth
-                           margin="normal"
-                        />
-                     </Grid>
-                     <Grid xs={12}>
-                        <TextField
-                           onChange={e => update({ password: e.target.value })}
-                           error={state.password.length < 6}
-                           id="outlined-password-input"
-                           label="Nueva contraseña"
-                           variant="outlined"
-                           fullWidth
-                           margin="normal"
-                        />
-                     </Grid>
-                     <Grid xs={12}>
-                        <TextField
-                           onChange={e => update({ password2: e.target.value })}
-                           error={state.password2.length < 6 || state.password !== state.password2}
-                           id="outlined-password-input"
-                           label="Confirmar nueva contraseña"
-                           variant="outlined"
-                           fullWidth
-                           margin="normal"
-                        />
-                     </Grid>
-                  </Grid>
-               </TabPanel>
-               <TabPanel value={state.value} index={2}>
-                  <Grid container>
-                     <Grid item xs={12}>
-                        <TextField
-                           id="outlined-select-currency"
-                           select
-                           label="Primera pregunta"
-                           value={state.pregunta1}
-                           onChange={e => update({ pregunta1: e.target.value })}
-                           variant="outlined"
-                           fullWidth
-                           margin="normal"
-                        >
-                           {mapPreguntas}
-                        </TextField>
-                     </Grid>
-                     <Grid item xs={12}>
-                        <TextField
-                           onChange={e => update({ respuesta1: e.target.value })}
-                           id="outlined-basic"
-                           value={state.respuesta1}
-                           label="Respuesta "
-                           variant="outlined"
-                           fullWidth
-                           margin="normal"
-                        />
-                     </Grid>
-                     <Grid item xs={12}>
-                        <TextField
-                           id="outlined-select-currency"
-                           select
-                           label="Segunda pregunta"
-                           value={state.pregunta2}
-                           onChange={e => update({ pregunta2: e.target.value })}
-                           variant="outlined"
-                           fullWidth
-                           margin="normal"
-                        >
-                           {mapPreguntas}
-                        </TextField>
-                     </Grid>     
-                     <Grid item xs={12}>
-                        <TextField
-                           onChange={e => update({ respuesta2: e.target.value })}
-                           id="outlined-basic"
-                           value={state.respuesta2}
-                           label="Respuesta "
-                           variant="outlined"
-                           fullWidth
-                           margin="normal"
-                        />
-                     </Grid>  
-                  </Grid>
-               </TabPanel>
-               </React.Fragment>
-   ;
+      <TabPanel value={state.value} index={0}>
+         <Grid container>
+            <Grid xs={12}>
+               <TextField
+                  onChange={e => update({ nombre: e.target.value })}
+                  defaultValue={user.nombre}
+                  id="outlined-basic"
+                  label="Nombre"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+               />
+            </Grid>
+            <Grid xs={12}>
+               <TextField
+                  onChange={e => update({ apellido: e.target.value })}
+                  defaultValue={user.apellido}
+                  id="outlined-basic"
+                  label="Apellido"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+               />
+            </Grid>
+         </Grid>
+      </TabPanel>
+      <TabPanel value={state.value} index={1}>
+         <Grid container>
+            <Grid xs={12}>
+               <TextField
+                  onChange={e => updatePassword0(e.target.value)}
+                  id="outlined-password-input"
+                  label="Contraseña actual"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+               />
+            </Grid>
+            <Grid xs={12}>
+               <TextField
+                  onChange={e => update({ password: e.target.value })}
+                  error={state.password.length < 6}
+                  id="outlined-password-input"
+                  label="Nueva contraseña"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+               />
+            </Grid>
+            <Grid xs={12}>
+               <TextField
+                  onChange={e => update({ password2: e.target.value })}
+                  error={state.password2.length < 6 || state.password !== state.password2}
+                  id="outlined-password-input"
+                  label="Confirmar nueva contraseña"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+               />
+            </Grid>
+         </Grid>
+      </TabPanel>
+      <TabPanel value={state.value} index={2}>
+         <Grid container>
+            <Grid item xs={12}>
+               <TextField
+                  id="outlined-select-currency"
+                  select
+                  label="Primera pregunta"
+                  value={state.pregunta1}
+                  onChange={e => update({ pregunta1: e.target.value })}
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+               >
+                  {mapPreguntas}
+               </TextField>
+            </Grid>
+            <Grid item xs={12}>
+               <TextField
+                  onChange={e => update({ respuesta1: e.target.value })}
+                  id="outlined-basic"
+                  value={state.respuesta1}
+                  label="Respuesta "
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+               />
+            </Grid>
+            <Grid item xs={12}>
+               <TextField
+                  id="outlined-select-currency"
+                  select
+                  label="Segunda pregunta"
+                  value={state.pregunta2}
+                  onChange={e => update({ pregunta2: e.target.value })}
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+               >
+                  {mapPreguntas}
+               </TextField>
+            </Grid>
+            <Grid item xs={12}>
+               <TextField
+                  onChange={e => update({ respuesta2: e.target.value })}
+                  id="outlined-basic"
+                  value={state.respuesta2}
+                  label="Respuesta "
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+               />
+            </Grid>
+         </Grid>
+      </TabPanel>
+   </React.Fragment>
+      ;
 
    if (!user.id)
       return <Redirect to="/notlogged" />;
 
-      const handleChange = (panel) => (event, newExpanded) => {
-         update({ expanded: newExpanded ? panel : false });
-         update({ value: panel === 'panel1' ? 0 : panel === 'panel2' ? 1 : 2});
-       };
+   const handleChange = (panel) => (event, newExpanded) => {
+      update({ expanded: newExpanded ? panel : false });
+      update({ value: panel === 'panel1' ? 0 : panel === 'panel2' ? 1 : 2 });
+   };
 
-       const handleClose = (event, reason) => {
-         if (reason === 'clickaway') {
-           return;
-         }
-     
-         update({ open: false });
-       };
+   const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+         return;
+      }
+
+      update({ open: false });
+   };
 
    return (
       <Box
@@ -388,12 +388,12 @@ const ProfileSettings = props => {
                <Container maxWidth='sm'>
                   {content}
                   <Button
-                        variant="contained"
-                        color="primary"
-                        className={classes.button}
-                        onClick={handleUpdate}
-                     >
-                        {" "}
+                     variant="contained"
+                     color="primary"
+                     className={classes.button}
+                     onClick={handleUpdate}
+                  >
+                     {" "}
                         Guardar
                      </Button>
                </Container>
@@ -436,16 +436,16 @@ const ProfileSettings = props => {
             </ExpansionPanel>
          </Box>
          <Box display={{ xs: 'block', sm: 'none' }}>
-            <Toolbar variant="dense"/>
+            <Toolbar variant="dense" />
          </Box>
          <Box>
-            <Snackbar 
+            <Snackbar
                anchorOrigin={{
-               vertical: 'bottom',
-               horizontal: 'right',
+                  vertical: 'bottom',
+                  horizontal: 'right',
                }}
-               open={state.open} 
-               autoHideDuration={6000} 
+               open={state.open}
+               autoHideDuration={6000}
                onClose={handleClose}
             >
                <Alert onClose={handleClose} severity="success">

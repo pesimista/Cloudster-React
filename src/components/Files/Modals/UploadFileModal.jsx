@@ -7,7 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import BackupIcon from "@material-ui/icons/Backup";
 import React from "react";
 import { getIcon } from "../../SF/helpers";
-import { useReducer } from "react";
+import { useReducer, useContext } from "react";
+import { saduwux } from "../../SF/Context";
 import path from "path";
 
 const useStyles = makeStyles((theme) => ({
@@ -32,8 +33,8 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
       maxWidth: 700,
       textAlign: "center",
-   }
-}));
+   },
+   }));
 
 const initialState = {
    fileField: '',
@@ -49,6 +50,7 @@ const reducer = (state, action) => {
 const UploadFileModal = ({ open, handleClose }) => {
    const classes = useStyles();
    const [state, update] = useReducer(reducer, initialState);
+   const { state: { theme} } = useContext(saduwux);
    const cleanState = () => update({ fileFieldName: state.originalName, fileField: null });
 
    const onChange = e => {
@@ -62,7 +64,7 @@ const UploadFileModal = ({ open, handleClose }) => {
          originalName: nombre
       });
    };
-   if(!open) return '';
+   if (!open) return '';
    else return (
       <Dialog open={open} className={classes.modal} onClose={() => handleClose('', true)}>
          <DialogTitle id="file-dialog-title" className={classes.title}>
@@ -73,6 +75,7 @@ const UploadFileModal = ({ open, handleClose }) => {
                <ModalContent
                   className={classes.input}
                   state={state}
+                  theme = {theme}
                   update={update}
                   onChange={onChange}
                   cleanState={cleanState}
@@ -87,6 +90,7 @@ const ModalContent = (props) => {
    const {
       className: classes
       , state
+      , theme
       , update
       , onChange
       , cleanState
@@ -113,7 +117,7 @@ const ModalContent = (props) => {
                   fullWidth
                   defaultValue={state.fileFieldName}
                   variant="outlined"
-                  style={{textAlign: 'center'}}
+                  style={{ textAlign: 'center' }}
                   onChange={(e) => update({ fileFieldName: e.target.value })} />
             </Grid>
             <Grid item xs={6} style={{ paddingTop: "15px" }}>
@@ -144,8 +148,8 @@ const ModalContent = (props) => {
                id="icon-button-file"
                type="file" />
             <label htmlFor="icon-button-file">
-               <IconButton
-                  color="primary"
+               <IconButton 
+                  color={theme ? "" : "primary"}
                   aria-label="upload picture"
                   component="span">
                   <BackupIcon style={{ fontSize: 164 }} />

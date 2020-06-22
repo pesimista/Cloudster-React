@@ -23,9 +23,9 @@ import { handleFetch } from '../SF/helpers';
 const useStyles = makeStyles(theme => ({
    marginTop: {
       marginTop: theme.spacing(8),
-    },
+   },
    form: {
-   marginTop: theme.spacing(1),
+      marginTop: theme.spacing(1),
    },
    button: {
       marginRight: theme.spacing(1),
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
    },
 }));
 
-const reactLink = React.forwardRef((props, ref) => 
+const reactLink = React.forwardRef((props, ref) =>
    <RouterLink innerRef={ref} {...props} />
 );
 reactLink.displayName = 'reactLink';
@@ -169,7 +169,7 @@ const Recover = () => {
                      id='respuesta1'
                      label='Respuesta #1'
                      helperText={state.pregunta1}
-                     variant='outlined' 
+                     variant='outlined'
                      margin="normal"
                      required
                      fullWidth
@@ -182,7 +182,7 @@ const Recover = () => {
                      id='outlined-basic'
                      label='Respuesta #2'
                      helperText={state.pregunta2}
-                     variant='outlined' 
+                     variant='outlined'
                      margin="normal"
                      required
                      fullWidth
@@ -225,14 +225,14 @@ const Recover = () => {
    }
 
    return (
-      <Container component="main" maxWidth="sm"> 
+      <Container component="main" maxWidth="sm">
          <Box className={classes.marginTop} display="flex" flexDirection="column" alignItems="center" textAlign="center">
             <Link to="/" component={reactLink} >
                <IconButton>
-                  <CloudIcon 
+                  <CloudIcon
                      color='primary'
                      style={{ fontSize: '4rem' }}
-                     />
+                  />
                </IconButton>
             </Link>
             <Typography component="h1" variant="h5">
@@ -274,28 +274,26 @@ const Recover = () => {
                   {state.activeStep === steps.length - 1 ? 'Aceptar' : 'Siguiente'}
                </Button>
             </Box>
-            
-            
          </Box>
          <Grid container>
-               <Grid item xs>
-                  <Link
-                     component={reactLink}
-                     to="/login"
-                     color="secondary"
-                  >
-                     Volver a inicio de sesión
+            <Grid item xs>
+               <Link
+                  component={reactLink}
+                  to="/login"
+                  color="secondary"
+               >
+                  Volver a inicio de sesión
                   </Link>
-               </Grid>
-               <Grid item>
-                  <Link
-                     component={reactLink}
-                     to="/register"
-                  >
-                     Registrarse
-                  </Link>
-               </Grid>
             </Grid>
+            <Grid item>
+               <Link
+                  component={reactLink}
+                  to="/register"
+               >
+                  Registrarse
+                  </Link>
+            </Grid>
+         </Grid>
       </Container>
    );
 }

@@ -22,14 +22,14 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(8),
    },
    form: {
-   marginTop: theme.spacing(1),
+      marginTop: theme.spacing(1),
    },
    submit: {
-   margin: theme.spacing(3, 0, 2),
+      margin: theme.spacing(3, 0, 2),
    },
 }));
 
-function Alert(props) {
+const Alert = (props) => {
    return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
@@ -39,7 +39,8 @@ function Alert(props) {
  */
 const initialState = {
    open: false,
-   message:'',
+   message: '',
+   severity: '',
    logedIn: false,
    signInUser: "",
    signInPassword: "",
@@ -51,7 +52,7 @@ const reducer = (state, action) => {
    return { ...state, ...action };
 };
 
-const reactLink = React.forwardRef((props, ref) => 
+const reactLink = React.forwardRef((props, ref) =>
    <RouterLink innerRef={ref} {...props} />
 );
 reactLink.displayName = 'reactLink';
@@ -83,7 +84,6 @@ const Login = () => {
          .then(data => {
             localStorage.setItem("token", "bearer " + data.token);
             dispatch({ type: "login", payload: { user: data.user } });
-            update({ open: true, message: 'Inicio de sesión exitoso!' });
             setTimeout(() => {
                history.push("/busqueda");
             }, 500);
@@ -95,21 +95,21 @@ const Login = () => {
 
    const handleClose = (event, reason) => {
       if (reason === 'clickaway') {
-        return;
+         return;
       }
-  
+
       update({ open: false });
-    };
+   };
 
    return (
       <Container component="main" maxWidth="xs">
          <Box className={classes.marginTop} display="flex" flexDirection="column" alignItems="center">
             <Link to="/" component={reactLink} >
                <IconButton>
-                  <CloudIcon 
+                  <CloudIcon
                      color='primary'
                      style={{ fontSize: '4rem' }}
-                     />
+                  />
                </IconButton>
             </Link>
             <Typography component="h1" variant="h5">
@@ -154,16 +154,16 @@ const Login = () => {
                >
                   Iniciar Sesión
                </Button>
-               <Snackbar 
+               <Snackbar
                   anchorOrigin={{
                      vertical: "bottom",
                      horizontal: "left"
                   }}
-                  open={state.open} 
+                  open={state.open}
                   onClose={handleClose}
                   autoHideDuration={6000}
                >
-                  <Alert onClose={handleClose} severity="success">
+                  <Alert onClose={handleClose} severity="error">
                      {state.message}
                   </Alert>
                </Snackbar>

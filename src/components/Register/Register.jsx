@@ -18,7 +18,6 @@ import React, { useContext, useReducer } from 'react';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, structuteChecker } from '../SF/helpers';
-import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
 import Container from '@material-ui/core/Container';
 import MuiAlert from '@material-ui/lab/Alert';
 
@@ -44,13 +43,13 @@ const reactLink = React.forwardRef((props, ref) =>
 );
 reactLink.displayName = 'reactLink';
 
-function Alert(props) {
+const Alert = (props) => {
    return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 const initialState = {
    open: false,
-   message:'',
+   message: '',
    activeStep: 0,
    nombre: "",
    apellido: "",
@@ -118,8 +117,6 @@ const Register = () => {
             localStorage.setItem("token", 'bearer ' + data.token);
             update({
                userExist: false,
-               open: true,
-               message: 'Inicio de sesión exitoso!'
             });
 
             setTimeout(() => {
@@ -167,7 +164,7 @@ const Register = () => {
                         name="nombre"
                         value={state.nombre}
                         id="nombre"
-                        label="Nombre" 
+                        label="Nombre"
                         variant="outlined"
                         helperText='El nombre debe contener al menos 2 catacteres'
                         fullWidth
@@ -206,11 +203,11 @@ const Register = () => {
                         type="password"
                         id="password2"
                         label="Confirmar contraseña"
-                        variant="outlined" 
+                        variant="outlined"
                         fullWidth
                         error={state.password2.length > 2 && state.password !== state.password2}
                         helperText={state.password2.length > 2 && state.password !== state.password2 ? "Las contraseñas no coinciden" : ' '}
-                        />
+                     />
                   </Grid>
                </Grid>
             );
@@ -240,7 +237,7 @@ const Register = () => {
                         value={state.respuesta1}
                         id="outlined-basic"
                         label="Respuesta"
-                        variant="outlined" 
+                        variant="outlined"
                         fullWidth
                      />
                   </Grid>
@@ -286,7 +283,7 @@ const Register = () => {
                      label="Nombre de usuario"
                      variant="outlined"
                      fullWidth
-                     />
+                  />
                </Grid>
             )
          default:
@@ -296,19 +293,19 @@ const Register = () => {
    return (
       <Container component="main" maxWidth="lg">
          <Box textAlign='center'>
-            <Link 
+            <Link
                component={reactLink}
                to="/"
             >
                <IconButton>
-                  <CloudIcon 
+                  <CloudIcon
                      color='primary'
                      style={{ fontSize: '4rem' }}
-                     />
+                  />
                </IconButton>
             </Link>
             <Typography component="h1" variant="h5">
-            Registrarse
+               Registrarse
             </Typography>
          </Box>
          <Stepper activeStep={state.activeStep} orientation="vertical">
@@ -358,11 +355,9 @@ const Register = () => {
                autoHideDuration={6000}
                onClose={handleClose}
             >
-               <MySnackbarContentWrapper
-                  onClose={handleClose}
-                  variant="success"
-                  message="Registro exitoso!"
-               />
+               <Alert onClose={handleClose} severity="error">
+                  {state.message}
+               </Alert>
             </Snackbar>
          </Box>
          <Paper square elevation={0} className={classes.pdd}>

@@ -40,10 +40,6 @@ const useStyles = makeStyles(theme => ({
          paddingRight: 8
       },
    },
-   useDark: {
-      '& .MuiListItemIcon-root': { color: 'white' },
-      '& .MuiDrawer-paper': { backgroundColor: '#252525' },
-   },
 }));
 
 const Sidebar = () => {

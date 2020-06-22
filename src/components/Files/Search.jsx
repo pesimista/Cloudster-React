@@ -18,6 +18,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CachedIcon from "@material-ui/icons/Cached";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import HomeIcon from "@material-ui/icons/Home";
+import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext } from "react";
 import { Redirect, useHistory } from "react-router-dom";
@@ -59,7 +60,10 @@ const useStyles = makeStyles((theme) => ({
             margin: 0
          }
       },
-   }
+   },
+   useDark: {
+      backgroundColor: '#393d46'
+   },
 }));
 
 const Alert = (props) => {
@@ -70,6 +74,7 @@ const Alert = (props) => {
 const initialState = {
    open: false,
    message: '',
+   severity: '',
    fileForModal: '',
    uploadModal: false,
    files: null,
@@ -84,7 +89,8 @@ const reducer = (state, action) => {
          uploadModal: false,
          fileModal: '',
          open: action.open,
-         message: action.message ? action.message : ''
+         message: action.message ? action.message : '',
+         severity: action.severity
       };
    }
    return { ...state, ...action };
@@ -172,12 +178,12 @@ const Search = () => {
     */
    const uploadFile = (fileToPost) => {
       const onSuccess = () => update({
-         type: "shouldUpdate", open: true, message: 'Archivo subido satisfactoriamente!'
+         type: "shouldUpdate", open: true, message: 'Archivo subido satisfactoriamente!', severity: 'success'
       });
 
       const onError = (mistake) => {
          console.log(`/api/files/${globalState.folder}/files`);
-         update({ open: true, message: mistake.message });
+         update({ open: true, message: mistake.message, severity: 'error' });
       }
       postFile(
          fileToPost,
@@ -209,12 +215,12 @@ const Search = () => {
 
    return (
       <main className={`${classes.root} flex-column min-h100`}>
-         <Box width={1}>
+         <Box width={1} className={globalState.theme ? classes.useDark : ''}>
             <AppBar position="static" component="div" color="secondary">
                <Toolbar variant="dense">
                   <Grid container alignItems="center">
-                     <Grid className={classes.sectionMobile} container item xs={12} sm={2} md={3} lg={1}>
-                        <Grid item xs={4} >
+                     <Grid className={classes.sectionMobile} container item xs={12} sm={3} md={3} lg={2}>
+                        <Grid item xs={3} >
                            <IconButton
                               edge="start"
                               onClick={goBack}
@@ -223,7 +229,7 @@ const Search = () => {
                               <ArrowBackIcon />
                            </IconButton>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                            <IconButton
                               edge="start"
                               color="inherit"
@@ -233,7 +239,7 @@ const Search = () => {
                               <CachedIcon />
                            </IconButton>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                            <IconButton
                               edge="start"
                               onClick={goHome}
@@ -242,8 +248,17 @@ const Search = () => {
                               <HomeIcon />
                            </IconButton>
                         </Grid>
+                        <Grid item xs={3}>
+                           <IconButton
+                              edge="start"
+                              onClick={goHome}
+                              color="inherit"
+                              aria-label="menu">
+                              <CreateNewFolderIcon />
+                           </IconButton>
+                        </Grid>
                      </Grid>
-                     <Grid item className={classes.sectionDesktop} sm={8} md={7} lg={10}>
+                     <Grid item className={classes.sectionDesktop} sm={7} md={7} lg={9}>
                         <Box display="flex">
                            <Typography variant="h6" className={classes.title}>
                               Puedes acceder desde {window.location.origin}
@@ -266,6 +281,9 @@ const Search = () => {
             <Grid container>
                {state.files ? items() : ""}
             </Grid>
+            <Box display={{ xs: 'flex', sm: 'none' }}>
+               <Toolbar variant="dense"/>
+            </Box>
          </Box>
          <FileInfoModal open={!!state.fileForModal} file={state.fileForModal} handleClose={handleFileModal} />
          <UploadFileModal open={state.uploadModal} handleClose={handleUploadModal} />
@@ -278,7 +296,7 @@ const Search = () => {
             onClose={handleClose}
             autoHideDuration={3000}
          >
-            <Alert onClose={handleClose} severity="success">
+            <Alert onClose={handleClose} severity={state.severity}>
                {state.message}
             </Alert>
          </Snackbar>

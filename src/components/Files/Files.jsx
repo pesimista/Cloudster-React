@@ -163,7 +163,7 @@ const Files = ({
 
 	const content = (
 		<Paper color="primary" elevation={0} className={classes.paper}>
-			<img src={getIcon(isFile, ext)} alt={ext} />
+			<img src={getIcon(isFile, ext)} alt={ext} width="64" height="64"/>
 			<Typography
 				variant="body2"
 				className={props.useTheme ? classes.text : ""}

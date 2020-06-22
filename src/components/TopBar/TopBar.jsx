@@ -138,10 +138,9 @@ const TopBar = () => {
                </Box>
             </Link>
             <Switch
-               checked={theme}
+               color={theme ? "" : "primary"}
                onChange={handleCheck}
                value="theme"
-               color="primary"
                inputProps={{ "aria-label": "primary checkbox" }}
             />
          </Toolbar>

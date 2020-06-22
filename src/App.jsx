@@ -33,7 +33,8 @@ const useStyles = makeStyles(theme => ({
    main: { display: 'flex', minWidth: '100%', flexGrow: 1, position: 'relaive' },
    theme: {
       backgroundColor: theme.palette.background.default, color: theme.palette.text.primary
-   }, useDark: {
+   }, 
+   useDark: {
       backgroundColor: '#393d46'
    },
    desktopBar: {
@@ -85,42 +86,7 @@ const prins = createMuiTheme({
       textPrimary: { main: '#FFF' },
    },
 });
-const dark = createMuiTheme({
-   typography: {
-      h2: {
-         fontSize: '3.75rem',
-         fontWeight: 300,
-         lineHeight: 1.2,
-         letterSpacing: '-0.00833em',
-         fontFamily: ["Roboto", "Helvetica", "Arial", 'sans-serif'],
-         '@media (min-width:600px)': {
-            fontSize: '3.75rem',
-         },
-         '@media (min-width:0px)': {
-            fontSize: '3.25rem',
-         },
-      },
-      h4: {
-         fontSize: '2.15rem',
-         fontWeight: 400,
-         lineHeight: 1.235,
-         letterSpacing: '0.00735em',
-         fontFamily: ["Roboto", "Helvetica", "Arial", 'sans-serif'],
-         '@media (min-width:600px)': {
-            fontSize: '2.15rem',
-         },
-         '@media (min-width:0px)': {
-            fontSize: '1.75rem',
-         },
-      },
-   },
-   palette: {
-      primary: { main: '#424242' },
-      secondary: { main: '#252525' },
-      primaryText: { main: '#FFF' },
-      bg: { main: '#393d46' },
-   },
-});
+
 
 
 /**
@@ -145,6 +111,43 @@ const App = () => {
    const classes = useStyles();
 
    const { state, dispatch } = useContext(saduwux);
+
+   const dark = createMuiTheme({
+      typography: {
+         h2: {
+            fontSize: '3.75rem',
+            fontWeight: 300,
+            lineHeight: 1.2,
+            letterSpacing: '-0.00833em',
+            fontFamily: ["Roboto", "Helvetica", "Arial", 'sans-serif'],
+            '@media (min-width:600px)': {
+               fontSize: '3.75rem',
+            },
+            '@media (min-width:0px)': {
+               fontSize: '3.25rem',
+            },
+         },
+         h4: {
+            fontSize: '2.15rem',
+            fontWeight: 400,
+            lineHeight: 1.235,
+            letterSpacing: '0.00735em',
+            fontFamily: ["Roboto", "Helvetica", "Arial", 'sans-serif'],
+            '@media (min-width:600px)': {
+               fontSize: '2.15rem',
+            },
+            '@media (min-width:0px)': {
+               fontSize: '1.75rem',
+            },
+         },
+      },
+      palette: {
+         type: "dark",
+         primary: { main: '#424242' },
+         secondary: { main: '#252525' },
+         primaryText: { main: '#FFF' },
+      },
+   });
 
    /** Verificacion de token on init */
    useFetchUser(() => {

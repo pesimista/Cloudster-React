@@ -4,13 +4,20 @@
 //SVG
 import folder from './svg/folder.svg';
 import audio from './svg/Papirus-Team-Papirus-audio.svg';
+import program from './svg/Papirus-Team-Papirus-Mimetypes-App-x-msdos-program.svg';
 import compress from './svg/Papirus-Team-Papirus-compress.svg';
 import html from './svg/Papirus-Team-Papirus-html.svg';
 import pic from './svg/Papirus-Team-Papirus-ImageGeneric.svg';
 import iso from './svg/Papirus-Team-Papirus-iso.svg';
 import json from './svg/Papirus-Team-Papirus-json.svg';
-import Mimetypes from './svg/Papirus-Team-Papirus-Mimetypes-X-office-document.svg';
+import js from './svg/Papirus-Team-Papirus-Mimetypes-App-x-javascript.svg';
+import doc from './svg/Papirus-Team-Papirus-Mimetypes-X-office-document.svg';
+import pp from './svg/Papirus-Team-Papirus-Mimetypes-X-office-presentation.svg';
+import excel from './svg/Papirus-Team-Papirus-Mimetypes-X-office-spreadsheet.svg';
 import pdf from './svg/Papirus-Team-Papirus-pdf.svg';
+import book from './svg/Paomedia-Small-N-Flat-Book.svg';
+import text from './svg/Paomedia-Small-N-Flat-File-text.svg';
+import jar from './svg/Papirus-Team-Papirus-Mimetypes-Text-x-java.svg';
 import video from './svg/Papirus-Team-Papirus-video.svg';
 import zerosize from './svg/Papirus-Team-Papirus-zerosize.svg';
 //SVG
@@ -52,8 +59,12 @@ export const getIcon = (isFile, ext) => {
       case 'jpg':
       case 'png':
          return pic;
+      case 'exe':
+      case 'msi':
+         return program;
       case 'mp3':
       case 'wav':
+      case 'm4a':
          return audio;
       case 'mp4':
       case 'mkv':
@@ -62,14 +73,27 @@ export const getIcon = (isFile, ext) => {
       case 'zip':
          return compress;
       case 'json':
-      case 'js':
          return json;
+      case 'js':
+      case 'jsx':
+         return js;
+      case 'jar':
+         return jar;
       case 'iso':
          return iso;
       case 'pdf':
          return pdf;
       case 'txt':
-         return Mimetypes;
+         return text;
+      case 'epub':
+         return book;
+      case 'doc':
+      case 'docx':
+         return doc;
+      case 'pptx':
+         return pp;
+      case 'xlsx':
+         return excel;
       case 'html':
          return html;
       default:

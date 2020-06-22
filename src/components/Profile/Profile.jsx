@@ -44,6 +44,12 @@ const useStyles = makeStyles(() => ({
       overflow: "auto",
       maxHeight: 300,
    },
+   useDark: {
+      backgroundColor: '#393d46'
+   },
+   useLight: {
+      color: 'white'
+   },
 }));
 
 const reactLink = React.forwardRef((props, ref) => (
@@ -71,11 +77,10 @@ const Profile = () => {
 
    /** @type {context}*/
    const {
-      state: { user },
+      state: { theme , user },
    } = useContext(saduwux);
    const [state, update] = React.useReducer(reducer, initialState);
 
-   /** Algo así para buscar los archivos subidos por el usuario */
    React.useEffect(() => {
       fetch(`http://${route}:1234/api/users/${user.id}/files`, {
          method: "GET",
@@ -97,7 +102,6 @@ const Profile = () => {
    }*/
 
    const files = () => state.files.map((file, index) => {
-      ///// Método para mostrar los archivos subidos por el usuario
       return (
          <ListItem key={index}>
             <ListItemIcon>
@@ -117,20 +121,12 @@ const Profile = () => {
 
    if (!user.id) return <Redirect to="/notlogged" />;
 
-   const data = [
-      //Hacer método para juntar archivos por tipo
-      { name: "pdf", value: 400 },
-      { name: "png", value: 350 },
-      { name: "Word", value: 100 },
-      { name: "mp3", value: 200 },
-   ];
-
    return (
       <Box component="main" width={1} textAlign="center" className="min-h100">
-         <Container fixed disableGutters maxWidth="md">
+         <Container className={theme ? classes.useDark : ''} fixed disableGutters maxWidth="md">
             <Grid container alignItems="center">
                <Grid item xs justify="center" container>
-                  <Grid item>
+                  <Grid item xs={12}>
                      <Card className={classes.card}>
                         <CardHeader title="Perfil" />
                         <Divider />
@@ -198,7 +194,7 @@ const Profile = () => {
                      <Card className={classes.card}>
                         <CardHeader title="Tipos de Archivos" />
                         <Divider />
-                        <FileChartContent matches={matches} data={state.chartData} />
+                        <FileChartContent theme={theme} matches={matches} data={state.chartData} />
                      </Card>
                   </Grid>
                </Grid>
@@ -211,9 +207,9 @@ const Profile = () => {
    );
 };
 
-const FileChartContent = ({ data, matches }) => {
+const FileChartContent = ({ data, matches, theme }) => {
 
-   if(!data.length) return <div></div>
+   if (!data.length) return <div></div>
 
    const result = data.reduce((totalValue, ext) => totalValue + ext.value, 0); // Suma de todos los archivos
    const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]; // Colores para el chart
