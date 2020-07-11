@@ -14,6 +14,12 @@ const reactLink = React.forwardRef((props, ref) =>
 reactLink.displayName = 'reactLink';
 
 const useStyles = makeStyles({
+  box: {
+    gridColumnStart: '1',
+    gridColumnEnd: '3',
+    gridRowStart: '1',
+    gridRowEnd: '3',
+  },
 	card: { minWidth: 275 },
 	title: { fontSize: 14 },
 	pos: { marginBottom: 12 },
@@ -34,7 +40,8 @@ const RequireLogin = () => {
 			width={1}
 			justifyContent="center"
 			alignItems="center"
-			className="min-h100">
+			className={classes.box}
+    >
 			<Card className={classes.card}>
 				<CardContent>
 					<Typography variant="h5" component="h2">
@@ -46,11 +53,15 @@ const RequireLogin = () => {
 				</CardContent>
 				<CardActions>
 					<Link component={reactLink} to='/login' underline='none'>
-						<Box fontWeight="fontWeightBold">Inicia Sesión</Box>
+						<Box fontWeight="fontWeightBold">
+              Inicia Sesión
+            </Box>
 					</Link>
 					<div className={classes.grow} />
 					<Link component={reactLink} to='/register' underline='none'>
-						<Box fontWeight="fontWeightBold">Registrarte</Box>
+						<Box fontWeight="fontWeightBold">
+              Registrarte
+            </Box>
 					</Link>
 				</CardActions>
 			</Card>

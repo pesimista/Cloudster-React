@@ -175,7 +175,7 @@ const Files = ({
 
 	if (!isFile) {
 		return (
-			<Grid item xs={4} sm={3} md={2} lg={1} className={classes.modal} >
+			<Grid style={{height: '120px'}} item xs={4} sm={3} md={2} lg={1} className={classes.modal} >
 				<Box
 					onClick={() => updateFolder(ino)}
 					onContextMenu={(e) => e.preventDefault()}
@@ -186,7 +186,7 @@ const Files = ({
 			</Grid>
 		);
 	} else return (
-		<Grid item xs={4} sm={3} md={2} lg={1}>
+		<Grid style={{height: '120px'}} item xs={4} sm={3} md={2} lg={1}>
 			<Box
 				textAlign="center"
 				className={classes.file}>
