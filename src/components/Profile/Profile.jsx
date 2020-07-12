@@ -35,250 +35,249 @@ import { saduwux } from "../SF/Context";
 import { handleFetch } from "../SF/helpers";
 
 const useStyles = makeStyles(() => ({
-   avatar: { backgroundColor: green[500] },
-   card: {
-      minWidth: 300,
-      margin: 5,
-   },
-   list: {
-      overflow: "auto",
-      maxHeight: 300,
-   },
-   useDark: {
-      backgroundColor: '#393d46'
-   },
-   useLight: {
-      color: 'white'
-   },
+  avatar: { backgroundColor: green[500] },
+  main: {
+    overflow: 'auto'
+  },
+  card: {
+    minWidth: 300,
+    margin: 5,
+  },
+  list: {
+    overflow: "auto",
+    maxHeight: 300,
+  },
+  useDark: {
+    backgroundColor: '#393d46'
+  },
+  useLight: {
+    color: 'white'
+  },
 }));
 
 const reactLink = React.forwardRef((props, ref) => (
-   <RouterLink innerRef={ref} {...props} />
+  <RouterLink innerRef={ref} {...props} />
 ));
 reactLink.displayName = "reactLink";
 
 const initialState = {
-   files: [],
-   shouldUpdate: false,
-   totalSize: 0,
-   parsedSize: '',
-   chartData: []
+  files: [],
+  shouldUpdate: false,
+  totalSize: 0,
+  parsedSize: '',
+  chartData: []
 };
 const reducer = (state, action) => {
-   console.log(action);
-   return { ...state, ...action };
+  return { ...state, ...action };
 };
 
 const route = window.location.hostname.replace(/(:)\d/g, '');
 
 const Profile = () => {
-   const classes = useStyles();
-   const matches = useMediaQuery((theme) => theme.breakpoints.up("sm"));
+  const classes = useStyles();
+  const matches = useMediaQuery((theme) => theme.breakpoints.up("sm"));
 
-   /** @type {context}*/
-   const {
-      state: { theme , user },
-   } = useContext(saduwux);
-   const [state, update] = React.useReducer(reducer, initialState);
+  /** @type {context}*/
+  const { state: { user, theme } } = useContext(saduwux);
+  const [state, update] = React.useReducer(reducer, initialState);
 
-   React.useEffect(() => {
-      fetch(`http://${route}:1234/api/users/${user.id}/files`, {
-         method: "GET",
-         headers: {
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("token"),
-         },
-      }).then(
-         handleFetch
-      ).then(
-         (response) => update({ ...response, files: sort(response.files) })
-      ).catch((mistake) =>
-         console.log(`/api/files/${user.id}/files`, mistake.message)
-      );
-   }, [user.id, state.shouldUpdate]);
+  /** Algo así para buscar los archivos subidos por el usuario */
+  React.useEffect(() => {
+    fetch(`http://${route}:1234/api/users/${user.id}/files`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    }).then(
+      handleFetch
+    ).then(
+      (response) => update({ ...response, files: sort(response.files) })
+    ).catch((mistake) =>
+      console.log(`/api/files/${user.id}/files`, mistake.message)
+    );
+  }, [user.id, state.shouldUpdate]);
 
-   /* const toFolder = () => {  //// Método para llevar al folder en el que se encuentra el archivo en el Search
+  /* const toFolder = () => {  //// Método para llevar al folder en el que se encuentra el archivo en el Search
 
-   }*/
+  }*/
 
-   const files = () => state.files.map((file, index) => {
-      return (
-         <ListItem key={index}>
-            <ListItemIcon>
-               <SvgIcon
-                  component={!file.ext ? FolderIcon : DescriptionIcon}
-               />
-            </ListItemIcon>
-            <ListItemText primary={file.name} secondary={null} />
-            <ListItemSecondaryAction>
-               <IconButton edge="end">
-                  <SvgIcon component={MoreHorizIcon} />
-               </IconButton>
-            </ListItemSecondaryAction>
-         </ListItem>
-      );
-   });
+  const files = () => state.files.map((file, index) => {
+    return (
+      <ListItem key={index}>
+        <ListItemIcon>
+          <SvgIcon
+            component={!file.ext ? FolderIcon : DescriptionIcon}
+          />
+        </ListItemIcon>
+        <ListItemText primary={file.name} secondary={null} />
+        <ListItemSecondaryAction>
+          <IconButton edge="end">
+            <SvgIcon component={MoreHorizIcon} />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
+  });
 
-   if (!user.id) return <Redirect to="/notlogged" />;
+  if (!user.id) return <Redirect to="/notlogged" />;
 
-   return (
-      <Box component="main" width={1} textAlign="center" className="min-h100">
-         <Container className={theme ? classes.useDark : ''} fixed disableGutters maxWidth="md">
-            <Grid container alignItems="center">
-               <Grid item xs justify="center" container>
-                  <Grid item xs={12}>
-                     <Card className={classes.card}>
-                        <CardHeader title="Perfil" />
-                        <Divider />
-                        <CardContent>
-                           <Typography variant="h3">{user.usuario}</Typography>
-                           <Box m={0.5}>
-                              <Box display="flex" justifyContent="center">
-                                 <Avatar className={classes.avatar}>
-                                    {user.nivel}
-                                 </Avatar>
-                              </Box>
-                              <Typography color="textSecondary">
-                                 Nivel de jerarquía
-                              </Typography>
-                           </Box>
-                           <Divider />
-                           <Box m={0.5}>
-                              <Typography>
-                                 {user.nombre} {user.apellido}
-                              </Typography>
-                              <Typography>
-                                 Miembro desde: {user.desde}
-                              </Typography>
-                           </Box>
-                           <Divider />
-                           <Box m={0.5}>
-                              <Typography>
-                                 Espacio en el servidor: {state.parsedSize}
-                              </Typography>
-                              <Typography>
-                                 Total de archivos subidos: {state.files.length}
-                              </Typography>
-                           </Box>
-                           <Divider />
-                        </CardContent>
-                        <CardActions>
-                           <Box mx="auto">
-                              <Link
-                                 component={reactLink}
-                                 to="/configuracion"
-                                 underline="none"
-                              >
-                                 <Button variant="contained" color="primary">
-                                    Configuración
-                                 </Button>
-                              </Link>
-                           </Box>
-                        </CardActions>
-                     </Card>
-                  </Grid>
-               </Grid>
-               <Grid item container xs>
-                  <Grid item xs={12}>
-                     <Card className={classes.card}>
-                        <CardHeader title="Archivos Subidos" />
-                        <Divider />
-                        <CardContent>
-                           <List className={classes.list} dense={true}>
-                              {files()}
-                           </List>
-                        </CardContent>
-                     </Card>
-                  </Grid>
-                  <Grid item xs={12}>
-                     <Card className={classes.card}>
-                        <CardHeader title="Tipos de Archivos" />
-                        <Divider />
-                        <FileChartContent theme={theme} matches={matches} data={state.chartData} />
-                     </Card>
-                  </Grid>
-               </Grid>
+  return (
+    <Box
+      className={classes.main}
+      component="main"
+      width={1}
+      textAlign="center"
+    >
+      <Container className={theme ? classes.useDark : ''} fixed disableGutters maxWidth="md">
+        <Grid container alignItems="center">
+          <Grid item xs justify="center" container>
+            <Grid item xs={12}>
+              <Card className={classes.card}>
+                <CardHeader title="Perfil" />
+                <Divider />
+                <CardContent>
+                  <Typography variant="h3">{user.usuario}</Typography>
+                  <Box m={0.5}>
+                    <Box display="flex" justifyContent="center">
+                      <Avatar className={classes.avatar}>
+                        {user.nivel}
+                      </Avatar>
+                    </Box>
+                    <Typography color="textSecondary">
+                      Nivel de jerarquía
+                    </Typography>
+                  </Box>
+                  <Divider />
+                  <Box m={0.5}>
+                    <Typography>
+                      {user.nombre} {user.apellido}
+                    </Typography>
+                    <Typography>
+                      Miembro desde: {user.desde}
+                    </Typography>
+                  </Box>
+                  <Divider />
+                  <Box m={0.5}>
+                    <Typography>
+                      Espacio en el servidor: {state.parsedSize}
+                    </Typography>
+                    <Typography>
+                      Total de archivos subidos: {state.files.length}
+                    </Typography>
+                  </Box>
+                  <Divider />
+                </CardContent>
+                <CardActions>
+                  <Box mx="auto">
+                    <Link
+                      component={reactLink}
+                      to="/configuracion"
+                      underline="none"
+                    >
+                      <Button variant="contained" color="primary">
+                        Configuración
+                      </Button>
+                    </Link>
+                  </Box>
+                </CardActions>
+              </Card>
             </Grid>
-         </Container>
-         <Box display={{ xs: "flex", sm: "none" }}>
-            <Toolbar variant="dense" />
-         </Box>
+          </Grid>
+          <Grid item container xs>
+            <Grid item xs={12}>
+              <Card className={classes.card}>
+                <CardHeader title="Archivos Subidos" />
+                <Divider />
+                <CardContent>
+                  <List className={classes.list} dense={true}>
+                    {files()}
+                  </List>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <Card className={classes.card}>
+                <CardHeader title="Tipos de Archivos" />
+                <Divider />
+                <FileChartContent matches={matches} data={state.chartData} />
+              </Card>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Container>
+      <Box display={{ xs: "flex", sm: "none" }}>
+        <Toolbar variant="dense" />
       </Box>
-   );
+    </Box>
+  );
 };
 
-const FileChartContent = ({ data, matches, theme }) => {
+const FileChartContent = ({ data, matches }) => {
 
-   if (!data.length) return <div></div>
+  if (!data.length) {
+    return <div></div>;
+  }
 
-   const result = data.reduce((totalValue, ext) => totalValue + ext.value, 0); // Suma de todos los archivos
-   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]; // Colores para el chart
+  const result = data.reduce((totalValue, ext) => totalValue + ext.value, 0); // Suma de todos los archivos
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]; // Colores para el chart
 
 
-   return (<CardContent>
-      <PieChart
-         width={matches ? 400 : 300}
-         height={300}
-         style={{ fontFamily: "sans-serif" }}
+  return (<CardContent>
+    <PieChart
+      width={matches ? 400 : 300}
+      height={300}
+      style={{ fontFamily: "sans-serif" }}
+    >
+      <Pie
+        data={data}
+        cx={"50%"}
+        cy={"50%"}
+        label
+        innerRadius={"68.9656%"}
+        outerRadius={"80%"}
+        fill="#8884d8"
+        paddingAngle={3}
+        dataKey="value"
+        isAnimationActive={false}
       >
-         <Pie
-            data={data}
-            cx={"50%"}
-            cy={"50%"}
-            label
-            innerRadius={"68.9656%"}
-            outerRadius={"80%"}
-            fill="#8884d8"
-            paddingAngle={3}
-            dataKey="value"
-            isAnimationActive={false}
-         >
-            <Label
-               value={result}
-               style={{ fontSize: "1.5rem" }}
-               offset={0}
-               position="center"
-            />
-            {data.map((entry, index) => (
-               <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-               />
-            ))}
-         </Pie>
-         <Legend
-            layout={matches ? "vertical" : "horizontal"}
-            verticalAlign={matches ? "middle" : "bottom"}
-            align={matches ? "left" : "center"}
-         />
-      </PieChart>
-   </CardContent>);
+        <Label
+          value={result}
+          style={{ fontSize: "1.5rem" }}
+          offset={0}
+          position="center"
+        />
+        {data.map((entry, index) => (
+          <Cell
+            key={`cell-${index}`}
+            fill={COLORS[index % COLORS.length]}
+          />
+        ))}
+      </Pie>
+      <Legend
+        layout={matches ? "vertical" : "horizontal"}
+        verticalAlign={matches ? "middle" : "bottom"}
+        align={matches ? "left" : "center"}
+      />
+    </PieChart>
+  </CardContent>);
 }
 
 /** @param {file[]} arr */
 const sort = (arr) => {
-   arr.sort(byName);
-   arr.sort(byIno);
-   return arr;
+  arr.sort(byName);
+  arr.sort(byIno);
+  return arr;
 }; //Sort
 /**
  * @param {file} a
  * @param {file} b
  */
-const byName = (a, b) => {
-   const x = a.name.toLowerCase();
-   const y = b.name.toLowerCase();
-   return compare(x, y);
-}; //By name
+const byName = (a, b) => a.name.localeCompare(b.name); //By name
 /**
  * @param {file} a
  * @param {file} b
  */
-const byIno = (a, b) => {
-   return compare(a.ino, b.ino);
-}; //ByIno
-const compare = (a, b) => {
-   return a < b ? -1 : a > b ? 1 : 0;
-}; //Compare
+const byIno = (a, b) => a.ino - b.ino;
 
 export default Profile;

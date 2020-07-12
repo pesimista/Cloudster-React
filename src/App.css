@@ -1,0 +1,10 @@
+.container {
+  display: grid;
+  
+  grid-template-rows: [header] 64px [main-content] 1fr;
+  grid-template-columns: [sidebar] 52px [main-content] 1fr;
+}
+
+.position-static {
+  position: static !important;
+}
