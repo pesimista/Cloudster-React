@@ -49,8 +49,8 @@ const useStyles = makeStyles((theme) => ({
       paddingLeft: 8,
       paddingRight: 8,
     },
-    '& .hide-on-big':{
-      display: 'none'
+    '& .hide-on-big': {
+      display: 'none',
     },
     [theme.breakpoints.down('xs')]: {
       gridRowStart: 3,
@@ -58,12 +58,12 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'row',
       },
       '& .MuiListItem-gutters': {
-        padding: '0px'
+        padding: '0px',
       },
       '& .MuiList-root': {
         display: 'flex',
         padding: '0px',
-        width: '100%'
+        width: '100%',
       },
       '& .Mui-selected': {
         border: 'none',
@@ -71,20 +71,20 @@ const useStyles = makeStyles((theme) => ({
       },
       '& .MuiButtonBase-root': {
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
       },
-      '& .hide-on-small':{
-        display: 'none'
+      '& .hide-on-small': {
+        display: 'none',
       },
       '& .hide-on-big': {
-        display: 'flex'
+        display: 'flex',
       },
-    }
+    },
   },
   dark: {
     '& .MuiListItemIcon-root': { color: 'white' },
     '& .MuiDrawer-paper': { backgroundColor: '#252525' },
-  }
+  },
 }));
 
 const Sidebar = () => {
@@ -117,27 +117,27 @@ const Sidebar = () => {
             selected={selectedIndex === index}
           >
             <ListItemIcon>
-              <SvgIcon fontSize='large' component={routesComponents[index]} />
+              <SvgIcon fontSize="large" component={routesComponents[index]} />
             </ListItemIcon>
           </ListItem>
-          <Divider className='hide-on-small'/>
+          <Divider className="hide-on-small" />
         </React.Fragment>
       );
       prev.push(fragment);
       return prev;
     }, []);
-  
+
   const getClass = () => {
     let className = `${classes.aside} `;
     className += globalState.theme ? classes.dark : '';
     return className;
-  }
+  };
   return (
-    <Box component='aside' className={getClass()}>
+    <Box component="aside" className={getClass()}>
       <Drawer
         className={`min-h100`}
-        color='primary.main'
-        variant='permanent'
+        color="primary.main"
+        variant="permanent"
         classes={{
           paper: `flex position-static`,
         }}
@@ -145,27 +145,22 @@ const Sidebar = () => {
         <List>
           {listItems()}
           <ListItem
-            className='hide-on-big'
+            className="hide-on-big"
             button
             component={reactLink}
-            to='/'
+            to="/"
             onClick={signout}
           >
             <ListItemIcon>
-              <ExitToAppIcon fontSize='large' />
+              <ExitToAppIcon fontSize="large" />
             </ListItemIcon>
           </ListItem>
         </List>
 
-        <List className='hide-on-small'>
-          <ListItem
-            button
-            component={reactLink}
-            to='/'
-            onClick={signout}
-          >
+        <List className="hide-on-small">
+          <ListItem button component={reactLink} to="/" onClick={signout}>
             <ListItemIcon>
-              <ExitToAppIcon fontSize='large' />
+              <ExitToAppIcon fontSize="large" />
             </ListItemIcon>
           </ListItem>
         </List>

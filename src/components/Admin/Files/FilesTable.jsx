@@ -47,7 +47,7 @@ const FilesTableContainer = ({
   useTheme,
   onResponse,
   loadingComponent,
-  criteria
+  criteria,
 }) => {
   const classes = useStyles();
 
@@ -251,7 +251,9 @@ const TableContent = ({
           );
           break;
         case 'lastModified':
-          constent = new Date(value[col.key] || value.birthtime).toLocaleString('es-VE');
+          constent = new Date(value[col.key] || value.birthtime).toLocaleString(
+            'es-VE'
+          );
           break;
         case '': {
           const title = value.available ? 'Dar de baja' : 'Restaurar';

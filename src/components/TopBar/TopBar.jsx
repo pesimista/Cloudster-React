@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('xs')]: {
       gridColumnStart: 1,
       gridColumnEnd: 2,
-    }
+    },
   },
   menuButton: { marginRight: theme.spacing(2) },
   inputRoot: { color: 'inherit' },
@@ -97,7 +97,7 @@ const TopBar = () => {
     });
 
   const searchBar = () => {
-    if (!routes.some( route => location.pathname.includes(route))) {
+    if (!routes.some((route) => location.pathname.includes(route))) {
       return '';
     }
     return (
@@ -118,8 +118,8 @@ const TopBar = () => {
           }
         />
       </div>
-    ); 
-  }
+    );
+  };
 
   return (
     <AppBar className={classes.appBar}>

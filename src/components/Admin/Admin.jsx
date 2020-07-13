@@ -29,7 +29,7 @@ import {
 } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import FilesTableContainer from './Files/FilesTable';
-import Details from './Details'
+import Details from './Details';
 import UsersTableContainer from './Users/UsersTable';
 
 const useStyles = makeStyles({
@@ -88,7 +88,7 @@ const useStyles = makeStyles({
       '& #subheader': {
         color: '#fff',
         borderBottomColor: '#cecece',
-      }
+      },
     },
   },
   card: {
@@ -227,8 +227,8 @@ const Admin = (props) => {
         <Divider />
       </React.Fragment>
     ));
-  
-  const spinner = <Spinner useDark={globalState.theme}/>;
+
+  const spinner = <Spinner useDark={globalState.theme} />;
 
   return (
     <Box component="main" display="flex" className={mainClass()}>
@@ -263,7 +263,7 @@ const Admin = (props) => {
             path={`${props.match.path}/archivos/detalles`}
             render={() => (
               <Details
-                key='files'
+                key="files"
                 dark={globalState.theme}
                 onResponse={addBar}
                 loadingComponent={spinner}
@@ -286,9 +286,9 @@ const Admin = (props) => {
             path={`${props.match.path}/usuarios/detalles`}
             render={() => (
               <Details
-                key='users'
+                key="users"
                 dark={globalState.theme}
-                type='users'
+                type="users"
                 onResponse={addBar}
                 loadingComponent={spinner}
               />
@@ -336,7 +336,7 @@ const WelcomeAdmin = () => {
   );
 };
 
-const Spinner = ({useDark}) => {
+const Spinner = ({ useDark }) => {
   const { main } = makeStyles(() => ({
     main: {
       minHeight: '100%',
@@ -355,7 +355,7 @@ const Spinner = ({useDark}) => {
       <CircularProgress size={100} thickness={5} />
     </div>
   );
-}
+};
 
 const RequestSnack = ({ onClose, onExit, open, data }) => {
   if (!open) {

@@ -147,7 +147,10 @@ const App = () => {
       return;
     }
 
-    dispatch({ type: 'update', payload: { logStatus: 1, theme: Boolean(usingDark) } });
+    dispatch({
+      type: 'update',
+      payload: { logStatus: 1, theme: Boolean(usingDark) },
+    });
     fetch(`/api/users/token`, {
       method: 'GET',
       headers: {

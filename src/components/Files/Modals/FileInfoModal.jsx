@@ -24,7 +24,9 @@ const useStyles = makeStyles((theme) => ({
 
 const FileInfoModal = ({ file, handleClose, open }) => {
   const classes = useStyles();
-  const date = new Date(file.lastModified || file.birthtime).toLocaleString('es-VE');
+  const date = new Date(file.lastModified || file.birthtime).toLocaleString(
+    'es-VE'
+  );
   if (!file) return '';
   else
     return (

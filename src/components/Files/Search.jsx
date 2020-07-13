@@ -85,13 +85,13 @@ const useStyles = makeStyles((theme) => ({
   hideOnBig: {
     display: 'none',
     [theme.breakpoints.down('xs')]: {
-      display: 'inline-block'
+      display: 'inline-block',
     },
-  }
+  },
 }));
 
 const Alert = (props) => {
-  return <MuiAlert elevation={6} variant='filled' {...props} />;
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
 /** @type {initialState} */
@@ -248,10 +248,10 @@ const Search = () => {
 
   return (
     <React.Fragment>
-      <Box className={mainClass()} component='main'>
-        <AppBar component='div' color='secondary' className={classes.bar}>
-          <Toolbar variant='dense'>
-            <Grid container alignItems='center'>
+      <Box className={mainClass()} component="main">
+        <AppBar component="div" color="secondary" className={classes.bar}>
+          <Toolbar variant="dense">
+            <Grid container alignItems="center">
               <Grid
                 className={classes.sectionMobile}
                 container
@@ -263,19 +263,19 @@ const Search = () => {
               >
                 <Grid item xs={3} sm={4}>
                   <IconButton
-                    edge='start'
+                    edge="start"
                     onClick={goBack}
-                    color='inherit'
-                    aria-label='menu'
+                    color="inherit"
+                    aria-label="menu"
                   >
                     <ArrowBackIcon />
                   </IconButton>
                 </Grid>
                 <Grid item xs={3} sm={4}>
                   <IconButton
-                    edge='start'
-                    color='inherit'
-                    aria-label='menu'
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
                     onClick={() => update({ type: 'shouldUpdate' })}
                   >
                     <CachedIcon />
@@ -283,20 +283,20 @@ const Search = () => {
                 </Grid>
                 <Grid item xs={3} sm={4}>
                   <IconButton
-                    edge='start'
+                    edge="start"
                     onClick={goHome}
-                    color='inherit'
-                    aria-label='menu'
+                    color="inherit"
+                    aria-label="menu"
                   >
                     <HomeIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs={3} className={classes.hideOnBig} >
+                <Grid item xs={3} className={classes.hideOnBig}>
                   <IconButton
-                    edge='start'
+                    edge="start"
                     onClick={handleUploadModal}
-                    color='inherit'
-                    aria-label='upload'
+                    color="inherit"
+                    aria-label="upload"
                   >
                     <CloudUploadIcon />
                   </IconButton>
@@ -309,8 +309,8 @@ const Search = () => {
                 md={7}
                 lg={10}
               >
-                <Box display='flex'>
-                  <Typography variant='h6' className={classes.title}>
+                <Box display="flex">
+                  <Typography variant="h6" className={classes.title}>
                     Puedes acceder desde {window.location.origin}
                   </Typography>
                 </Box>
@@ -324,9 +324,9 @@ const Search = () => {
                 style={{ textAlign: 'end' }}
               >
                 <Button
-                  color='inherit'
+                  color="inherit"
                   startIcon={<CloudUploadIcon />}
-                  component='span'
+                  component="span"
                   onClick={() => handleUploadModal()}
                 >
                   Subir
@@ -394,14 +394,14 @@ const MovingBar = ({ movingFile: file, className, move, cancel, theme }) => {
 
   return (
     <div className={className}>
-      <Typography variant='h6' className={spanClass.typo}>
+      <Typography variant="h6" className={spanClass.typo}>
         Moviendo: {nameToShow}
       </Typography>
       <div>
         <Button
           disableElevation
           onClick={() => cancel()}
-          size='large'
+          size="large"
           startIcon={<CancelIcon />}
           className={spanClass.button}
         >
@@ -410,7 +410,7 @@ const MovingBar = ({ movingFile: file, className, move, cancel, theme }) => {
         <Button
           disableElevation
           onClick={() => move()}
-          size='large'
+          size="large"
           endIcon={<SendIcon />}
           className={spanClass.button}
         >

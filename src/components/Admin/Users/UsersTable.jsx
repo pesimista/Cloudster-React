@@ -50,7 +50,7 @@ const UserTableContainer = ({
   adminID,
   onResponse,
   loadingComponent,
-  criteria
+  criteria,
 }) => {
   const classes = useStyles();
 
@@ -79,7 +79,7 @@ const UserTableContainer = ({
           ...user,
           short: user.id.slice(-5),
           updating: adminID === user.id,
-          index
+          index,
         }));
         setState({ userList: users });
       })
@@ -276,11 +276,14 @@ const TableContent = ({
   onChangeSelect,
   onClickLock,
   onClickTrash,
-  criteria = ''
+  criteria = '',
 }) => {
   const regex = new RegExp(criteria, 'ig');
   const content = data.reduce((collection, value) => {
-    const match = value.usuario.match(regex) || value.nombre.match(regex) || value.apellido.match(regex);
+    const match =
+      value.usuario.match(regex) ||
+      value.nombre.match(regex) ||
+      value.apellido.match(regex);
     if (criteria && !match) {
       return collection;
     }
