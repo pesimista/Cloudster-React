@@ -104,7 +104,8 @@ const ModalContent = (props) => {
                <img
                   src={getIcon(true, state.ext)}
                   width="164"
-                  height="164" />
+                  height="164"
+                  alt="Subir imagen..." />
             </Grid>
             <Grid item xs={12}>
                <Typography
