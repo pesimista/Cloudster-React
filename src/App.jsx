@@ -18,7 +18,6 @@ import ProfileSettings from './components/Profile/ProfileSettings';
 import Register from './components/Register/Register';
 import Reproductor from './components/Reproductor/Reproductor';
 import Sidebar from './components/Sidebar/Sidebar';
-// import Bottombar from './components/Sidebar/Bottombar';
 import TopBar from './components/TopBar/TopBar';
 import Welcome from './components/Welcome/Welcome';
 import NotFound from './components/Err/NotFound';
@@ -33,7 +32,8 @@ const useStyles = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
   // main: { display: 'flex', minWidth: '100%', flexGrow: 1, position: 'relaive' },
   theme: {
-    backgroundColor: theme.palette.background.default, color: theme.palette.text.primary
+    backgroundColor: theme.palette.background.default,
+    color: theme.palette.text.primary
   }, useDark: {
     backgroundColor: '#393d46'
   }
@@ -184,19 +184,21 @@ const App = () => {
             "/admin"
           ]}
         />
+        
         <Switch>
-          <Route exact path="/" component={Welcome} />
+          <Route exact path="/" component={Welcome} /> 
           <Route exact path="/login" component={Login} />
           <Route exact path="/recover" component={Recover} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/notlogged" component={RequireLogin} />
-          <ProtectedRoute exact path="/reproductor" render={() => <div></div>} />
+          <ProtectedRoute exact path="/reproductor" render={() => <div style={{display: 'none'}}></div>} />
           <ProtectedRoute exact path="/busqueda" component={Search} />
           <ProtectedRoute exact path="/perfil" component={Profile} />
           <ProtectedRoute exact path="/configuracion" component={ProfileSettings} />
           <ProtectedRoute requireAdmin path="/admin" component={Admin} />
           <Route component={NotFound} />
         </Switch>
+        
         <ProtectedRoute
           path={["/perfil", "/configuracion", "/busqueda", "/transfers", "/reproductor", "/admin"]}
           component={Reproductor}

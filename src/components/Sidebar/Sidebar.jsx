@@ -14,8 +14,9 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { saduwux } from "../SF/Context";
+import green from '@material-ui/core/colors/green';
 
-const routes = [`/busqueda`, `/reproductor`, `/perfil`, `/admin/files`];
+const routes = [`/busqueda`, `/reproductor`, `/perfil`, `/admin`];
 const routesComponents = [FolderIcon, PlayCircleFilledIcon, AccountCircleIcon, SettingsIcon];
 
 const reactLink = React.forwardRef((props, ref) =>
@@ -28,9 +29,13 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    width: '100%'
+    width: '100%',
   },
   drawer: {
+    '& .Mui-selected': {
+      backgroundColor: 'rgba(0,0,0,0.1)',
+      borderLeft: '2px solid ' + green[500]
+    },
     flexShrink: 0,
     '& .MuiListItemIcon-root': { minWidth: '0' },
     '& .MuiListItem-gutters': {
@@ -52,7 +57,8 @@ const Sidebar = () => {
   const { state: globalState, dispatch } = React.useContext(saduwux);
 
   React.useEffect(() => {
-    let x = routes.indexOf(location.pathname);
+    const [,url] = location.pathname.split('/');
+    const x = routes.indexOf(`/${url}`);
     setSelectedIndex(x)
   }, [location.pathname])
 

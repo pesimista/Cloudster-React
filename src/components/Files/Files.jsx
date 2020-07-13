@@ -13,231 +13,266 @@ import { useHistory } from "react-router-dom";
 import { getIcon } from "../SF/helpers";
 
 const useStyles = makeStyles((theme) => ({
-	popper: { zIndex: 10000 },
-	text: { color: "white" },
-	image: { width: 164, height: 164 },
-	paper: {
-		margin: theme.spacing(1),
-		backgroundColor: "inherit",
-	},
-	paperMod: {
-		padding: theme.spacing(2),
-		margin: "auto",
-		maxWidth: 700,
-	},
-	modal: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	file: { margin: "0px 5px 10px", cursor: "pointer" }
+  popper: { zIndex: 10000 },
+  text: { color: "white" },
+  image: { width: 164, height: 164 },
+  paper: {
+    margin: theme.spacing(1),
+    backgroundColor: "inherit",
+  },
+  paperMod: {
+    padding: theme.spacing(2),
+    margin: "auto",
+    maxWidth: 700,
+  },
+  modal: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  file: { margin: "0px 5px 10px", cursor: "pointer" }
 }));
 
 const initialState = {
-	open: false,
-	openModal: false,
-	progress: null,
-	total: null,
+  open: false,
+  openModal: false,
+  progress: null,
+  total: null,
 };
 
 const reducer = (state, action) => {
-	switch (action.type) {
-		case "start": {
-			return {
-				...state,
-				progress: 0,
-				total: action.total,
-			};
-		}
-		case "add": {
-			const received = state.progress + action.progress;
-			console.log(`
+  switch (action.type) {
+    case "start": {
+      return {
+        ...state,
+        progress: 0,
+        total: action.total,
+      };
+    }
+    case "add": {
+      const received = state.progress + action.progress;
+      console.log(`
 			Received ${received} bytes of ${state.total} 
 				${((received * 100) / state.total).toFixed(2)}%
 			`);
-			return {
-				...state,
-				progress: received,
-			};
-		}
-		case "end": {
-			return {
-				...state,
-				progress: 0,
-				total: 0,
-			};
-		}
+      return {
+        ...state,
+        progress: received,
+      };
+    }
+    case "end": {
+      return {
+        ...state,
+        progress: 0,
+        total: 0,
+      };
+    }
 
-		default: {
-			return { ...state, ...action };
-		}
-	}
+    default: {
+      return { ...state, ...action };
+    }
+  }
 };
 
 const Files = ({
-	file,
-	...props
+  file,
+  move: { setMovingFile, movingFile },
+  ...props
 }) => {
-	const classes = useStyles();
-	const history = useHistory();
+  const classes = useStyles();
+  const history = useHistory();
 
-	const { ino, name, ext, isFile } = file;
+  const { ino, name, ext, isFile } = file;
 
-	const [state, update] = React.useReducer(reducer, initialState);
-	// const { state: globalState, dispatch } = useContext(saduwux);
+  const [state, update] = React.useReducer(reducer, initialState);
+  // const { state: globalState, dispatch } = useContext(saduwux);
 
-	const { updateFolder, updatePlayer } = props;
-	const anchorRef = React.useRef(null);
-	const prevOpen = React.useRef(state.open);
-	const nameToShow = name.length > 30
-		? name.substring(0, 27).trim() + "..." + ext
-		: name;
+  const { updateFolder, updatePlayer } = props;
+  const anchorRef = React.useRef(null);
+  const prevOpen = React.useRef(state.open);
+  const nameToShow = name.length > 30
+    ? name.substring(0, 27).trim() + "..." + ext
+    : name;
 
-	React.useEffect(() => {
-		if (prevOpen.current && !state.open) {
-			anchorRef.current.focus();
-		}
-		prevOpen.current = state.open;
-	}, [state.open]);
+  React.useEffect(() => {
+    if (prevOpen.current && !state.open) {
+      anchorRef.current.focus();
+    }
+    prevOpen.current = state.open;
+  }, [state.open]);
 
-	const handleToggle = () => {
-		update({ open: !state.open });
-	};
+  const handleToggle = () => {
+    if(movingFile) {
+      return;
+    }
+    update({ open: !state.open });
+  };
 
-	const handleClose = (event) => {
-		if (anchorRef.current && anchorRef.current.contains(event.target)) {
-			return;
-		}
-		update({ open: false });
-	};
+  const handleClickAway = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+    update({ open: false });
+  };
 
-	const handleOpenModal = () => {
-		update({ open: false });
-		props.openModal(file)
-	};
+  const handleOpenModal = () => {
+    update({ open: false });
+    props.openModal(file)
+  };
 
-	const modRep = (id) => {
-		updatePlayer(id);
-		history.push("/reproductor");
-	}; //changeRep
+  const setFileAsMoving = () => {
+    update({ open: false });
+    setMovingFile(file);
+  }
 
-	const download = async (ino, filename) => {
-		const response = await fetch(`/api/files/${ino}/download`, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: localStorage.getItem("token"),
-			},
-		});
-		const reader = response.body.getReader();
-		const chunks = [];
+  const modRep = (id) => {
+    updatePlayer(id);
+    history.push("/reproductor");
+  }; //changeRep
 
-		update({ type: "start", total: +response.headers.get("Content-Length") });
-		// eslint-disable-next-line no-constant-condition
-		while (true) {
-			const { done, value } = await reader.read();
+  const download = async (ino, filename) => {
+    const response = await fetch(`/api/files/${ino}/download`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    const reader = response.body.getReader();
+    const chunks = [];
 
-			if (done) {
-				break;
-			}
-			chunks.push(value);
-			update({ type: "add", progress: value.length });
-		}
+    update({ type: "start", total: +response.headers.get("Content-Length") });
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read();
 
-		const blob = new Blob(chunks);
-		const url = window.URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = filename;
-		document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-		a.click();
-		a.remove(); //afterwards we remove the element again
-	};
+      if (done) {
+        break;
+      }
+      chunks.push(value);
+      update({ type: "add", progress: value.length });
+    }
 
-	const handleListKeyDown = (event) => {
-		if (event.index === "Tab") {
-			event.preventDefault();
-			update({ open: true });
-		}
-	};
+    const blob = new Blob(chunks);
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+    a.click();
+    a.remove(); //afterwards we remove the element again
+  };
 
-	const content = (
-		<Paper color="primary" elevation={0} className={classes.paper}>
-			<img src={getIcon(isFile, ext)} alt={ext} width="64" height="64"/>
-			<Typography
-				variant="body2"
-				className={props.useTheme ? classes.text : ""}
-				style={{ overflowWrap: "break-word" }}>
-				{nameToShow}
-			</Typography>
-		</Paper>
-	);
+  const handleListKeyDown = (event) => {
+    if (event.index === "Tab") {
+      event.preventDefault();
+      update({ open: true });
+    }
+  };
 
-	if (!isFile) {
-		return (
-			<Grid style={{height: '120px'}} item xs={4} sm={3} md={2} lg={1} className={classes.modal} >
-				<Box
-					onClick={() => updateFolder(ino)}
-					onContextMenu={(e) => e.preventDefault()}
-					textAlign="center"
-					className={classes.file}>
-					{content}
-				</Box>
-			</Grid>
-		);
-	} else return (
-		<Grid style={{height: '120px'}} item xs={4} sm={3} md={2} lg={1}>
-			<Box
-				textAlign="center"
-				className={classes.file}>
-				<a
-					ref={anchorRef}
-					aria-controls={state.open ? "menu-list-grow" : undefined}
-					aria-haspopup="true"
-					onClick={handleToggle}
-					onContextMenu={(e) => e.preventDefault()}>
-					{content}
-				</a>
-				<Popper
-					className={classes.popper}
-					open={state.open}
-					anchorEl={anchorRef.current}
-					role={undefined}
-					transition
-					disablePortal>
-					{({ TransitionProps, placement }) => (
-						<Grow
-							{...TransitionProps}
-							style={{
-								transformOrigin:
-									placement === "bottom"
-										? "center top"
-										: "center bottom",
-							}}>
-							<Paper>
-								<ClickAwayListener onClickAway={handleClose}>
-									<MenuList
-										autoFocusItem={state.open}
-										id="menu-list-grow"
-										onKeyDown={handleListKeyDown}>
-										<MenuItem onClick={() => download(ino, name)}>
-											Descargar
+  const content = (
+    <Paper color="primary" elevation={0} className={classes.paper}>
+      <img src={getIcon(isFile, ext)} alt={ext} width="64" height="64" />
+      <Typography
+        variant="body2"
+        className={props.useTheme ? classes.text : ""}
+        style={{ overflowWrap: "break-word" }}
+      >
+        {nameToShow}
+      </Typography>
+    </Paper>
+  );
+
+  const opacity = () => movingFile && ino === movingFile.ino ? '0.6' : '1';
+
+
+  if (!isFile) {
+    return (
+      <Grid
+        style={{ height: '120px' }}
+        item
+        xs={4}
+        sm={3}
+        md={2}
+        lg={1}
+        className={classes.modal}
+      >
+        <Box
+          onClick={() => updateFolder(ino)}
+          onContextMenu={(e) => e.preventDefault()}
+          textAlign="center"
+          className={classes.file}
+        >
+          {content}
+        </Box>
+      </Grid>
+    );
+  }
+  return (
+    <Grid
+      style={{ height: '120px', opacity: opacity() }}
+      item xs={4}
+      sm={3}
+      md={2}
+      lg={1}
+    >
+      <Box
+        textAlign="center"
+        className={classes.file}>
+        <Box
+          ref={anchorRef}
+          aria-controls={state.open ? "menu-list-grow" : undefined}
+          aria-haspopup="true"
+          onClick={handleToggle}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          {content}
+        </Box>
+        <Popper
+          className={classes.popper}
+          open={state.open}
+          anchorEl={anchorRef.current}
+          role={undefined}
+          transition
+          disablePortal
+        >
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              style={{
+                transformOrigin:
+                  placement === "bottom"
+                    ? "center top"
+                    : "center bottom",
+              }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={handleClickAway}>
+                  <MenuList
+                    autoFocusItem={state.open}
+                    id="menu-list-grow"
+                    onKeyDown={handleListKeyDown}>
+                    <MenuItem onClick={() => download(ino, name)}>
+                      Descargar
 										</MenuItem>
-										<MenuItem onClick={() => modRep(ino)}>
-											Reproducir
+                    <MenuItem onClick={() => modRep(ino)}>
+                      Reproducir
 										</MenuItem>
-										<MenuItem onClick={() => handleOpenModal()}>
-											Información
+                    <MenuItem onClick={() => setFileAsMoving()}>
+                      Mover
 										</MenuItem>
-									</MenuList>
-								</ClickAwayListener>
-							</Paper>
-						</Grow>
-					)}
-				</Popper>
-			</Box>
-		</Grid>
-	);
+                    <MenuItem onClick={() => handleOpenModal()}>
+                      Información
+										</MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
+      </Box>
+    </Grid>
+  );
 };
 
 export default Files;

@@ -144,6 +144,7 @@ const Recover = () => {
         const { password, password2 } = state;
         return password.length < 6 || password2.length < 6 || password !== password2
       }
+      default: break;
     }
   }
 

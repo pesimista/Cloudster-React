@@ -20,20 +20,26 @@ import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import HomeIcon from "@material-ui/icons/Home";
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext } from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, postFile } from '../SF/helpers';
 import Files from './Files';
 import FileInfoModal from './Modals/FileInfoModal';
 import UploadFileModal from './Modals/UploadFileModal';
+import SendIcon from '@material-ui/icons/Send';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 const useStyles = makeStyles((theme) => ({
   main: {
     overflow: 'auto',
     display: 'grid',
     gridTemplateRows: '48px 1fr',
-    width: '100%',
+    width: '100%'
   },
+  anotherRow: {
+    gridTemplateRows: '48px 1fr 48px',
+  },
+  peachColor: { backgroundColor: '#fff9c4' },
   bar: {
     position: 'sticky'
   },
@@ -68,6 +74,13 @@ const useStyles = makeStyles((theme) => ({
       }
     },
   },
+  movingBar: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between', 
+    padding: '0.25rem 1rem',
+    borderTop: '1px solid grey'
+  },
   inline: { display: 'inline' }
 }));
 
@@ -83,22 +96,23 @@ const initialState = {
   fileForModal: '',
   uploadModal: false,
   files: null,
-  shouldUpdate: false
+  shouldUpdate: false,
+  movingFile: ''
 };
 
 const reducer = (state, action) => {
-  if (action.type === 'shouldUpdate') {
-    return {
-      ...state,
-      shouldUpdate: !state.shouldUpdate,
-      uploadModal: false,
-      fileModal: '',
-      open: action.open,
-      message: action.message ? action.message : '',
-      severity: action.severity
-    };
+  if (action.type !== 'shouldUpdate') {
+    return { ...state, ...action };
   }
-  return { ...state, ...action };
+  return {
+    ...state,
+    shouldUpdate: !state.shouldUpdate,
+    uploadModal: false,
+    fileModal: '',
+    open: action.open,
+    message: action.message || '',
+    severity: action.severity || ''
+  };
 };
 
 const Search = () => {
@@ -109,6 +123,9 @@ const Search = () => {
   const { state: globalState, dispatch } = useContext(saduwux);
 
   React.useEffect(() => {
+    if(state.shouldUpdate) {
+      update({ type: 'shouldUpdate' });
+    }
     fetch(`/api/files/${globalState.folder}/files`, {
       method: 'GET',
       headers: {
@@ -125,10 +142,6 @@ const Search = () => {
       )
     );
   }, [globalState.folder, state.shouldUpdate]);
-
-  if (!globalState.logStatus) {
-    return <Redirect to='/notlogged' />;
-  }
 
   /**--------------------- Navigators ----------------------*/
   /** Goes one folder up if possible */
@@ -190,6 +203,18 @@ const Search = () => {
     );
   };
 
+  /** Mover archivos */
+  const setMovingFile = (ino) => {
+    update({ movingFile: ino });
+  }
+  const cancelMoving = () => {
+    update({ movingFile: null });
+  }
+  const moveFile = () => {
+    // fetch state.moving file => globalState.folder
+  }
+  /** */
+
   const items = () => {
     const regex = new RegExp(globalState.search, 'gi');
     return state.files.reduce(
@@ -203,6 +228,7 @@ const Search = () => {
             useTheme={globalState.theme}
             updatePlayer={updatePlayer}
             updateFolder={updateFolder}
+            move={{setMovingFile, movingFile: state.movingFile}}
             key={index}
             file={file}
           />
@@ -212,9 +238,16 @@ const Search = () => {
     )
   };
 
+  const mainClass = () => {
+    let className = classes.main;
+    if (state.movingFile) className += ` ${classes.anotherRow}`
+    if (!globalState.theme) className += ` ${classes.peachColor}`
+    return className;
+  }
+
   return (
     <React.Fragment>
-      <Box className={classes.main} component='main'>
+      <Box className={mainClass()} component='main'>
         <AppBar component='div' color='secondary' className={classes.bar}>
           <Toolbar variant='dense'>
             <Grid container alignItems='center'>
@@ -262,17 +295,24 @@ const Search = () => {
                   component='span'
                   onClick={() => handleUploadModal()}>
                   Subir
-                     </Button>
+                </Button>
               </Grid>
             </Grid>
           </Toolbar>
         </AppBar>
-        {!state.files || state.shouldUpdate ? <LinearProgress /> : ''}
         <Grid container className={classes.inline}>
+          {!state.files || state.shouldUpdate ? <LinearProgress /> : ''}
           <div className={classes.container}>
             {state.files ? items() : ''}
           </div>
         </Grid>
+        <MovingBar 
+          movingFile={state.movingFile}
+          className={classes.movingBar}
+          move={moveFile}
+          cancel={cancelMoving}
+          theme={globalState.theme}
+        />
       </Box>
       <FileInfoModal open={!!state.fileForModal} file={state.fileForModal} handleClose={handleFileModal} />
       <UploadFileModal open={state.uploadModal} handleClose={handleUploadModal} />
@@ -292,6 +332,54 @@ const Search = () => {
     </React.Fragment>
   );
 };
+
+const MovingBar  = ({movingFile: file, className, move, cancel, theme}) => {
+  if(!file) {
+    return '';
+  }
+  const spanClass = makeStyles(() => ({
+    button: {
+      '& .MuiButton-endIcon, & .MuiButton-startIcon': {
+        marginTop: '-5px'
+      }
+    }, typo: {
+      color: theme ? '#fff' : 'rgba(0, 0, 0, 0.87)'
+    }
+  }))();
+
+  const { name, ext } = file;
+  const nameToShow = name.length > 30
+    ? name.substring(0, 27).trim() + "..." + ext
+    : name;
+
+  return (
+    <div className={className}>
+      <Typography variant='h6' className={spanClass.typo}>
+        Moviendo: { nameToShow }
+      </Typography>
+      <div>
+        <Button
+          disableElevation
+          onClick={() => cancel()}
+          size='large'
+          startIcon={<CancelIcon/>}
+          className={spanClass.button}
+        >
+          Cancelar
+        </Button>
+        <Button
+          disableElevation
+          onClick={() => move()}
+          size='large'
+          endIcon={<SendIcon/>}
+          className={spanClass.button}
+        >
+          Mover aquí
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 export default Search;
 

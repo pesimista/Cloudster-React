@@ -8,3 +8,15 @@
 .position-static {
   position: static !important;
 }
+
+.MuiButton-containedPrimary {
+  color: #fff !important;
+}
+.MuiButton-containedDanger {
+  color: #fff !important;
+  background-color: #f44336 !important;
+}
+.MuiButton-root {
+  font-weight: bold;
+  border-radius: 0px;
+}

@@ -7,15 +7,30 @@ const ProtectedRoute = ({
   redirectToAdmin = "/notFound",
   requireLogin = true,
   redirectTo = "/notlogged",
-  ...rest
+  ...props
 }) => {
   const { state } = useContext(saduwux);
-  const children = () => {
-    if (requireLogin && !state.logStatus) { return <Redirect to={redirectTo} />; }
-    if (requireAdmin && state.user.nivel < 5) { return <Redirect to={redirectToAdmin || redirectTo} />; }
-    return rest.children;
+  console.log(requireLogin, !state.logStatus, requireAdmin, state.user.nivel);
+  const getComponent = () => {
+    
+    if (requireLogin && !state.logStatus) {
+      return (
+        <Route>
+          <Redirect to={redirectTo} />
+        </Route>
+      );
+    }
+    if (requireAdmin && state.user.nivel < 5) {
+      return (
+        <Route>
+          <Redirect to={redirectToAdmin || redirectTo} />
+        </Route>
+      );
+    }
+    return <Route {...props} />;
   }
-  return <Route {...rest} render={children} />
+  
+  return getComponent();
 };
 
 export default ProtectedRoute;

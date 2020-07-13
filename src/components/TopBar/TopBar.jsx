@@ -116,14 +116,12 @@ const TopBar = () => {
       <Toolbar>
         <FilterDramaIcon className={classes.icon} />
         <Typography
-          className={
-            routes.includes(location.pathname) ? classes.title : searchBar
-          }
+          className={classes.title}
           variant='h5'
           noWrap
         >
           Cloudster
-            </Typography>
+        </Typography>
         {routes.includes(location.pathname) ? searchBar : ''}
         <div className={classes.grow} />
         <Link
