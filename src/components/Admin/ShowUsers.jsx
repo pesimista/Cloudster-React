@@ -24,7 +24,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import MySnackbarContentWrapper from '../SubSnackBar/SubSnackBar';
 
-
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
@@ -32,45 +31,45 @@ const useStyles = makeStyles({
   useDark: {
     '& .MuiTableCell-head': {
       backgroundColor: '#424242',
-      color: 'white'
+      color: 'white',
     },
     '& .MuiTableCell-body': {
       backgroundColor: '#393d46',
-      color: 'white'
+      color: 'white',
     },
     '& .MuiSelect-select:focus': {
-      backgroundColor: 'rgba(255,255,255,.75)'
+      backgroundColor: 'rgba(255,255,255,.75)',
     },
     '& .MuiTablePagination-toolbar': {
       backgroundColor: '#393d46',
-      color: 'white'
+      color: 'white',
     },
     '& .MuiSelect-icon': {
-      color: 'white'
+      color: 'white',
     },
     '& .MuiIconButton-root': {
-      color: 'rgba(255,255,255,0.54)'
+      color: 'rgba(255,255,255,0.54)',
     },
     '& .MuiIconButton-root.Mui-disabled': {
-      color: 'rgba(255,255,255,0.26)'
-    }
+      color: 'rgba(255,255,255,0.26)',
+    },
   },
   a: {
     color: '#228dff',
   },
   text: {
-    color: '#FFF'
+    color: '#FFF',
   },
 });
 
-const useStyles1 = makeStyles(theme => ({
+const useStyles1 = makeStyles((theme) => ({
   root: {
     flexShrink: 0,
     marginLeft: theme.spacing(2.5),
   },
 }));
 
-const BootstrapInput = withStyles(theme => ({
+const BootstrapInput = withStyles((theme) => ({
   root: {
     'label + &': {
       marginTop: theme.spacing(3),
@@ -115,19 +114,19 @@ function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onChangePage } = props;
 
-  const handleFirstPageButtonClick = event => {
+  const handleFirstPageButtonClick = (event) => {
     onChangePage(event, 0);
   };
 
-  const handleBackButtonClick = event => {
+  const handleBackButtonClick = (event) => {
     onChangePage(event, page - 1);
   };
 
-  const handleNextButtonClick = event => {
+  const handleNextButtonClick = (event) => {
     onChangePage(event, page + 1);
   };
 
-  const handleLastPageButtonClick = event => {
+  const handleLastPageButtonClick = (event) => {
     onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
@@ -140,15 +139,27 @@ function TablePaginationActions(props) {
       >
         {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
-      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
-        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+      <IconButton
+        onClick={handleBackButtonClick}
+        disabled={page === 0}
+        aria-label="previous page"
+      >
+        {theme.direction === 'rtl' ? (
+          <KeyboardArrowRight />
+        ) : (
+          <KeyboardArrowLeft />
+        )}
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page"
       >
-        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+        {theme.direction === 'rtl' ? (
+          <KeyboardArrowLeft />
+        ) : (
+          <KeyboardArrowRight />
+        )}
       </IconButton>
       <IconButton
         onClick={handleLastPageButtonClick}
@@ -181,16 +192,17 @@ const ShowUsers = (props) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id: fileId,
-        newNivel: target.value
-      })
-    }).then(res => res.json())
-      .then(data => {
-        if (data.response === "oll korrect") {
-          updateMessage('Nivel modificado satisfactoriamente!')
+        newNivel: target.value,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.response === 'oll korrect') {
+          updateMessage('Nivel modificado satisfactoriamente!');
           setOpen(true);
         }
-      })
-  }
+      });
+  };
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -203,7 +215,7 @@ const ShowUsers = (props) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = event => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -211,20 +223,19 @@ const ShowUsers = (props) => {
   const deleteUser = (userid, nivel) => {
     if (userid !== props.userId && nivel < 5) {
       fetch(`/api/users/${userid}`, {
-        method: 'delete'
-      }).then(res => res.json())
-        .then(data => {
-          if (data.response === "oll korrect") {
+        method: 'delete',
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.response === 'oll korrect') {
             props.fetchUsers();
-            updateMessage('Usuario eliminado satisfactoriamente!')
+            updateMessage('Usuario eliminado satisfactoriamente!');
             setOpen(true);
           }
-        })
-    }
-    else if (nivel === 5) {
+        });
+    } else if (nivel === 5) {
       alert('No puedes eliminar a otro administrados');
-    }
-    else {
+    } else {
       alert('No puedes eliminar tu propio usuario');
     }
   };
@@ -251,23 +262,28 @@ const ShowUsers = (props) => {
             <MenuItem value={4}>4</MenuItem>
             <MenuItem value={5}>5</MenuItem>
           </Select>
-
         </TableCell>
         <TableCell align="right">{value.desde}</TableCell>
         <TableCell align="right">{value.nombre}</TableCell>
         <TableCell align="right">
-          <IconButton onClick={() => deleteUser(value.id, value.nivel)} aria-label="delete">
+          <IconButton
+            onClick={() => deleteUser(value.id, value.nivel)}
+            aria-label="delete"
+          >
             <DeleteIcon />
           </IconButton>
         </TableCell>
       </TableRow>
-    )
+    );
   });
 
   return (
     <div>
       <TableContainer component={Paper}>
-        <Table className={!props.useTheme ? classes.table : classes.useDark} aria-label="simple table">
+        <Table
+          className={!props.useTheme ? classes.table : classes.useDark}
+          aria-label="simple table"
+        >
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
@@ -278,9 +294,7 @@ const ShowUsers = (props) => {
               <TableCell align="right">Eliminar</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {users}
-          </TableBody>
+          <TableBody>{users}</TableBody>
         </Table>
         <Box>
           <Snackbar
@@ -313,7 +327,7 @@ const ShowUsers = (props) => {
       />
     </div>
   );
-}
+};
 
 // const showUsers = (
 //   <TableContainer component={Paper} color="primary">

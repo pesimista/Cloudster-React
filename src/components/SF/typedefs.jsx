@@ -35,7 +35,7 @@ export const doc = {};
  * @property {string} search - id de la seguda pregunta secreta
  */
 
- /**
+/**
  * @typedef context
  * @type {object}
  * @property {store} state - self explanatory

@@ -1,18 +1,17 @@
-import React, { useContext } from "react";
-import { saduwux } from "../SF/Context";
-import { Redirect, Route } from "react-router-dom";
+import React, { useContext } from 'react';
+import { saduwux } from '../SF/Context';
+import { Redirect, Route } from 'react-router-dom';
 
 const ProtectedRoute = ({
   requireAdmin = false,
-  redirectToAdmin = "/notFound",
+  redirectToAdmin = '/notFound',
   requireLogin = true,
-  redirectTo = "/notlogged",
+  redirectTo = '/notlogged',
   ...props
 }) => {
   const { state } = useContext(saduwux);
   console.log(requireLogin, !state.logStatus, requireAdmin, state.user.nivel);
   const getComponent = () => {
-    
     if (requireLogin && !state.logStatus) {
       return (
         <Route>
@@ -28,8 +27,8 @@ const ProtectedRoute = ({
       );
     }
     return <Route {...props} />;
-  }
-  
+  };
+
   return getComponent();
 };
 

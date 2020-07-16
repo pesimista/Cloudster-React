@@ -17,7 +17,6 @@ import { Link as RouterLink, Redirect, useHistory } from 'react-router-dom';
 import { handleFetch } from '../SF/helpers';
 import { saduwux } from '../SF/Context';
 
-
 const useStyles = makeStyles((theme) => ({
   grow: { flexGrow: 1 },
   root: {
@@ -29,12 +28,12 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: '600',
 
       '&.MuiButton-containedPrimary': {
-        color: '#fff'
+        color: '#fff',
       },
       '&.Mui-disabled': {
-        color: 'rgba(0, 0, 0, 0.26)'
-      }
-    }
+        color: 'rgba(0, 0, 0, 0.26)',
+      },
+    },
   },
   form: { marginTop: theme.spacing(8) },
   appBar: {
@@ -70,17 +69,17 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-  }
+  },
 }));
 
-const reactLink = React.forwardRef(
-  (props, ref) => <RouterLink innerRef={ref} {...props} />
-);
+const reactLink = React.forwardRef((props, ref) => (
+  <RouterLink innerRef={ref} {...props} />
+));
 reactLink.displayName = 'reactLink';
 
 const Alert = (props) => {
-  return <MuiAlert elevation={6} variant='filled' {...props} />;
-}
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
 const initialState = {
   open: false,
@@ -89,7 +88,7 @@ const initialState = {
   signInUser: '',
   signInPassword: '',
   wrong: '',
-  block: false
+  block: false,
 };
 
 const reducer = (state, action) => {
@@ -99,7 +98,9 @@ const reducer = (state, action) => {
 const Welcome = () => {
   const history = useHistory();
   const classes = useStyles();
-  const { state: { logStatus } } = useContext(saduwux);
+  const {
+    state: { logStatus },
+  } = useContext(saduwux);
 
   const [state, update] = useReducer(reducer, initialState);
   const { dispatch } = useContext(saduwux);
@@ -107,7 +108,7 @@ const Welcome = () => {
   const invalid = () => {
     const { signInUser, signInPassword } = state;
     return !signInUser.length || signInPassword.length < 6;
-  }
+  };
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -122,18 +123,19 @@ const Welcome = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         usuario: signInUser,
-        password: signInPassword
+        password: signInPassword,
+      }),
+    })
+      .then(handleFetch)
+      .then((data) => {
+        localStorage.setItem('token', 'bearer ' + data.token);
+        dispatch({ type: 'login', payload: { user: data.user } });
+        update({ open: true, message: 'Inicio de sesión exitoso!' });
+        setTimeout(() => history.push('/busqueda'), 500);
       })
-    }).then(
-      handleFetch
-    ).then(data => {
-      localStorage.setItem('token', 'bearer ' + data.token);
-      dispatch({ type: 'login', payload: { user: data.user } });
-      update({ open: true, message: 'Inicio de sesión exitoso!' });
-      setTimeout(() => history.push('/busqueda'), 500);
-    }).catch(error => {
-      update({ open: true, message: error.message, block: false });
-    });
+      .catch((error) => {
+        update({ open: true, message: error.message, block: false });
+      });
   };
 
   const handleClose = (event, reason) => {
@@ -143,27 +145,27 @@ const Welcome = () => {
     update({ open: false });
   };
 
-  const handleChangeTrim = (e) => update({ [e.target.name]: e.target.value.trim() })
+  const handleChangeTrim = (e) =>
+    update({ [e.target.name]: e.target.value.trim() });
 
   if (logStatus === 2) {
-    return <Redirect to='/busqueda' />
+    return <Redirect to="/busqueda" />;
   } else {
     return (
       <React.Fragment>
-
         <AppBar className={classes.appBar}>
           <Toolbar>
-            <Container maxWidth='lg' className={classes.sectionDesktop}>
-              <Link component={reactLink} to='/login' underline='none'>
-                <Button size='large'>
-                  <Typography fontWeight='fontWeightBold'>
+            <Container maxWidth="lg" className={classes.sectionDesktop}>
+              <Link component={reactLink} to="/login" underline="none">
+                <Button size="large">
+                  <Typography fontWeight="fontWeightBold">
                     Iniciar Sesión
                   </Typography>
                 </Button>
               </Link>
-              <Link component={reactLink} to='/register' underline='none'>
-                <Button size='large'>
-                  <Typography fontWeight='fontWeightBold'>
+              <Link component={reactLink} to="/register" underline="none">
+                <Button size="large">
+                  <Typography fontWeight="fontWeightBold">
                     Registrarse
                   </Typography>
                 </Button>
@@ -173,19 +175,17 @@ const Welcome = () => {
             <Link
               className={classes.sectionMobile}
               component={reactLink}
-              to='/register'
-              underline='none'
+              to="/register"
+              underline="none"
             >
-              <Button size='large'>
-                <Typography fontWeight='fontWeightBold'>
-                  Registrarse
-                </Typography>
+              <Button size="large">
+                <Typography fontWeight="fontWeightBold">Registrarse</Typography>
               </Button>
             </Link>
           </Toolbar>
         </AppBar>
 
-        <Grid container component='main' className={classes.root}>
+        <Grid container component="main" className={classes.root}>
           <Grid
             item
             xs={12}
@@ -196,22 +196,17 @@ const Welcome = () => {
             square
           >
             <div>
-              <Box
-                color='secondary.main'
-                className={classes.form}
-              >
-                <CloudIcon
-                  color='primary'
-                  fontSize='inherit'
-                />
-                  Cloudster
+              <Box color="secondary.main" className={classes.form}>
+                <CloudIcon color="primary" fontSize="inherit" />
+                Cloudster
               </Box>
-              <Typography variant='h4'>
-                Una forma sencilla de compartir tus archivos sin limites de plataforma.
+              <Typography variant="h4">
+                Una forma sencilla de compartir tus archivos sin limites de
+                plataforma.
               </Typography>
               <Box display={{ xs: 'block', sm: 'none' }}>
-                <Link component={reactLink} to='/login' underline='none'>
-                  <Button size='large' color='primary' variant='contained'>
+                <Link component={reactLink} to="/login" underline="none">
+                  <Button size="large" color="primary" variant="contained">
                     Iniciar Sesión
                   </Button>
                 </Link>
@@ -221,13 +216,13 @@ const Welcome = () => {
               <form onSubmit={handleLogin}>
                 <Container maxWidth={'xs'}>
                   <TextField
-                    name='signInUser'
+                    name="signInUser"
                     value={state.signInUser}
                     onChange={handleChangeTrim}
-                    id='username'
-                    label='Nombre de usuario'
-                    variant='outlined'
-                    margin='normal'
+                    id="username"
+                    label="Nombre de usuario"
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
                     disabled={state.block}
@@ -236,31 +231,27 @@ const Welcome = () => {
                     name="signInPassword"
                     value={state.signInPassword}
                     onChange={handleChangeTrim}
-                    id='password'
-                    label='Contraseña'
-                    variant='outlined'
-                    margin='normal'
+                    id="password"
+                    label="Contraseña"
+                    variant="outlined"
+                    margin="normal"
                     required
                     fullWidth
-                    type='password'
+                    type="password"
                     disabled={state.block}
                   />
                   <Button
                     disabled={state.block || invalid()}
                     className={classes.submit}
                     fullWidth
-                    variant='contained'
-                    color='primary'
-                    size='large'
-                    type='submit'
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    type="submit"
                   >
                     Iniciar Sesión
                   </Button>
-                  <Link
-                    component={reactLink}
-                    to='/recover'
-                    color='secondary'
-                  >
+                  <Link component={reactLink} to="/recover" color="secondary">
                     Olvidé mi contraseña
                   </Link>
                 </Container>
@@ -272,18 +263,18 @@ const Welcome = () => {
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'left'
+            horizontal: 'left',
           }}
           open={state.open}
           onClose={handleClose}
           autoHideDuration={6000}
         >
-          <Alert onClose={handleClose} severity='success'>
+          <Alert onClose={handleClose} severity="success">
             {state.message}
           </Alert>
         </Snackbar>
       </React.Fragment>
-    )
+    );
   }
-}
+};
 export default Welcome;

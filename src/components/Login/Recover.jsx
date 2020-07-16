@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -17,7 +17,7 @@ import { Link as RouterLink, useHistory, withRouter } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch } from '../SF/helpers';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     gridColumnStart: '1',
     gridColumnEnd: '3',
@@ -34,13 +34,13 @@ const useStyles = makeStyles(theme => ({
     padding: '1rem 3rem',
     backgroundColor: '#fff',
     borderRadius: '1rem',
-    maxWidth: '400px'
+    maxWidth: '400px',
   },
   form: {
     margin: '0',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   button: {
     marginRight: theme.spacing(1),
@@ -55,24 +55,24 @@ const useStyles = makeStyles(theme => ({
       fontWeight: '600',
 
       '&.MuiButton-containedPrimary': {
-        color: '#fff'
+        color: '#fff',
       },
       '&.Mui-disabled': {
-        color: 'rgba(0, 0, 0, 0.26)'
-      }
-    }
+        color: 'rgba(0, 0, 0, 0.26)',
+      },
+    },
   },
   instructions: {
-    maxWidth: '75%'
+    maxWidth: '75%',
   },
   mRight: {
     flexGrow: 1,
   },
 }));
 
-const reactLink = React.forwardRef((props, ref) =>
+const reactLink = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
-);
+));
 reactLink.displayName = 'reactLink';
 
 const initialState = {
@@ -86,11 +86,11 @@ const initialState = {
   respuesta1: '',
   respuesta2: '',
   password: '',
-  password2: ''
-}
+  password2: '',
+};
 const reducer = (state, action) => {
   if (action) {
-    return { ...state, ...action }
+    return { ...state, ...action };
   }
 
   switch (state.activeStep) {
@@ -100,7 +100,7 @@ const reducer = (state, action) => {
         password: '',
         password2: '',
         touched: true,
-        activeStep: 1
+        activeStep: 1,
       };
     }
     case 1: {
@@ -111,8 +111,8 @@ const reducer = (state, action) => {
         respuesta1: '',
         respuesta2: '',
         touched: true,
-        activeStep: 0
-      }
+        activeStep: 0,
+      };
     }
     default:
       return initialState;
@@ -134,19 +134,22 @@ const Recover = () => {
     switch (state.activeStep) {
       case 0: {
         const { user } = state;
-        return !user.length
+        return !user.length;
       }
       case 1: {
         const { respuesta1, respuesta2 } = state;
-        return !respuesta1.trim().length || !respuesta2.trim().length
+        return !respuesta1.trim().length || !respuesta2.trim().length;
       }
       case 2: {
         const { password, password2 } = state;
-        return password.length < 6 || password2.length < 6 || password !== password2
+        return (
+          password.length < 6 || password2.length < 6 || password !== password2
+        );
       }
-      default: break;
+      default:
+        break;
     }
-  }
+  };
 
   const handleUsername = () => {
     update({ isLoading: true });
@@ -160,70 +163,74 @@ const Recover = () => {
           pregunta2: pregunta2,
           activeStep: 1,
           touched: false,
-          isLoading: false
+          isLoading: false,
         });
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
         update({
           touched: false,
-          isLoading: false
+          isLoading: false,
         });
       });
   };
 
   const handleQuestions = () => {
     update({ isLoading: true });
-    fetch(`/api/users/${state.id_usuario}/questions`, {
+    const headers = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         respuesta1: state.respuesta1,
-        respuesta2: state.respuesta2
+        respuesta2: state.respuesta2,
+      }),
+    };
+
+    fetch(`/api/users/${state.id_usuario}/questions`, headers)
+      .then(handleFetch)
+      .then((data) => {
+        localStorage.setItem('token', 'bearer ' + data.token);
+        update({
+          activeStep: 2,
+          touched: false,
+          isLoading: false,
+        });
       })
-    }).then(
-      handleFetch
-    ).then(data => {
-      localStorage.setItem('token', 'bearer ' + data.token);
-      update({
-        'activeStep': 2,
-        touched: false,
-        isLoading: false
+      .catch((e) => {
+        alert(e);
+        update({
+          touched: false,
+          isLoading: false,
+        });
       });
-    }).catch(e => {
-      alert(e);
-      update({
-        touched: false,
-        isLoading: false
-      });
-    });
-  }
+  };
 
   const changePassword = () => {
     update({ isLoading: true });
-    fetch(`/api/users/${state.id_usuario}`, {
+    const headers = {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': localStorage.getItem('token')
+        Authorization: localStorage.getItem('token'),
       },
-      body: JSON.stringify({ password: state.password })
-    }).then(
-      handleFetch
-    ).then(data => {
+      body: JSON.stringify({ password: state.password }),
+    };
 
-      dispatch({
-        type: 'login',
-        payload: { user: data.user }
+    fetch(`/api/users/${state.id_usuario}`, headers)
+      .then(handleFetch)
+      .then((data) => {
+        dispatch({
+          type: 'login',
+          payload: { user: data.user },
+        });
+        localStorage.setItem('token', 'bearer ' + data.token);
+        history.push('/busqueda');
+      })
+      .catch((err) => {
+        console.log('ERROR', err);
+        update({ touched: false, isLoading: false });
       });
-      localStorage.setItem('token', 'bearer ' + data.token);
-      history.push('/busqueda');
-    }).catch(err => {
-      console.log('ERROR', err);
-      update({ touched: false, isLoading: false });
-    });
-
-  }
+  };
 
   const handleNext = (event) => {
     event.preventDefault();
@@ -248,8 +255,10 @@ const Recover = () => {
 
   const handleBack = () => update();
 
-  const handleChange = (e) => update({ [e.target.name]: e.target.value, touched: true })
-  const handleChangeTrim = (e) => update({ [e.target.name]: e.target.value.trim(), touched: true })
+  const handleChange = (e) =>
+    update({ [e.target.name]: e.target.value, touched: true });
+  const handleChangeTrim = (e) =>
+    update({ [e.target.name]: e.target.value.trim(), touched: true });
 
   /** @param {number} step */
   const getStepContent = (step) => {
@@ -257,12 +266,12 @@ const Recover = () => {
       case 0:
         return (
           <TextField
-            name='user'
+            name="user"
             value={state.user}
             onChange={handleChangeTrim}
-            id='standard-name'
-            label='Nombre de usuario'
-            variant='outlined'
+            id="standard-name"
+            label="Nombre de usuario"
+            variant="outlined"
             margin="normal"
             required
             fullWidth
@@ -273,12 +282,12 @@ const Recover = () => {
         return (
           <Box>
             <TextField
-              name='respuesta1'
+              name="respuesta1"
               value={state.respuesta1}
               onChange={handleChange}
-              id='respuesta1'
-              label='Respuesta #1'
-              variant='outlined'
+              id="respuesta1"
+              label="Respuesta #1"
+              variant="outlined"
               margin="normal"
               required
               fullWidth
@@ -286,12 +295,12 @@ const Recover = () => {
               helperText={state.pregunta1}
             />
             <TextField
-              name='respuesta2'
+              name="respuesta2"
               value={state.respuesta2}
               onChange={handleChange}
-              id='respuesta2'
-              label='Respuesta #2'
-              variant='outlined'
+              id="respuesta2"
+              label="Respuesta #2"
+              variant="outlined"
               margin="normal"
               required
               fullWidth
@@ -303,26 +312,26 @@ const Recover = () => {
         return (
           <Box>
             <TextField
-              name='password'
+              name="password"
               value={state.password}
               onChange={handleChangeTrim}
-              id='password-input'
-              label='Nueva contraseña'
-              type='password'
-              variant='outlined'
+              id="password-input"
+              label="Nueva contraseña"
+              type="password"
+              variant="outlined"
               margin="normal"
               required
               fullWidth
               autoFocus
             />
             <TextField
-              name='password2'
+              name="password2"
               value={state.password2}
               onChange={handleChangeTrim}
-              id='password-confirm-input'
-              label='Confirmar contraseña'
-              type='password'
-              variant='outlined'
+              id="password-confirm-input"
+              label="Confirmar contraseña"
+              type="password"
+              variant="outlined"
               margin="normal"
               fullWidth
               required
@@ -332,7 +341,7 @@ const Recover = () => {
       default:
         return <p>Unknown step</p>;
     }
-  }
+  };
 
   return (
     <Container component="main" className={classes.main}>
@@ -342,12 +351,9 @@ const Recover = () => {
         alignItems="center"
         textAlign="center"
       >
-        <Link to="/" component={reactLink} >
+        <Link to="/" component={reactLink}>
           <IconButton>
-            <CloudIcon
-              color='primary'
-              style={{ fontSize: '4rem' }}
-            />
+            <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
           </IconButton>
         </Link>
         <Typography component="h1" variant="h5">
@@ -357,20 +363,16 @@ const Recover = () => {
           activeStep={state.activeStep}
           style={{ padding: '0px 0px 24px' }}
           alternativeLabel
-        >{
-            steps.map(label => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))
-          }</Stepper>
-        <Divider />
-        <form
-          autoComplete="off"
-          className={classes.form}
-          onSubmit={handleNext}
         >
-          <div className={classes.instructions} >
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <Divider />
+        <form autoComplete="off" className={classes.form} onSubmit={handleNext}>
+          <div className={classes.instructions}>
             {getStepContent(state.activeStep)}
           </div>
 
@@ -384,8 +386,8 @@ const Recover = () => {
               &lt; Volver
             </Button>
             <Button
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               disabled={invalid()}
               type="submit"
             >
@@ -396,25 +398,18 @@ const Recover = () => {
       </Box>
       <Grid container>
         <Grid item xs>
-          <Link
-            component={reactLink}
-            to="/login"
-            color="secondary"
-          >
+          <Link component={reactLink} to="/login" color="secondary">
             Volver a inicio de sesión
           </Link>
         </Grid>
         <Grid item>
-          <Link
-            component={reactLink}
-            to="/register"
-          >
+          <Link component={reactLink} to="/register">
             Registrarse
           </Link>
         </Grid>
       </Grid>
     </Container>
   );
-}
+};
 
 export default withRouter(Recover);
