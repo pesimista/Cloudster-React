@@ -35,9 +35,20 @@ export const useStyles = makeStyles({
     '& .MuiTableCell-body ': {
       padding: '8px',
     },
-    '& .MuiTableRow-root.disabled': {
-      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    '& .MuiTableRow-root': {
+      '&.disabled': {
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      },
+      '&.suspended': {
+        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+      }
     },
+    '& .MuiButtonBase-root': {
+      color: 'rgba(0, 0, 0, 0.9)',
+      '&.Mui-disabled': {
+        color: 'rgba(0, 0, 0, 0.3)',
+      }
+    }
   },
   dark: {
     minWidth: 650,
@@ -47,8 +58,13 @@ export const useStyles = makeStyles({
     '& .MuiTableBody-root': {
       backgroundColor: '#393d46',
     },
-    '& .MuiTableRow-root.disabled': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    '& .MuiTableRow-root': {
+      '&.disabled': {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      },
+      '&.suspended': {
+        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+      }
     },
     '& .MuiTableCell-body ': {
       padding: '8px',
@@ -152,7 +168,7 @@ export const ConfirmDialog = ({
       minWidth: '340px',
       '& h2': {
         textAlign: 'center',
-        paddingBottom: '1rem',
+        padding: '0.5rem 3rem 1rem',
         fontSize: '1rem',
       },
       '& .MuiButton-root': {

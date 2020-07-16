@@ -7,7 +7,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { handleFetch } from '../../SF/helpers';
 import EnhancedEncryptionIcon from '@material-ui/icons/EnhancedEncryption';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -48,7 +47,7 @@ const reducer = (state, action) => {
   };
 };
 
-const UserTableContainer = ({ useTheme, adminID }) => {
+const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
   const classes = useStyles();
   const { main } = makeStyles(() => ({
     main: {
@@ -130,12 +129,21 @@ const UserTableContainer = ({ useTheme, adminID }) => {
 
     fetch(`/api/users/${name}`, headers)
       .then(handleFetch)
-      .then((data) => {
-        console.log(data);
+      .then((res) => {
         setState({ shouldUpdate: true });
+        onResponse({
+          key: new Date().getTime(),
+          type: 'success',
+          message: res.response
+        });
       })
       .catch((err) => {
-        console.log(err);
+        setState({ shouldUpdate: true });
+        onResponse({
+          key: new Date().getTime(),
+          type: 'error',
+          message: err.message
+        });
       });
   };
 
@@ -158,11 +166,20 @@ const UserTableContainer = ({ useTheme, adminID }) => {
     fetch(`/api/users/${data.userID}`, headers)
       .then(handleFetch)
       .then((res) => {
-        console.log(res);
         setUpdate(data.index, false);
+        onResponse({
+          key: new Date().getTime(),
+          type: 'success',
+          message: res.response
+        });
       })
       .catch((err) => {
-        console.log(err);
+        setUpdate(data.index, false);
+        onResponse({
+          key: new Date().getTime(),
+          type: 'error',
+          message: err.message
+        });
       });
   };
 
@@ -170,8 +187,8 @@ const UserTableContainer = ({ useTheme, adminID }) => {
     setState({ ...state, changePassword: { ...user, index } });
   };
 
-  const handleSuspend = (res) => {
-    if (!res) {
+  const handleSuspend = (closeEvent) => {
+    if (!closeEvent) {
       setState({ userToSuspend: null });
       return;
     }
@@ -190,17 +207,36 @@ const UserTableContainer = ({ useTheme, adminID }) => {
     fetch(`/api/users/${user.id}`, headers)
       .then(handleFetch)
       .then((res) => {
-        console.log(res);
         toggleSuspend(user.index);
+        onResponse({
+          key: new Date().getTime(),
+          type: 'success',
+          message: res.response
+        });
       })
       .catch((err) => {
-        console.log(err);
+        setUpdate(state.userToSuspend.index, false);
+        onResponse({
+          key: new Date().getTime(),
+          type: 'error',
+          message: err.message
+        });
       });
   };
 
   const setSuspend = (user, index) => {
     setState({ ...state, userToSuspend: { ...user, index } });
   };
+
+  const confirmText = () => {
+    if (!state.userToSuspend) {
+      return '';
+    }
+    if (state.userToSuspend.active) {
+      return `¿Seguro deseas suspender a ${state.userToSuspend.usuario}?`;
+    }
+    return `¿Seguro deseas reactivar la cuenta de ${state.userToSuspend.usuario}?`
+  }
 
   return (
     <React.Fragment>
@@ -229,9 +265,7 @@ const UserTableContainer = ({ useTheme, adminID }) => {
         open={state.userToSuspend}
         handleClose={handleSuspend}
         theme={useTheme}
-        text={`¿Seguro deseas suspender a ${
-          state.userToSuspend && state.userToSuspend.usuario
-        }?`}
+        text={confirmText()}
       />
     </React.Fragment>
   );
@@ -242,7 +276,7 @@ export default UserTableContainer;
 const TableContent = ({
   classes,
   data,
-  onChange,
+  onChangeSelect,
   onClickLock,
   onClickTrash,
 }) => {
@@ -259,7 +293,7 @@ const TableContent = ({
               nivel={value.nivel}
               identifier={value.id}
               disabled={value.updating}
-              onChange={(target) => onChange(target, index)}
+              onChange={(target) => onChangeSelect(target, index)}
             />
           );
           break;
@@ -314,7 +348,7 @@ const TableContent = ({
         </TableCell>
       );
     });
-    console.log(value);
+
     const rowClass = () => {
       switch (true) {
         case value.updating:
@@ -334,3 +368,7 @@ const TableContent = ({
   }, []);
   return <TableBody>{content}</TableBody>;
 };
+
+// const Alert = (props) => {
+//   return <MuiAlert elevation={6} variant="filled" {...props} />;
+// };

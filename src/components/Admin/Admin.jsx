@@ -19,7 +19,8 @@ import FolderSpecialIcon from '@material-ui/icons/FolderSpecial';
 import HowToRegIcon from '@material-ui/icons/HowToReg';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import WarningIcon from '@material-ui/icons/Warning';
-import PropTypes from 'prop-types';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import {
   Link as RouterLink,
   Route,
@@ -125,43 +126,61 @@ const reactLink = React.forwardRef((props, ref) => (
 ));
 reactLink.displayName = 'reactLink';
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component='div'
-      role='tabpanel'
-      hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box>{children}</Box>}
-    </Typography>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
+const reducer = (state, action) => ({...state, ...action});
 
 const Admin = (props) => {
   const classes = useStyles();
   const location = useLocation();
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const { state: globalState } = useContext(saduwux);
+
+  const [state, setState] = React.useReducer(reducer, {
+    selectedIndex: 0,
+    snackPack: [],
+    open: false,
+    messageInfo: undefined
+  });
 
   React.useEffect(() => {
     const x = routes.findIndex((route) => {
       const link = props.match.path + route.link;
       return location.pathname === link;
     });
-    setSelectedIndex(x);
+    setState({selectedIndex: x});
   }, [location.pathname, props.match.path]);
 
-  const { state: globalState } = useContext(saduwux);
+  React.useEffect(() => {
+    console.log(state);
+    if (state.snackPack.length && !state.messageInfo) {
+      // Set a new snack when we don't have an active one
+      setState({ 
+        messageInfo: { ...state.snackPack[0] },
+        snackPack: state.snackPack.slice(1),
+        open: true
+      });
+    } else if (state.snackPack.length && state.open) {
+      // Close an active snack when a new one is added
+      setState({ open: false, messageInfo: undefined });
+    }
+  }, [state]);
+
+  const addBar = (data) => {
+    setState({ snackPack: [...state.snackPack, {
+      key: new Date().getTime(),
+      type: data.type,
+      message: data.message
+    }]});
+  };
+
+  const closeBar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setState({open: false, messageInfo: undefined});
+  };
+
+  const exitBar = () => {
+    setState({ messageInfo: undefined });
+  };
 
   const mainClass = () => {
     let className = classes.main;
@@ -176,7 +195,7 @@ const Admin = (props) => {
           button
           component={reactLink}
           to={props.match.path + route.link}
-          selected={selectedIndex === index}
+          selected={state.selectedIndex === index}
         >
           <ListItemAvatar>
             <Avatar>
@@ -220,11 +239,18 @@ const Admin = (props) => {
               <UsersTableContainer
                 useTheme={globalState.theme}
                 adminID={globalState.user.id}
+                onResponse={addBar}
               />
             )}
           />
         </Switch>
       </Box>
+      <RequestSnack
+        onClose={closeBar}
+        onExit={exitBar}
+        data={state.messageInfo}
+        open={state.open}
+      />
     </Box>
   );
 };
@@ -258,6 +284,40 @@ const WelcomeAdmin = () => {
     </Box>
   );
 };
+
+const RequestSnack = ({
+  onClose,
+  onExit,
+  open,
+  data
+}) => {
+  if(!open) {
+    return '';
+  }
+  const { message, type, key } = data;
+  return (
+    <Snackbar
+      key={key || 'asdgaryisthebest'}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      open={open}
+      onClose={onClose}
+      onExited={onExit}
+      autoHideDuration={2000}
+    >
+      <MuiAlert
+        severity={type || 'success'}
+        elevation={6}
+        variant='filled'
+        onClose={onClose}
+      >
+        {message}
+      </MuiAlert>
+    </Snackbar>
+  );
+}
 
 /* <Route exact path={this.props.match.path} component={HomeDefault} />
 <Route path={`${this.props.match.path}/one`} component={HomePageOne} />
