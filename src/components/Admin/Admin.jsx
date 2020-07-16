@@ -126,7 +126,7 @@ const reactLink = React.forwardRef((props, ref) => (
 ));
 reactLink.displayName = 'reactLink';
 
-const reducer = (state, action) => ({...state, ...action});
+const reducer = (state, action) => ({ ...state, ...action });
 
 const Admin = (props) => {
   const classes = useStyles();
@@ -137,7 +137,7 @@ const Admin = (props) => {
     selectedIndex: 0,
     snackPack: [],
     open: false,
-    messageInfo: undefined
+    messageInfo: undefined,
   });
 
   React.useEffect(() => {
@@ -145,17 +145,17 @@ const Admin = (props) => {
       const link = props.match.path + route.link;
       return location.pathname === link;
     });
-    setState({selectedIndex: x});
+    setState({ selectedIndex: x });
   }, [location.pathname, props.match.path]);
 
   React.useEffect(() => {
     console.log(state);
     if (state.snackPack.length && !state.messageInfo) {
       // Set a new snack when we don't have an active one
-      setState({ 
+      setState({
         messageInfo: { ...state.snackPack[0] },
         snackPack: state.snackPack.slice(1),
-        open: true
+        open: true,
       });
     } else if (state.snackPack.length && state.open) {
       // Close an active snack when a new one is added
@@ -164,18 +164,23 @@ const Admin = (props) => {
   }, [state]);
 
   const addBar = (data) => {
-    setState({ snackPack: [...state.snackPack, {
-      key: new Date().getTime(),
-      type: data.type,
-      message: data.message
-    }]});
+    setState({
+      snackPack: [
+        ...state.snackPack,
+        {
+          key: new Date().getTime(),
+          type: data.type,
+          message: data.message,
+        },
+      ],
+    });
   };
 
   const closeBar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    setState({open: false, messageInfo: undefined});
+    setState({ open: false, messageInfo: undefined });
   };
 
   const exitBar = () => {
@@ -231,7 +236,12 @@ const Admin = (props) => {
           <Route exact path={props.match.path} component={WelcomeAdmin} />
           <Route
             path={`${props.match.path}/archivos/lista`}
-            render={() => <FilesTableContainer useTheme={globalState.theme} />}
+            render={() => (
+              <FilesTableContainer
+                useTheme={globalState.theme}
+                onResponse={addBar}
+              />
+            )}
           />
           <Route
             path={`${props.match.path}/usuarios/lista`}
@@ -285,13 +295,8 @@ const WelcomeAdmin = () => {
   );
 };
 
-const RequestSnack = ({
-  onClose,
-  onExit,
-  open,
-  data
-}) => {
-  if(!open) {
+const RequestSnack = ({ onClose, onExit, open, data }) => {
+  if (!open) {
     return '';
   }
   const { message, type, key } = data;
@@ -310,14 +315,14 @@ const RequestSnack = ({
       <MuiAlert
         severity={type || 'success'}
         elevation={6}
-        variant='filled'
+        variant="filled"
         onClose={onClose}
       >
         {message}
       </MuiAlert>
     </Snackbar>
   );
-}
+};
 
 /* <Route exact path={this.props.match.path} component={HomeDefault} />
 <Route path={`${this.props.match.path}/one`} component={HomePageOne} />

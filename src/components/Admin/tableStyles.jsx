@@ -41,14 +41,14 @@ export const useStyles = makeStyles({
       },
       '&.suspended': {
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
-      }
+      },
     },
     '& .MuiButtonBase-root': {
       color: 'rgba(0, 0, 0, 0.9)',
       '&.Mui-disabled': {
         color: 'rgba(0, 0, 0, 0.3)',
-      }
-    }
+      },
+    },
   },
   dark: {
     minWidth: 650,
@@ -64,7 +64,7 @@ export const useStyles = makeStyles({
       },
       '&.suspended': {
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
-      }
+      },
     },
     '& .MuiTableCell-body ': {
       padding: '8px',

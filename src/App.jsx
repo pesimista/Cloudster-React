@@ -140,6 +140,7 @@ const App = () => {
   useFetchUser(() => {
     const token = localStorage.getItem('token');
     if (!token) {
+      console.log('No token');
       dispatch({ type: 'update', payload: { logStatus: 0 } });
       localStorage.clear();
       return;

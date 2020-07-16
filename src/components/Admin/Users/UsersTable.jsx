@@ -90,8 +90,15 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
         }));
         setState({ userList: users });
       })
-      .catch((mistake) => alert('salio mal' + mistake.message));
-  }, [shouldUpdate, adminID]);
+      .catch((mistake) => {
+        setState({ shouldUpdate: false });
+        onResponse({
+          key: new Date().getTime(),
+          type: 'error',
+          message: mistake.message,
+        });
+      });
+  }, [shouldUpdate, adminID, onResponse]);
 
   if (!userList) {
     return (
@@ -122,9 +129,7 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('token'),
       },
-      body: JSON.stringify({
-        nivel: value,
-      }),
+      body: JSON.stringify({ nivel: value }),
     };
 
     fetch(`/api/users/${name}`, headers)
@@ -134,7 +139,7 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
         onResponse({
           key: new Date().getTime(),
           type: 'success',
-          message: res.response
+          message: res.response,
         });
       })
       .catch((err) => {
@@ -142,7 +147,7 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
         onResponse({
           key: new Date().getTime(),
           type: 'error',
-          message: err.message
+          message: err.message,
         });
       });
   };
@@ -170,7 +175,7 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
         onResponse({
           key: new Date().getTime(),
           type: 'success',
-          message: res.response
+          message: res.response,
         });
       })
       .catch((err) => {
@@ -178,7 +183,7 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
         onResponse({
           key: new Date().getTime(),
           type: 'error',
-          message: err.message
+          message: err.message,
         });
       });
   };
@@ -211,7 +216,7 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
         onResponse({
           key: new Date().getTime(),
           type: 'success',
-          message: res.response
+          message: res.response,
         });
       })
       .catch((err) => {
@@ -219,12 +224,15 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
         onResponse({
           key: new Date().getTime(),
           type: 'error',
-          message: err.message
+          message: err.message,
         });
       });
   };
 
   const setSuspend = (user, index) => {
+    if (adminID === user.id) {
+      return;
+    }
     setState({ ...state, userToSuspend: { ...user, index } });
   };
 
@@ -235,8 +243,8 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
     if (state.userToSuspend.active) {
       return `¿Seguro deseas suspender a ${state.userToSuspend.usuario}?`;
     }
-    return `¿Seguro deseas reactivar la cuenta de ${state.userToSuspend.usuario}?`
-  }
+    return `¿Seguro deseas reactivar la cuenta de ${state.userToSuspend.usuario}?`;
+  };
 
   return (
     <React.Fragment>
@@ -303,7 +311,10 @@ const TableContent = ({
         case 'nombre':
           constent = `${value.nombre} ${value.apellido}`;
           break;
-        case '':
+        case '': {
+          const title = value.active
+            ? 'Suspender usuario'
+            : 'Reactivar usuario';
           constent = (
             <React.Fragment>
               <Tooltip title="Cambiar contraseña">
@@ -317,7 +328,7 @@ const TableContent = ({
                   </IconButton>
                 </span>
               </Tooltip>
-              <Tooltip title="Suspender usuario">
+              <Tooltip title={title}>
                 <span>
                   <IconButton
                     disabled={value.updating}
@@ -331,6 +342,7 @@ const TableContent = ({
             </React.Fragment>
           );
           break;
+        }
         default:
           break;
       }
@@ -368,7 +380,3 @@ const TableContent = ({
   }, []);
   return <TableBody>{content}</TableBody>;
 };
-
-// const Alert = (props) => {
-//   return <MuiAlert elevation={6} variant="filled" {...props} />;
-// };
