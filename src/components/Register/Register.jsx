@@ -21,7 +21,7 @@ import { handleFetch, structuteChecker } from '../SF/helpers';
 import Container from '@material-ui/core/Container';
 import MuiAlert from '@material-ui/lab/Alert';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     gridColumnStart: '1',
     gridColumnEnd: '3',
@@ -44,14 +44,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const reactLink = React.forwardRef((props, ref) =>
+const reactLink = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
-);
+));
 reactLink.displayName = 'reactLink';
 
 const Alert = (props) => {
-  return <MuiAlert elevation={6} variant='filled' {...props} />;
-}
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
 const initialState = {
   open: false,
@@ -67,12 +67,12 @@ const initialState = {
   pregunta2: 2,
   respuesta1: '',
   respuesta2: '',
-  questions: []
-}
+  questions: [],
+};
 
 const reducer = (state, action) => {
   return { ...state, ...action };
-}
+};
 
 const Register = () => {
   let history = useHistory();
@@ -86,7 +86,7 @@ const Register = () => {
     { id: '2', pregunta: 'Cuál es la ciudad donde naciste?' },
     { id: '3', pregunta: 'Cómo se llamaba tu primera mascota?' },
     { id: '4', pregunta: 'Cuál es tu color favorito?' },
-    { id: '5', pregunta: 'Cuál es el segundo nombre de tu madre?' }
+    { id: '5', pregunta: 'Cuál es el segundo nombre de tu madre?' },
   ];
 
   const handleRegister = () => {
@@ -98,11 +98,10 @@ const Register = () => {
       { name: 'pregunta1', required: true, type: 'number' },
       { name: 'pregunta2', required: true, type: 'number' },
       { name: 'respuesta1', required: true, type: 'string', length: 3 },
-      { name: 'respuesta2', required: true, type: 'string', length: 3 }
+      { name: 'respuesta2', required: true, type: 'string', length: 3 },
     ];
 
-    if (!structuteChecker(state, keys))
-      return;
+    if (!structuteChecker(state, keys)) return;
 
     fetch('http://localhost:1234/api/users', {
       method: 'post',
@@ -115,10 +114,11 @@ const Register = () => {
         pregunta1: state.pregunta1,
         pregunta2: state.pregunta2,
         respuesta1: state.respuesta1.trim(),
-        respuesta2: state.respuesta2.trim()
-      })
-    }).then(handleFetch).then(
-      data => {
+        respuesta2: state.respuesta2.trim(),
+      }),
+    })
+      .then(handleFetch)
+      .then((data) => {
         dispatch({ type: 'login', payload: { user: data.user } });
         localStorage.setItem('token', 'bearer ' + data.token);
         update({
@@ -128,12 +128,12 @@ const Register = () => {
         setTimeout(() => {
           history.push('/busqueda');
         }, 1000);
-      }
-    ).catch(err => {
-      console.log(err);
-      update({ activeStep: 2, open: true, message: err.message });
-    });
-  }
+      })
+      .catch((err) => {
+        console.log(err);
+        update({ activeStep: 2, open: true, message: err.message });
+      });
+  };
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -142,21 +142,29 @@ const Register = () => {
     update({ open: false });
   };
 
-  const steps = ['Nombres y Contraseña', 'Preguntas Secretas', 'Nombre de usuario'];
+  const steps = [
+    'Nombres y Contraseña',
+    'Preguntas Secretas',
+    'Nombre de usuario',
+  ];
   const handleNext = () => update({ activeStep: state.activeStep + 1 });
   const handleBack = () => update({ activeStep: state.activeStep - 1 });
-  const handleClick = () => state.activeStep < 2 ? handleNext() : handleRegister();
+  const handleClick = () =>
+    state.activeStep < 2 ? handleNext() : handleRegister();
 
   const handleChange = (e) => {
     if (state.userExist && e.target.name === 'user') {
       update({ userExist: false, user: e.target.value });
-    }
-    else
-      update({ [e.target.name]: e.target.value });
-  }
+    } else update({ [e.target.name]: e.target.value });
+  };
 
-  const mapPreguntas = questions.map(item => {
-    return <MenuItem key={item.id} value={item.id}> {item.pregunta} </MenuItem>
+  const mapPreguntas = questions.map((item) => {
+    return (
+      <MenuItem key={item.id} value={item.id}>
+        {' '}
+        {item.pregunta}{' '}
+      </MenuItem>
+    );
   });
 
   const getStepContent = (step) => {
@@ -167,52 +175,60 @@ const Register = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 onChange={handleChange}
-                name='nombre'
+                name="nombre"
                 value={state.nombre}
-                id='nombre'
-                label='Nombre'
-                variant='outlined'
-                helperText='El nombre debe contener al menos 2 catacteres'
+                id="nombre"
+                label="Nombre"
+                variant="outlined"
+                helperText="El nombre debe contener al menos 2 catacteres"
                 fullWidth
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
                 onChange={handleChange}
-                name='apellido'
+                name="apellido"
                 value={state.apellido}
-                id='apellido'
-                label='Apellido'
-                variant='outlined'
-                helperText='El apellido debe contener al menos 2 catacteres'
+                id="apellido"
+                label="Apellido"
+                variant="outlined"
+                helperText="El apellido debe contener al menos 2 catacteres"
                 fullWidth
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
                 onChange={handleChange}
-                name='password'
+                name="password"
                 value={state.password}
-                type='password'
-                id='password'
-                label='Contraseña'
-                variant='outlined'
-                helperText='La contraseña debe contener al menos 6 catacteres'
+                type="password"
+                id="password"
+                label="Contraseña"
+                variant="outlined"
+                helperText="La contraseña debe contener al menos 6 catacteres"
                 fullWidth
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
                 onChange={handleChange}
-                name='password2'
+                name="password2"
                 value={state.password2}
-                type='password'
-                id='password2'
-                label='Confirmar contraseña'
-                variant='outlined'
+                type="password"
+                id="password2"
+                label="Confirmar contraseña"
+                variant="outlined"
                 fullWidth
-                error={state.password2.length > 2 && state.password !== state.password2}
-                helperText={state.password2.length > 2 && state.password !== state.password2 ? 'Las contraseñas no coinciden' : ' '}
+                error={
+                  state.password2.length > 2 &&
+                  state.password !== state.password2
+                }
+                helperText={
+                  state.password2.length > 2 &&
+                  state.password !== state.password2
+                    ? 'Las contraseñas no coinciden'
+                    : ' '
+                }
               />
             </Grid>
           </Grid>
@@ -222,15 +238,19 @@ const Register = () => {
           <Grid container spacing={1}>
             <Grid item xs={12} md={6}>
               <TextField
-                id='outlined-select-currency'
+                id="outlined-select-currency"
                 select
                 onChange={handleChange}
-                name='pregunta1'
-                helperText={state.pregunta1 === state.pregunta2 ? 'Las preguntas no pueden ser iguales' : ''}
+                name="pregunta1"
+                helperText={
+                  state.pregunta1 === state.pregunta2
+                    ? 'Las preguntas no pueden ser iguales'
+                    : ''
+                }
                 error={state.pregunta1 === state.pregunta2}
                 value={state.pregunta1}
-                label='Primera pregunta'
-                variant='outlined'
+                label="Primera pregunta"
+                variant="outlined"
                 fullWidth
               >
                 {mapPreguntas}
@@ -239,25 +259,29 @@ const Register = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 onChange={handleChange}
-                name='respuesta1'
+                name="respuesta1"
                 value={state.respuesta1}
-                id='outlined-basic'
-                label='Respuesta'
-                variant='outlined'
+                id="outlined-basic"
+                label="Respuesta"
+                variant="outlined"
                 fullWidth
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
-                id='outlined-select-currency'
+                id="outlined-select-currency"
                 select
-                label='Segunda pregunta'
+                label="Segunda pregunta"
                 onChange={handleChange}
-                name='pregunta2'
-                helperText={state.pregunta1 === state.pregunta2 ? 'Las preguntas no pueden ser iguales' : ''}
+                name="pregunta2"
+                helperText={
+                  state.pregunta1 === state.pregunta2
+                    ? 'Las preguntas no pueden ser iguales'
+                    : ''
+                }
                 error={state.pregunta1 === state.pregunta2}
                 value={state.pregunta2}
-                variant='outlined'
+                variant="outlined"
                 fullWidth
               >
                 {mapPreguntas}
@@ -266,11 +290,11 @@ const Register = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 onChange={handleChange}
-                name='respuesta2'
+                name="respuesta2"
                 value={state.respuesta2}
-                id='outlined-basic'
-                label='Respuesta'
-                variant='outlined'
+                id="outlined-basic"
+                label="Respuesta"
+                variant="outlined"
                 fullWidth
               />
             </Grid>
@@ -281,45 +305,43 @@ const Register = () => {
           <Grid item xs={12} md={6}>
             <TextField
               onChange={handleChange}
-              name='user'
+              name="user"
               value={state.user}
-              helperText={state.userExist ? 'El nombre de usuario ya existe' : ' '}
+              helperText={
+                state.userExist ? 'El nombre de usuario ya existe' : ' '
+              }
               error={state.userExist}
-              id='outlined-basic'
-              label='Nombre de usuario'
-              variant='outlined'
+              id="outlined-basic"
+              label="Nombre de usuario"
+              variant="outlined"
               fullWidth
             />
           </Grid>
-        )
+        );
       default:
         return 'Paso no existente';
     }
-  }
+  };
   return (
-    <Container className={classes.main} component='main' maxWidth='lg'>
-      <Box textAlign='center'>
-        <Link
-          component={reactLink}
-          to='/'
-        >
+    <Container className={classes.main} component="main" maxWidth="lg">
+      <Box textAlign="center">
+        <Link component={reactLink} to="/">
           <IconButton>
-            <CloudIcon
-              color='primary'
-              style={{ fontSize: '4rem' }}
-            />
+            <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
           </IconButton>
         </Link>
-        <Typography component='h1' variant='h5'>
+        <Typography component="h1" variant="h5">
           Registrarse
-            </Typography>
+        </Typography>
       </Box>
-      <Stepper activeStep={state.activeStep} orientation='vertical'>
+      <Stepper activeStep={state.activeStep} orientation="vertical">
         {steps.map((label, index) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
             <StepContent>
-              <Typography component={'span'}>{getStepContent(index)}</Typography>
+              <Typography component={'span'}>
+                {getStepContent(index)}
+              </Typography>
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
                   disabled={state.activeStep === 0}
@@ -327,24 +349,27 @@ const Register = () => {
                   className={classes.button}
                 >
                   Volver
-                        </Button>
+                </Button>
                 <Button
                   disabled={
                     (index === 0 &&
                       (state.nombre.length < 2 ||
                         state.apellido.length < 2 ||
                         state.password.length < 6 ||
-                        state.password !== state.password2)
-                    ) ||
-                    (index === 1 && (state.respuesta1.length < 3 || state.respuesta2.length < 3)) ||
+                        state.password !== state.password2)) ||
+                    (index === 1 &&
+                      (state.respuesta1.length < 3 ||
+                        state.respuesta2.length < 3)) ||
                     (index === 2 && state.user.length < 3)
                   }
-                  variant='contained'
-                  color='primary'
+                  variant="contained"
+                  color="primary"
                   onClick={handleClick}
                   className={classes.button}
                 >
-                  {state.activeStep === (steps.length - 1) ? 'Registrarse' : 'Siguiente'}
+                  {state.activeStep === steps.length - 1
+                    ? 'Registrarse'
+                    : 'Siguiente'}
                 </Button>
               </div>
             </StepContent>
@@ -361,23 +386,19 @@ const Register = () => {
           autoHideDuration={6000}
           onClose={handleClose}
         >
-          <Alert onClose={handleClose} severity='error'>
+          <Alert onClose={handleClose} severity="error">
             {state.message}
           </Alert>
         </Snackbar>
       </Box>
       <Paper square elevation={0} className={classes.pdd}>
-        <Typography>
-          Ya tienes cuenta?
-            </Typography>
-        <Link component={reactLink} to='/login'>
-          <Button className={classes.button}>
-            Inicia Sesión!
-               </Button>
+        <Typography>Ya tienes cuenta?</Typography>
+        <Link component={reactLink} to="/login">
+          <Button className={classes.button}>Inicia Sesión!</Button>
         </Link>
       </Paper>
     </Container>
-  )
-}
+  );
+};
 
 export default Register;

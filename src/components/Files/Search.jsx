@@ -4,28 +4,30 @@
  * @typedef {import('../SF/typedefs.jsx').inputFile} inputFile
  * @typedef {import('../SF/typedefs.jsx').context} context
  */
-import AppBar from "@material-ui/core/AppBar";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import Snackbar from "@material-ui/core/Snackbar";
-import { makeStyles } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import CachedIcon from "@material-ui/icons/Cached";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import HomeIcon from "@material-ui/icons/Home";
+import AppBar from '@material-ui/core/AppBar';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Snackbar from '@material-ui/core/Snackbar';
+import { makeStyles } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CachedIcon from '@material-ui/icons/Cached';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import HomeIcon from '@material-ui/icons/Home';
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext } from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, postFile } from '../SF/helpers';
 import Files from './Files';
 import FileInfoModal from './Modals/FileInfoModal';
 import UploadFileModal from './Modals/UploadFileModal';
+import SendIcon from '@material-ui/icons/Send';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -34,8 +36,12 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateRows: '48px 1fr',
     width: '100%',
   },
+  anotherRow: {
+    gridTemplateRows: '48px 1fr 48px',
+  },
+  peachColor: { backgroundColor: '#fff9c4' },
   bar: {
-    position: 'sticky'
+    position: 'sticky',
   },
   title: { flexGrow: 1, textAlign: 'center' },
   input: { display: 'none' },
@@ -64,16 +70,23 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('xs')]: {
       textAlign: 'center',
       '& .MuiIconButton-edgeStart': {
-        margin: 0
-      }
+        margin: 0,
+      },
     },
   },
-  inline: { display: 'inline' }
+  movingBar: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '0.25rem 1rem',
+    borderTop: '1px solid grey',
+  },
+  inline: { display: 'inline' },
 }));
 
 const Alert = (props) => {
-  return <MuiAlert elevation={6} variant='filled' {...props} />;
-}
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
 /** @type {initialState} */
 const initialState = {
@@ -83,22 +96,23 @@ const initialState = {
   fileForModal: '',
   uploadModal: false,
   files: null,
-  shouldUpdate: false
+  shouldUpdate: false,
+  movingFile: '',
 };
 
 const reducer = (state, action) => {
-  if (action.type === 'shouldUpdate') {
-    return {
-      ...state,
-      shouldUpdate: !state.shouldUpdate,
-      uploadModal: false,
-      fileModal: '',
-      open: action.open,
-      message: action.message ? action.message : '',
-      severity: action.severity
-    };
+  if (action.type !== 'shouldUpdate') {
+    return { ...state, ...action };
   }
-  return { ...state, ...action };
+  return {
+    ...state,
+    shouldUpdate: !state.shouldUpdate,
+    uploadModal: false,
+    fileModal: '',
+    open: action.open,
+    message: action.message || '',
+    severity: action.severity || '',
+  };
 };
 
 const Search = () => {
@@ -109,30 +123,27 @@ const Search = () => {
   const { state: globalState, dispatch } = useContext(saduwux);
 
   React.useEffect(() => {
+    if (state.shouldUpdate) {
+      update({ type: 'shouldUpdate' });
+    }
     fetch(`/api/files/${globalState.folder}/files`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('token'),
       },
-    }).then(
-      handleFetch
-    ).then((response) => update({ files: sort(response) })
-    ).catch((mistake) =>
-      console.log(
-        `/api/files/${globalState.folder}/files`,
-        mistake.message
-      )
-    );
+    })
+      .then(handleFetch)
+      .then((response) => update({ files: sort(response) }))
+      .catch((mistake) =>
+        console.log(`/api/files/${globalState.folder}/files`, mistake.message)
+      );
   }, [globalState.folder, state.shouldUpdate]);
-
-  if (!globalState.logStatus) {
-    return <Redirect to='/notlogged' />;
-  }
 
   /**--------------------- Navigators ----------------------*/
   /** Goes one folder up if possible */
-  const goBack = () => globalState.history.length && dispatch({ type: 'moveBack' });
+  const goBack = () =>
+    globalState.history.length && dispatch({ type: 'moveBack' });
   /** Goes one folder in */
   const updateFolder = (ino) => dispatch({ type: 'moveForward', payload: ino });
   /** Redirects to the player */
@@ -157,9 +168,7 @@ const Search = () => {
    */
   const handleUploadModal = (data, closing = false) => {
     if (!data && !closing) update({ uploadModal: true });
-
-    else if (data)
-      uploadFile({ ...data, folder: globalState.folder });
+    else if (data) uploadFile({ ...data, folder: globalState.folder });
 
     if (closing) update({ uploadModal: false });
   };
@@ -177,62 +186,90 @@ const Search = () => {
    * @param {inputFile} fileToPost The data to be posted
    */
   const uploadFile = (fileToPost) => {
-    const onSuccess = () => update({
-      type: 'shouldUpdate', open: true, message: 'Archivo subido satisfactoriamente!', severity: 'success'
-    });
+    const onSuccess = () =>
+      update({
+        type: 'shouldUpdate',
+        open: true,
+        message: 'Archivo subido satisfactoriamente!',
+        severity: 'success',
+      });
 
-    const onError = (mistake) => update({ open: true, message: mistake.message });
+    const onError = (mistake) =>
+      update({ open: true, message: mistake.message });
 
-    postFile(
-      fileToPost,
-      onSuccess,
-      onError
-    );
+    postFile(fileToPost, onSuccess, onError);
   };
+
+  /** Mover archivos */
+  const setMovingFile = (ino) => {
+    update({ movingFile: ino });
+  };
+  const cancelMoving = () => {
+    update({ movingFile: null });
+  };
+  const moveFile = () => {
+    // fetch state.moving file => globalState.folder
+  };
+  /** */
 
   const items = () => {
     const regex = new RegExp(globalState.search, 'gi');
-    return state.files.reduce(
-      (filtered, file, index) => {
-        if (!file.name.match(regex)) {
-          return filtered;
-        }
-        const temp = (
-          <Files
-            openModal={handleFileModal}
-            useTheme={globalState.theme}
-            updatePlayer={updatePlayer}
-            updateFolder={updateFolder}
-            key={index}
-            file={file}
-          />
-        );
-        return [...filtered, temp];
-      }, []
-    )
+    return state.files.reduce((filtered, file, index) => {
+      if (!file.name.match(regex)) {
+        return filtered;
+      }
+      const temp = (
+        <Files
+          openModal={handleFileModal}
+          useTheme={globalState.theme}
+          updatePlayer={updatePlayer}
+          updateFolder={updateFolder}
+          move={{ setMovingFile, movingFile: state.movingFile }}
+          key={index}
+          file={file}
+        />
+      );
+      return [...filtered, temp];
+    }, []);
+  };
+
+  const mainClass = () => {
+    let className = classes.main;
+    if (state.movingFile) className += ` ${classes.anotherRow}`;
+    if (!globalState.theme) className += ` ${classes.peachColor}`;
+    return className;
   };
 
   return (
     <React.Fragment>
-      <Box className={classes.main} component='main'>
-        <AppBar component='div' color='secondary' className={classes.bar}>
-          <Toolbar variant='dense'>
-            <Grid container alignItems='center'>
-              <Grid className={classes.sectionMobile} container item xs={12} sm={2} md={3} lg={1}>
-                <Grid item xs={4} >
+      <Box className={mainClass()} component="main">
+        <AppBar component="div" color="secondary" className={classes.bar}>
+          <Toolbar variant="dense">
+            <Grid container alignItems="center">
+              <Grid
+                className={classes.sectionMobile}
+                container
+                item
+                xs={12}
+                sm={2}
+                md={3}
+                lg={1}
+              >
+                <Grid item xs={4}>
                   <IconButton
-                    edge='start'
+                    edge="start"
                     onClick={goBack}
-                    color='inherit'
-                    aria-label='menu'>
+                    color="inherit"
+                    aria-label="menu"
+                  >
                     <ArrowBackIcon />
                   </IconButton>
                 </Grid>
                 <Grid item xs={4}>
                   <IconButton
-                    edge='start'
-                    color='inherit'
-                    aria-label='menu'
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
                     onClick={() => update({ type: 'shouldUpdate' })}
                   >
                     <CachedIcon />
@@ -240,46 +277,73 @@ const Search = () => {
                 </Grid>
                 <Grid item xs={4}>
                   <IconButton
-                    edge='start'
+                    edge="start"
                     onClick={goHome}
-                    color='inherit'
-                    aria-label='menu'>
+                    color="inherit"
+                    aria-label="menu"
+                  >
                     <HomeIcon />
                   </IconButton>
                 </Grid>
               </Grid>
-              <Grid item className={classes.sectionDesktop} sm={8} md={7} lg={10}>
-                <Box display='flex'>
-                  <Typography variant='h6' className={classes.title}>
+              <Grid
+                item
+                className={classes.sectionDesktop}
+                sm={8}
+                md={7}
+                lg={10}
+              >
+                <Box display="flex">
+                  <Typography variant="h6" className={classes.title}>
                     Puedes acceder desde {window.location.origin}
                   </Typography>
                 </Box>
               </Grid>
-              <Grid item className={classes.sectionDesktop} sm={2} md={2} lg={1} style={{ textAlign: 'end' }}>
+              <Grid
+                item
+                className={classes.sectionDesktop}
+                sm={2}
+                md={2}
+                lg={1}
+                style={{ textAlign: 'end' }}
+              >
                 <Button
-                  color='inherit'
+                  color="inherit"
                   startIcon={<CloudUploadIcon />}
-                  component='span'
-                  onClick={() => handleUploadModal()}>
+                  component="span"
+                  onClick={() => handleUploadModal()}
+                >
                   Subir
-                     </Button>
+                </Button>
               </Grid>
             </Grid>
           </Toolbar>
         </AppBar>
-        {!state.files || state.shouldUpdate ? <LinearProgress /> : ''}
         <Grid container className={classes.inline}>
-          <div className={classes.container}>
-            {state.files ? items() : ''}
-          </div>
+          {!state.files || state.shouldUpdate ? <LinearProgress /> : ''}
+          <div className={classes.container}>{state.files ? items() : ''}</div>
         </Grid>
+        <MovingBar
+          movingFile={state.movingFile}
+          className={classes.movingBar}
+          move={moveFile}
+          cancel={cancelMoving}
+          theme={globalState.theme}
+        />
       </Box>
-      <FileInfoModal open={!!state.fileForModal} file={state.fileForModal} handleClose={handleFileModal} />
-      <UploadFileModal open={state.uploadModal} handleClose={handleUploadModal} />
+      <FileInfoModal
+        open={!!state.fileForModal}
+        file={state.fileForModal}
+        handleClose={handleFileModal}
+      />
+      <UploadFileModal
+        open={state.uploadModal}
+        handleClose={handleUploadModal}
+      />
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right'
+          horizontal: 'right',
         }}
         open={state.open}
         onClose={handleClose}
@@ -293,10 +357,58 @@ const Search = () => {
   );
 };
 
+const MovingBar = ({ movingFile: file, className, move, cancel, theme }) => {
+  if (!file) {
+    return '';
+  }
+  const spanClass = makeStyles(() => ({
+    button: {
+      '& .MuiButton-endIcon, & .MuiButton-startIcon': {
+        marginTop: '-5px',
+      },
+    },
+    typo: {
+      color: theme ? '#fff' : 'rgba(0, 0, 0, 0.87)',
+    },
+  }))();
+
+  const { name, ext } = file;
+  const nameToShow =
+    name.length > 30 ? name.substring(0, 27).trim() + '...' + ext : name;
+
+  return (
+    <div className={className}>
+      <Typography variant="h6" className={spanClass.typo}>
+        Moviendo: {nameToShow}
+      </Typography>
+      <div>
+        <Button
+          disableElevation
+          onClick={() => cancel()}
+          size="large"
+          startIcon={<CancelIcon />}
+          className={spanClass.button}
+        >
+          Cancelar
+        </Button>
+        <Button
+          disableElevation
+          onClick={() => move()}
+          size="large"
+          endIcon={<SendIcon />}
+          className={spanClass.button}
+        >
+          Mover aquí
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 export default Search;
 
 /**
- * @param {file[]} arr 
+ * @param {file[]} arr
  */
 const sort = (arr) => {
   arr.sort(byName);
@@ -305,13 +417,13 @@ const sort = (arr) => {
 }; //Sort
 /**
  * Sort by name
- * @param {file} a 
- * @param {file} b 
+ * @param {file} a
+ * @param {file} b
  */
 const byName = (a, b) => a.name.localeCompare(b.name); //By name
 /**
  * Sort by extension
- * @param {file} a 
- * @param {file} b 
+ * @param {file} a
+ * @param {file} b
  */
 const byFileType = (a, b) => a.ext.localeCompare(b.ext);

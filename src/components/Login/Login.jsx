@@ -16,7 +16,7 @@ import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch } from '../SF/helpers';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     gridColumnStart: '1',
     gridColumnEnd: '3',
@@ -35,31 +35,31 @@ const useStyles = makeStyles(theme => ({
       fontWeight: '600',
 
       '&.MuiButton-containedPrimary': {
-        color: '#fff'
+        color: '#fff',
       },
       '&.Mui-disabled': {
-        color: 'rgba(0, 0, 0, 0.26)'
-      }
-    }
+        color: 'rgba(0, 0, 0, 0.26)',
+      },
+    },
   },
   box: {
     padding: '1rem 3rem',
     backgroundColor: '#fff',
     borderRadius: '1rem',
-    maxWidth: '400px'
+    maxWidth: '400px',
   },
   form: {
     marginTop: theme.spacing(1),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    padding: '0.5rem !important'
+    padding: '0.5rem !important',
   },
 }));
 
 const Alert = (props) => {
-  return <MuiAlert elevation={6} variant='filled' {...props} />;
-}
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
 /**
  * updates the state
@@ -70,23 +70,23 @@ const initialState = {
   message: '',
   username: '',
   password: '',
-  isLoading: false
+  isLoading: false,
 };
 
 const reducer = (state, action) => {
   return { ...state, ...action };
 };
 
-const reactLink = React.forwardRef((props, ref) =>
+const reactLink = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
-);
+));
 reactLink.displayName = 'reactLink';
 
 const Login = () => {
   const history = useHistory();
   const classes = useStyles();
 
-  React.useEffect(() => localStorage.clear(), [])
+  React.useEffect(() => localStorage.clear(), []);
 
   const [state, update] = useReducer(reducer, initialState);
   const { dispatch } = useContext(saduwux);
@@ -94,7 +94,7 @@ const Login = () => {
   const invalid = () => {
     const { username, password } = state;
     return !username.length || password.length < 6;
-  }
+  };
 
   const handleLogin = () => {
     if (invalid()) {
@@ -108,18 +108,19 @@ const Login = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         usuario: username,
-        password
+        password,
+      }),
+    })
+      .then(handleFetch)
+      .then((data) => {
+        localStorage.setItem('token', 'bearer ' + data.token);
+        dispatch({ type: 'login', payload: { user: data.user } });
+        update({ open: true, message: 'Inicio de sesión exitoso!' });
+        setTimeout(() => history.push('/busqueda'), 500);
       })
-    }).then(
-      handleFetch
-    ).then(data => {
-      localStorage.setItem('token', 'bearer ' + data.token);
-      dispatch({ type: 'login', payload: { user: data.user } });
-      update({ open: true, message: 'Inicio de sesión exitoso!' });
-      setTimeout(() => history.push('/busqueda'), 500);
-    }).catch(error => {
-      update({ open: true, message: error.message, isLoading: false });
-    });
+      .catch((error) => {
+        update({ open: true, message: error.message, isLoading: false });
+      });
   };
 
   const handleClose = (event, reason) => {
@@ -131,93 +132,83 @@ const Login = () => {
 
   const handleInput = ({ target }) => {
     update({ [target.id]: target.value.trim() });
-  }
+  };
 
   return (
-    <Container component='main' className={classes.main}>
+    <Container component="main" className={classes.main}>
       <Box
         className={classes.box}
-        display='flex'
-        flexDirection='column'
-        alignItems='center'
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
       >
-        <Link to='/' component={reactLink} >
+        <Link to="/" component={reactLink}>
           <IconButton>
-            <CloudIcon
-              color='primary'
-              style={{ fontSize: '4rem' }}
-            />
+            <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
           </IconButton>
         </Link>
-        <Typography component='h1' variant='h5'>
+        <Typography component="h1" variant="h5">
           Inicia Sesión
         </Typography>
         <Box className={classes.form} width={1}>
           <Divider />
           <TextField
             disabled={state.isLoading}
-            margin='normal'
+            margin="normal"
             required
             fullWidth
             autoFocus
             value={state.username}
-            onChange={e => handleInput(e)}
-            id='username'
-            label='Nombre de usuario'
-            variant='outlined'
+            onChange={(e) => handleInput(e)}
+            id="username"
+            label="Nombre de usuario"
+            variant="outlined"
           />
           <TextField
             disabled={state.isLoading}
-            margin='normal'
+            margin="normal"
             required
             fullWidth
             value={state.password}
-            onChange={e => handleInput(e)}
-            id='password'
-            type='password'
-            label='Contraseña'
-            variant='outlined'
+            onChange={(e) => handleInput(e)}
+            id="password"
+            type="password"
+            label="Contraseña"
+            variant="outlined"
           />
           <Button
             disabled={state.isLoading || invalid()}
             className={classes.submit}
             fullWidth
             onClick={handleLogin}
-            variant='contained'
-            color='primary'
-            size='large'
+            variant="contained"
+            color="primary"
+            size="large"
           >
             Iniciar Sesión
           </Button>
           <Snackbar
             anchorOrigin={{
               vertical: 'bottom',
-              horizontal: 'left'
+              horizontal: 'left',
             }}
             open={state.open}
             onClose={handleClose}
             autoHideDuration={6000}
           >
-            <Alert onClose={handleClose} severity='success'>
+            <Alert onClose={handleClose} severity="success">
               {state.message}
             </Alert>
           </Snackbar>
         </Box>
         <Grid container>
           <Grid item xs>
-            <Link
-              component={reactLink}
-              to='/recover'
-              color='secondary'
-            >
+            <Link component={reactLink} to="/recover" color="secondary">
               Olvidé mi contraseña
             </Link>
           </Grid>
           <Grid item>
-            <Link
-              component={reactLink}
-              to='/register'
-            >
+            <Link component={reactLink} to="/register">
               Registrarse
             </Link>
           </Grid>

@@ -5,31 +5,32 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(theme => ({
-	root: { padding: theme.spacing(3, 2) },
+const useStyles = makeStyles((theme) => ({
+  root: { padding: theme.spacing(3, 2) },
 }));
 
 const NotFound = () => {
-	const classes = useStyles();
+  const classes = useStyles();
 
-	return (
-		<Box 
-			textAlign="center"
-			display="flex"
-			width={1}
-			justifyContent="center"
-			alignItems="center"
-			className="min-h100">
-			<Paper className={classes.root}>
-				<Typography variant="h5" component="h3">
-					Lo sentimos!
-				</Typography>
-				<Typography component="p">
-					La página que estás buscando no existe.
-				</Typography>
-			</Paper>
-		</Box>
-	)
-}
+  return (
+    <Box
+      textAlign="center"
+      display="flex"
+      width={1}
+      justifyContent="center"
+      alignItems="center"
+      className="min-h100"
+    >
+      <Paper className={classes.root}>
+        <Typography variant="h5" component="h3">
+          Lo sentimos!
+        </Typography>
+        <Typography component="p">
+          La página que estás buscando no existe.
+        </Typography>
+      </Paper>
+    </Box>
+  );
+};
 
 export default NotFound;

@@ -1,67 +1,55 @@
-*
-{
+* {
   margin: 0px;
   padding: 0px;
 }
-red-hover:hover
-{
+red-hover:hover {
   color: red !important;
 }
-body, html
-{
+body,
+html {
   height: 100%;
 }
-li:hover
-{
+li:hover {
   background-color: #ffa726;
 }
-button
-{
-  background-color: transparent; 
+button {
+  background-color: transparent;
   border: none;
 }
-button:focus
-{
+button:focus {
   background-color: transparent;
 }
-button:hover
-{
+button:hover {
   cursor: pointer;
 }
-#leftBar
-{
+#leftBar {
   position: fixed;
   height: 100vh;
   margin-bottom: 0px !important;
   width: 55px;
-  background-color: rgb(37,37,37);
+  background-color: rgb(37, 37, 37);
 }
-.rightBar
-{
+.rightBar {
   position: fixed;
   left: 0;
   top: 0;
   height: 100%;
   margin: 0;
   width: 300px;
-  background-color: rgb(37,37,37);
+  background-color: rgb(37, 37, 37);
 }
-.leftBar-Button
-{
+.leftBar-Button {
   padding: 30px 0px;
   width: 100%;
 }
-.leftBar-Button:hover
-{
-  background-color:rgb(50,50,50);
+.leftBar-Button:hover {
+  background-color: rgb(50, 50, 50);
 }
-i
-{
+i {
   font-size: 30px;
   color: #eee;
 }
-.leftBar-Button > i
-{
+.leftBar-Button > i {
   font-size: 30px !important;
 }
 .logout-btn {
@@ -70,13 +58,11 @@ i
   left: 0;
   width: 55px;
 }
-#container
-{
+#container {
   margin-bottom: 0px !important;
   padding-left: 55px;
 }
-video
-{
+video {
   position: absolute;
   top: 0;
   right: 0;
@@ -87,50 +73,43 @@ video
   max-width: 100%;
   max-height: 100%;
 }
-#topBar
-{
-  padding: 5px; 
-  color: #eee; 
+#topBar {
+  padding: 5px;
+  color: #eee;
   height: 40px;
 }
-.main
-{
+.main {
   margin-left: 55px;
 }
-.p0, #secondBar
-{
+.p0,
+#secondBar {
   padding: 0px !important;
 }
-#itemHolder
-{
+#itemHolder {
   height: 100%;
   margin-left: 10px;
 }
-.file
-{
+.file {
   display: block;
   text-align: center;
   margin: 10px 5px;
-  width: 80px; 
+  width: 80px;
 }
-.item-text
-{
+.item-text {
   margin: 0;
-  padding-Bottom: 5px;
+  padding-bottom: 5px;
   overflow-wrap: break-word;
   text-decoration: none;
   font-size: 14px;
 }
-.progression
-{
+.progression {
   max-height: 5px;
   width: 90%;
   margin-right: 10px;
   background: #333;
   border-radius: 13px;
 }
-.progression:after
-{
+.progression:after {
   content: '';
   display: block;
   background: #ffa726;
@@ -138,53 +117,44 @@ video
   height: 5px;
   border-radius: 9px;
 }
-.divider
-{
+.divider {
   height: 2px;
 }
-.updown
-{
+.updown {
   margin-right: 0px;
 }
-.ptext 
-{
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+.ptext {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
 }
-.message, .message > h3
-{
+.message,
+.message > h3 {
   font-weight: 600;
   width: 100%;
   text-align: center;
   color: #424242;
   /* font-family: Georgia, 'Times New Roman', Times, serif; */
 }
-.file:hover
-{
+.file:hover {
   border: 1px solid transparent;
 }
-.file:hover
-{
+.file:hover {
   border: 1px solid blue;
-
 }
-td input[type="text"]
-{
+td input[type='text'] {
   border-bottom: 0px !important;
   margin: 0px !important;
 }
-.user-table td
-{
+.user-table td {
   padding-top: 5px !important;
   padding-bottom: 5px !important;
 }
-.number-column
-{
+.number-column {
   overflow-wrap: break-word;
   min-width: 55px;
-  max-width:55px;
-  text-align: center
+  max-width: 55px;
+  text-align: center;
 }
 .tabs .indicator {
   position: absolute;
@@ -193,27 +163,19 @@ td input[type="text"]
   background-color: orange;
   will-change: left, right;
 }
-.file-path-wrapper
-{
+.file-path-wrapper {
   width: 100% !important;
 }
-@media only screen and (max-width: 600px)
-{
-  #itemHolder
-  {
+@media only screen and (max-width: 600px) {
+  #itemHolder {
     margin-left: 0px;
   }
-  .updown
-  {
+  .updown {
     margin-right: 0px;
   }
 }
-@media only screen and (max-width: 414px)
-{
-  .file
-  {
+@media only screen and (max-width: 414px) {
+  .file {
     width: 29%;
   }
 }
-
-

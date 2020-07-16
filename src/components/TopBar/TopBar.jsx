@@ -86,10 +86,11 @@ const TopBar = () => {
     dispatch,
   } = useContext(saduwux);
 
-  const handleCheck = (event) => dispatch({
-    type: 'update',
-    payload: { theme: event.target.checked }
-  });
+  const handleCheck = (event) =>
+    dispatch({
+      type: 'update',
+      payload: { theme: event.target.checked },
+    });
 
   const searchBar = (
     <div className={classes.search}>
@@ -97,7 +98,7 @@ const TopBar = () => {
         <SearchIcon />
       </div>
       <InputBase
-        placeholder='Buscar...'
+        placeholder="Buscar..."
         classes={{
           root: classes.inputRoot,
           input: classes.inputInput,
@@ -115,22 +116,16 @@ const TopBar = () => {
     <AppBar className={classes.appBar}>
       <Toolbar>
         <FilterDramaIcon className={classes.icon} />
-        <Typography
-          className={
-            routes.includes(location.pathname) ? classes.title : searchBar
-          }
-          variant='h5'
-          noWrap
-        >
+        <Typography className={classes.title} variant="h5" noWrap>
           Cloudster
-            </Typography>
+        </Typography>
         {routes.includes(location.pathname) ? searchBar : ''}
         <div className={classes.grow} />
         <Link
           component={reactLink}
-          to='/Perfil'
-          color='inherit'
-          underline='none'
+          to="/Perfil"
+          color="inherit"
+          underline="none"
         >
           <Box display={{ xs: 'none', sm: 'flex' }}>
             <AccountCircle />
@@ -140,7 +135,7 @@ const TopBar = () => {
         <Switch
           checked={theme}
           onChange={handleCheck}
-          value='theme'
+          value="theme"
           color={theme ? '' : 'primary'}
           inputProps={{ 'aria-label': 'primary checkbox' }}
         />

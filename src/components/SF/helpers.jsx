@@ -23,12 +23,10 @@ import zerosize from './svg/Papirus-Team-Papirus-zerosize.svg';
 //SVG
 
 export const handleFetch = (response) => {
-   return response.json().then(json => {
-      if (response.ok)
-         return json;
-      else
-         return Promise.reject(json);
-   });
+  return response.json().then((json) => {
+    if (response.ok) return json;
+    else return Promise.reject(json);
+  });
 };
 
 /**
@@ -37,73 +35,69 @@ export const handleFetch = (response) => {
  * @returns {string} the size
  */
 export const parseSize = (size) => {
-   if (size < 1024)
-      return `${size.toFixed(2)} Bytes`;
+  if (size < 1024) return `${size.toFixed(2)} Bytes`;
 
-   size = size / 1024;
-   if (size < 1024)
-      return `${size.toFixed(2)} KB`
+  size = size / 1024;
+  if (size < 1024) return `${size.toFixed(2)} KB`;
 
-   size = size / 1024;
-   if (size < 1024)
-      return `${size.toFixed(2)} MB`
+  size = size / 1024;
+  if (size < 1024) return `${size.toFixed(2)} MB`;
 
-   size = size / 1024;
-   return `${size.toFixed(2)} GB`
-}
+  size = size / 1024;
+  return `${size.toFixed(2)} GB`;
+};
 
 export const getIcon = (isFile, ext) => {
-   if (!isFile)
-      return folder;
-   switch (ext) {
-      case 'jpg':
-      case 'png':
-         return pic;
-      case 'exe':
-      case 'msi':
-         return program;
-      case 'mp3':
-      case 'wav':
-      case 'm4a':
-         return audio;
-      case 'mp4':
-      case 'mkv':
-         return video;
-      case 'rar':
-      case 'zip':
-         return compress;
-      case 'json':
-         return json;
-      case 'js':
-      case 'jsx':
-         return js;
-      case 'jar':
-         return jar;
-      case 'iso':
-         return iso;
-      case 'pdf':
-         return pdf;
-      case 'txt':
-         return text;
-      case 'epub':
-         return book;
-      case 'doc':
-      case 'docx':
-         return doc;
-      case 'pptx':
-         return pp;
-      case 'xlsx':
-         return excel;
-      case 'html':
-         return html;
-      default:
-         return zerosize;
-   }
-}//GetIcon
+  if (!isFile) return folder;
+  switch (ext) {
+    case 'jpg':
+    case 'png':
+      return pic;
+    case 'exe':
+    case 'msi':
+      return program;
+    case 'mp3':
+    case 'wav':
+    case 'm4a':
+      return audio;
+    case 'mp4':
+    case 'mkv':
+      return video;
+    case 'rar':
+    case 'zip':
+      return compress;
+    case 'json':
+      return json;
+    case 'js':
+    case 'jsx':
+      return js;
+    case 'jar':
+      return jar;
+    case 'iso':
+      return iso;
+    case 'pdf':
+      return pdf;
+    case 'txt':
+      return text;
+    case 'epub':
+      return book;
+    case 'doc':
+    case 'docx':
+      return doc;
+    case 'pptx':
+      return pp;
+    case 'xlsx':
+      return excel;
+    case 'html':
+      return html;
+    default:
+      return zerosize;
+  }
+}; //GetIcon
 
 /**
- * 
- * @param {any} item 
+ *
+ * @param {any} item
  * @param {Object[]} keys description
  * @param {string} keys.name
  * @param {boolean} keys.required
@@ -111,55 +105,53 @@ export const getIcon = (isFile, ext) => {
  * @param {string} keys.type
  */
 export const structuteChecker = (item, keys) => {
-   return keys.every(key => {
-      console.log(key);
-      const { name, required, type, length } = key;
+  return keys.every((key) => {
+    console.log(key);
+    const { name, required, type, length } = key;
 
-      if (required && !item[name]) {
-         console.log(item);
-         console.log('Missing required ' + name + ' ' + item[name])
-         return false;
-      }
+    if (required && !item[name]) {
+      console.log(item);
+      console.log('Missing required ' + name + ' ' + item[name]);
+      return false;
+    }
 
-      if (type && typeof item[name] !== type) {
-         console.log('Type doesnt match ' + name)
-         return false;
-      }
+    if (type && typeof item[name] !== type) {
+      console.log('Type doesnt match ' + name);
+      return false;
+    }
 
-      if (length && item[name].length < length) {
-         console.log('length ' + name)
-         return false;
-      }
+    if (length && item[name].length < length) {
+      console.log('length ' + name);
+      return false;
+    }
 
-      return true;
-   }
-   )
+    return true;
+  });
 };
 
 /**
-* @param {inputFile} data The data to be posted
-* @param {Function} onSuccess funtion to be called when the fecth has concluded successfully
-* @param {Function} onError throw and error
-*/
+ * @param {inputFile} data The data to be posted
+ * @param {Function} onSuccess funtion to be called when the fecth has concluded successfully
+ * @param {Function} onError throw and error
+ */
 export const postFile = (data, onSuccess, onError) => {
-   if (!data.fileField || isNaN(data.folder)) return;
+  if (!data.fileField || isNaN(data.folder)) return;
 
-   let formData = new FormData();
-   formData.append("file", data.fileField);
-   formData.append("name", data.fileFieldName);
+  let formData = new FormData();
+  formData.append('file', data.fileField);
+  formData.append('name', data.fileFieldName);
 
-   fetch(`/api/files/${data.folder}`, {
-      method: "POST",
-      headers: {
-         Authorization: localStorage.getItem("token"),
-      },
-      enctype: "multipart/form-data",
-      body: formData,
-   }).then(
-      handleFetch
-   ).then(
-      onSuccess
-   ).catch(onError);
+  fetch(`/api/files/${data.folder}`, {
+    method: 'POST',
+    headers: {
+      Authorization: localStorage.getItem('token'),
+    },
+    enctype: 'multipart/form-data',
+    body: formData,
+  })
+    .then(handleFetch)
+    .then(onSuccess)
+    .catch(onError);
 };
 
 /**

@@ -8,9 +8,9 @@ import CardActions from '@material-ui/core/CardActions';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 
-const reactLink = React.forwardRef((props, ref) =>
-	<RouterLink innerRef={ref} {...props} />
-);
+const reactLink = React.forwardRef((props, ref) => (
+  <RouterLink innerRef={ref} {...props} />
+));
 reactLink.displayName = 'reactLink';
 
 const useStyles = makeStyles({
@@ -20,53 +20,49 @@ const useStyles = makeStyles({
     gridRowStart: '1',
     gridRowEnd: '3',
   },
-	card: { minWidth: 275 },
-	title: { fontSize: 14 },
-	pos: { marginBottom: 12 },
-	grow: { flexGrow: 1 },
-	bullet: {
-		display: 'inline-block',
-		margin: '0 2px',
-		transform: 'scale(0.8)',
-	},
+  card: { minWidth: 275 },
+  title: { fontSize: 14 },
+  pos: { marginBottom: 12 },
+  grow: { flexGrow: 1 },
+  bullet: {
+    display: 'inline-block',
+    margin: '0 2px',
+    transform: 'scale(0.8)',
+  },
 });
 
 const RequireLogin = () => {
-	const classes = useStyles();
-	return (
-		<Box
-			textAlign="center"
-			display="flex"
-			width={1}
-			justifyContent="center"
-			alignItems="center"
-			className={classes.box}
+  const classes = useStyles();
+  return (
+    <Box
+      textAlign="center"
+      display="flex"
+      width={1}
+      justifyContent="center"
+      alignItems="center"
+      className={classes.box}
     >
-			<Card className={classes.card}>
-				<CardContent>
-					<Typography variant="h5" component="h2">
-						Lo sentimos!
-					</Typography>
-					<Typography variant="body2" component="p">
-						Debes iniciar sesión para visitar esta página.
-					</Typography>
-				</CardContent>
-				<CardActions>
-					<Link component={reactLink} to='/login' underline='none'>
-						<Box fontWeight="fontWeightBold">
-              Inicia Sesión
-            </Box>
-					</Link>
-					<div className={classes.grow} />
-					<Link component={reactLink} to='/register' underline='none'>
-						<Box fontWeight="fontWeightBold">
-              Registrarte
-            </Box>
-					</Link>
-				</CardActions>
-			</Card>
-		</Box>
-	)
-}
+      <Card className={classes.card}>
+        <CardContent>
+          <Typography variant="h5" component="h2">
+            Lo sentimos!
+          </Typography>
+          <Typography variant="body2" component="p">
+            Debes iniciar sesión para visitar esta página.
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Link component={reactLink} to="/login" underline="none">
+            <Box fontWeight="fontWeightBold">Inicia Sesión</Box>
+          </Link>
+          <div className={classes.grow} />
+          <Link component={reactLink} to="/register" underline="none">
+            <Box fontWeight="fontWeightBold">Registrarte</Box>
+          </Link>
+        </CardActions>
+      </Card>
+    </Box>
+  );
+};
 
 export default RequireLogin;
