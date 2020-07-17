@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
@@ -29,6 +29,7 @@ import {
 } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import FilesTableContainer from './Files/FilesTable';
+import Details from './Details'
 import UsersTableContainer from './Users/UsersTable';
 
 const useStyles = makeStyles({
@@ -47,6 +48,7 @@ const useStyles = makeStyles({
       boxShadow: '5px 0 5px -5px #333',
       width: '100%',
       height: '100%',
+      oveflow: 'auto',
       zIndex: '10',
       '& .MuiAvatar-root': {
         backgroundColor: 'transparent',
@@ -56,6 +58,13 @@ const useStyles = makeStyles({
       },
       '& .MuiListItem-root:hover': {
         backgroundColor: 'rgba(0,0,0,0.3)',
+      },
+      '& #subheader': {
+        position: 'static',
+        fontWeight: '500',
+        fontSize: '18px',
+        color: '#000',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
       },
     },
   },
@@ -76,6 +85,10 @@ const useStyles = makeStyles({
       '& .MuiSvgIcon-root': {
         color: '#fff',
       },
+      '& #subheader': {
+        color: '#fff',
+        borderBottomColor: '#cecece',
+      }
     },
   },
   card: {
@@ -149,7 +162,6 @@ const Admin = (props) => {
   }, [location.pathname, props.match.path]);
 
   React.useEffect(() => {
-    console.log(state);
     if (state.snackPack.length && !state.messageInfo) {
       // Set a new snack when we don't have an active one
       setState({
@@ -215,6 +227,8 @@ const Admin = (props) => {
         <Divider />
       </React.Fragment>
     ));
+  
+  const spinner = <Spinner useDark={globalState.theme}/>;
 
   return (
     <Box component="main" display="flex" className={mainClass()}>
@@ -239,7 +253,20 @@ const Admin = (props) => {
             render={() => (
               <FilesTableContainer
                 useTheme={globalState.theme}
+                criteria={globalState.search}
                 onResponse={addBar}
+                loadingComponent={spinner}
+              />
+            )}
+          />
+          <Route
+            path={`${props.match.path}/archivos/detalles`}
+            render={() => (
+              <Details
+                key='files'
+                dark={globalState.theme}
+                onResponse={addBar}
+                loadingComponent={spinner}
               />
             )}
           />
@@ -249,7 +276,21 @@ const Admin = (props) => {
               <UsersTableContainer
                 useTheme={globalState.theme}
                 adminID={globalState.user.id}
+                criteria={globalState.search}
                 onResponse={addBar}
+                loadingComponent={spinner}
+              />
+            )}
+          />
+          <Route
+            path={`${props.match.path}/usuarios/detalles`}
+            render={() => (
+              <Details
+                key='users'
+                dark={globalState.theme}
+                type='users'
+                onResponse={addBar}
+                loadingComponent={spinner}
               />
             )}
           />
@@ -294,6 +335,27 @@ const WelcomeAdmin = () => {
     </Box>
   );
 };
+
+const Spinner = ({useDark}) => {
+  const { main } = makeStyles(() => ({
+    main: {
+      minHeight: '100%',
+      minWidth: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      '& .MuiCircularProgress-colorPrimary': {
+        color: useDark ? '#fff' : '#4caf50',
+      },
+    },
+  }))();
+
+  return (
+    <div className={main}>
+      <CircularProgress size={100} thickness={5} />
+    </div>
+  );
+}
 
 const RequestSnack = ({ onClose, onExit, open, data }) => {
   if (!open) {

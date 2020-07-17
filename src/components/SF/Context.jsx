@@ -39,7 +39,9 @@ const Provider = saduwux.Provider;
 /** @type {function} */
 const reducer = (state, action) => {
   const { payload, type } = action;
-
+  if (typeof payload.theme !== 'undefined') {
+    localStorage.setItem('theme', payload.theme)
+  }
   switch (type) {
     case 'update': {
       const newState = { ...state, ...payload };

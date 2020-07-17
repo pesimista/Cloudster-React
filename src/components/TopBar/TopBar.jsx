@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const routes = [`/busqueda`, `/admin`];
+const routes = [`busqueda`, `lista`];
 
 const reactLink = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
@@ -92,25 +92,30 @@ const TopBar = () => {
       payload: { theme: event.target.checked },
     });
 
-  const searchBar = (
-    <div className={classes.search}>
-      <div className={classes.searchIcon}>
-        <SearchIcon />
+  const searchBar = () => {
+    if (!routes.some( route => location.pathname.includes(route))) {
+      return '';
+    }
+    return (
+      <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <SearchIcon />
+        </div>
+        <InputBase
+          placeholder="Buscar..."
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          }}
+          inputProps={{ 'aria-label': 'search' }}
+          value={search}
+          onChange={(e) =>
+            dispatch({ type: 'update', payload: { search: e.target.value } })
+          }
+        />
       </div>
-      <InputBase
-        placeholder="Buscar..."
-        classes={{
-          root: classes.inputRoot,
-          input: classes.inputInput,
-        }}
-        inputProps={{ 'aria-label': 'search' }}
-        value={search}
-        onChange={(e) =>
-          dispatch({ type: 'update', payload: { search: e.target.value } })
-        }
-      />
-    </div>
-  );
+    ); 
+  }
 
   return (
     <AppBar className={classes.appBar}>
@@ -119,7 +124,7 @@ const TopBar = () => {
         <Typography className={classes.title} variant="h5" noWrap>
           Cloudster
         </Typography>
-        {routes.includes(location.pathname) ? searchBar : ''}
+        {searchBar()}
         <div className={classes.grow} />
         <Link
           component={reactLink}

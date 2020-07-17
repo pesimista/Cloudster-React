@@ -139,6 +139,7 @@ const App = () => {
   /** Verificacion de token on init */
   useFetchUser(() => {
     const token = localStorage.getItem('token');
+    const usingDark = localStorage.getItem('theme');
     if (!token) {
       console.log('No token');
       dispatch({ type: 'update', payload: { logStatus: 0 } });
@@ -146,7 +147,7 @@ const App = () => {
       return;
     }
 
-    dispatch({ type: 'update', payload: { logStatus: 1 } });
+    dispatch({ type: 'update', payload: { logStatus: 1, theme: Boolean(usingDark) } });
     fetch(`/api/users/token`, {
       method: 'GET',
       headers: {

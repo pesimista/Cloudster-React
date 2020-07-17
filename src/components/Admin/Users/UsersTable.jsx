@@ -1,5 +1,4 @@
 import React from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -17,7 +16,6 @@ import {
   TableHeader,
   ConfirmDialog,
 } from '../tableStyles';
-import { makeStyles } from '@material-ui/core/styles';
 import CloudQueueIcon from '@material-ui/icons/CloudQueue';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 
@@ -47,20 +45,14 @@ const reducer = (state, action) => {
   };
 };
 
-const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
+const UserTableContainer = ({
+  useTheme,
+  adminID,
+  onResponse,
+  loadingComponent,
+  criteria
+}) => {
   const classes = useStyles();
-  const { main } = makeStyles(() => ({
-    main: {
-      minHeight: '100%',
-      minWidth: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      '& .MuiCircularProgress-colorPrimary': {
-        color: useTheme ? '#fff' : '#4caf50',
-      },
-    },
-  }))();
 
   const [state, setState] = React.useReducer(reducer, {
     ...initialState,
@@ -79,19 +71,19 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
         Authorization: localStorage.getItem('token'),
       },
     };
-
+    setState({ shouldUpdate: false });
     fetch(`/api/admin/users`, headers)
       .then(handleFetch)
       .then((users) => {
-        users = users.map((user) => ({
+        users = users.map((user, index) => ({
           ...user,
           short: user.id.slice(-5),
           updating: adminID === user.id,
+          index
         }));
         setState({ userList: users });
       })
       .catch((mistake) => {
-        setState({ shouldUpdate: false });
         onResponse({
           key: new Date().getTime(),
           type: 'error',
@@ -101,11 +93,7 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
   }, [shouldUpdate, adminID, onResponse]);
 
   if (!userList) {
-    return (
-      <div className={main}>
-        <CircularProgress size={100} thickness={5} />
-      </div>
-    );
+    return loadingComponent;
   }
 
   const setUpdate = (index, value = true) => {
@@ -261,6 +249,7 @@ const UserTableContainer = ({ useTheme, adminID, onResponse }) => {
             onChangeSelect={handleLevelChage}
             onClickLock={setHandlePassword}
             onClickTrash={setSuspend}
+            criteria={criteria}
             key="12gey12"
           />
         </Table>
@@ -287,8 +276,14 @@ const TableContent = ({
   onChangeSelect,
   onClickLock,
   onClickTrash,
+  criteria = ''
 }) => {
-  const content = data.map((value, index) => {
+  const regex = new RegExp(criteria, 'ig');
+  const content = data.reduce((collection, value) => {
+    const match = value.usuario.match(regex) || value.nombre.match(regex) || value.apellido.match(regex);
+    if (criteria && !match) {
+      return collection;
+    }
     const cells = tableColumns.map((col, i) => {
       let constent = value[col.key];
       switch (col.key) {
@@ -301,7 +296,7 @@ const TableContent = ({
               nivel={value.nivel}
               identifier={value.id}
               disabled={value.updating}
-              onChange={(target) => onChangeSelect(target, index)}
+              onChange={(target) => onChangeSelect(target, value.index)}
             />
           );
           break;
@@ -322,7 +317,7 @@ const TableContent = ({
                   <IconButton
                     disabled={value.updating}
                     aria-label="edit-password"
-                    onClick={() => onClickLock(value, index)}
+                    onClick={() => onClickLock(value, value.index)}
                   >
                     <EnhancedEncryptionIcon />
                   </IconButton>
@@ -333,7 +328,7 @@ const TableContent = ({
                   <IconButton
                     disabled={value.updating}
                     aria-label="delete"
-                    onClick={() => onClickTrash(value, index)}
+                    onClick={() => onClickTrash(value, value.index)}
                   >
                     {value.active ? <CloudQueueIcon /> : <CloudOffIcon />}
                   </IconButton>
@@ -372,11 +367,12 @@ const TableContent = ({
       }
     };
 
-    return (
+    const row = (
       <TableRow className={rowClass()} key={`row-${value.id}`}>
         {cells}
       </TableRow>
     );
+    return [...collection, row];
   }, []);
   return <TableBody>{content}</TableBody>;
 };
