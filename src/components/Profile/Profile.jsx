@@ -13,7 +13,8 @@ import { green } from '@material-ui/core/colors';
 import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Link from '@material-ui/core/Link';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -26,6 +27,7 @@ import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DescriptionIcon from '@material-ui/icons/Description';
 import FolderIcon from '@material-ui/icons/Folder';
+import SettingsIcon from '@material-ui/icons/Settings';
 import SvgIcon from '@material-ui/core/SvgIcon/SvgIcon';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useContext } from 'react';
@@ -41,6 +43,7 @@ const useStyles = makeStyles(() => ({
   },
   card: {
     minWidth: 300,
+    maxWidth: 500,
     margin: 5,
   },
   list: {
@@ -79,7 +82,7 @@ const Profile = () => {
 
   /** @type {context}*/
   const {
-    state: { user, theme },
+    state: { user, theme }, dispatch
   } = useContext(saduwux);
   const [state, update] = React.useReducer(reducer, initialState);
 
@@ -103,6 +106,12 @@ const Profile = () => {
 
   }*/
 
+  const handleCheck = (event) =>
+    dispatch({
+      type: 'update',
+      payload: { theme: event.target.checked },
+  });
+
   const files = () =>
     state.files.map((file, index) => {
       return (
@@ -111,11 +120,6 @@ const Profile = () => {
             <SvgIcon component={!file.ext ? FolderIcon : DescriptionIcon} />
           </ListItemIcon>
           <ListItemText primary={file.name} secondary={null} />
-          <ListItemSecondaryAction>
-            <IconButton edge="end">
-              <SvgIcon component={MoreHorizIcon} />
-            </IconButton>
-          </ListItemSecondaryAction>
         </ListItem>
       );
     });
@@ -171,17 +175,28 @@ const Profile = () => {
                       to="/configuracion"
                       underline="none"
                     >
-                      <Button variant="contained" color="primary">
+                      <Button variant="contained" color="primary" startIcon={<SettingsIcon />}>
                         Configuración
                       </Button>
                     </Link>
                   </Box>
                 </CardActions>
+                <FormControlLabel
+                control={
+                <Switch
+                  checked={theme}
+                  onChange={handleCheck}
+                  value="theme"
+                  color={theme ? 'default' : 'primary'}
+                  inputProps={{ 'aria-label': 'primary checkbox' }}
+                />}
+                label="Cambiar tema"
+                />
               </Card>
             </Grid>
           </Grid>
           <Grid item container xs>
-            <Grid item xs={12}>
+            <Grid item xs={12} >
               <Card className={classes.card}>
                 <CardHeader title="Archivos Subidos" />
                 <Divider />

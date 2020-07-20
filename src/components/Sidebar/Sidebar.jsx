@@ -10,7 +10,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FolderIcon from '@material-ui/icons/Folder';
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-import SettingsIcon from '@material-ui/icons/Settings';
+import BuildIcon from '@material-ui/icons/Build';
 import React from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
@@ -21,7 +21,7 @@ const routesComponents = [
   FolderIcon,
   PlayCircleFilledIcon,
   AccountCircleIcon,
-  SettingsIcon,
+  BuildIcon,
 ];
 
 const reactLink = React.forwardRef((props, ref) => (

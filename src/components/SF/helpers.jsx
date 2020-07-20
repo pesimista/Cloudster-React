@@ -150,11 +150,30 @@ export const postFile = (data, onSuccess, onError) => {
     body: formData,
   })
     .then(handleFetch)
-    .then(onSuccess)
+    .then(onSuccess('Archivo subido satisfactoriamente!'))
     .catch(onError);
 };
 
+export const newFolder = (folderName, folder, onSuccess, onError) => {
+  if(!folderName) return;
+  fetch(`/api/files/${folder}/folder`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('token'),
+    },
+    enctype: 'application/json',
+    body:  JSON.stringify({
+      name: folderName
+      }),
+  })
+    .then(handleFetch)
+    .then(onSuccess('Carpeta creada con exito!'))
+    .catch(onError);
+}
+
 /**
+ * 
  * Usuario:
  * Añadir chart con los tipos de archivos subidos por el usuario
  * Añadir archivos subidos por el usuario

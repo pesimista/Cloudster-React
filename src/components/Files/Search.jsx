@@ -18,16 +18,21 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CachedIcon from '@material-ui/icons/Cached';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import HomeIcon from '@material-ui/icons/Home';
+import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
-import { handleFetch, postFile } from '../SF/helpers';
+import { handleFetch, postFile, newFolder } from '../SF/helpers';
 import Files from './Files';
 import FileInfoModal from './Modals/FileInfoModal';
 import UploadFileModal from './Modals/UploadFileModal';
 import SendIcon from '@material-ui/icons/Send';
 import CancelIcon from '@material-ui/icons/Cancel';
+import Paper from '@material-ui/core/Paper';
+import Dialog from '@material-ui/core/Dialog';
+import TextField from '@material-ui/core/TextField';
+import { getIcon } from '../SF/helpers';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -104,6 +109,8 @@ const initialState = {
   files: null,
   shouldUpdate: false,
   movingFile: '',
+  folderModal: false,
+  folderName: 'Nueva Carpeta',
 };
 
 const reducer = (state, action) => {
@@ -114,10 +121,12 @@ const reducer = (state, action) => {
     ...state,
     shouldUpdate: !state.shouldUpdate,
     uploadModal: false,
+    folderModal: false,
     fileModal: '',
     open: action.open,
     message: action.message || '',
     severity: action.severity || '',
+    folderName: 'Nueva Carpeta',
   };
 };
 
@@ -186,23 +195,28 @@ const Search = () => {
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') return;
     update({ open: false });
+    update({ folderModal: false });
   };
 
+  
   /**
    * @param {inputFile} fileToPost The data to be posted
    */
+
+  const onSuccess = (mensaje) => {
+    update({
+      type: 'shouldUpdate',
+      open: true,
+      message: mensaje,
+      severity: 'success'
+    });
+  }
+
+
+  const onError = (mistake) =>
+  update({ open: true, message: mistake.message });
+
   const uploadFile = (fileToPost) => {
-    const onSuccess = () =>
-      update({
-        type: 'shouldUpdate',
-        open: true,
-        message: 'Archivo subido satisfactoriamente!',
-        severity: 'success',
-      });
-
-    const onError = (mistake) =>
-      update({ open: true, message: mistake.message });
-
     postFile(fileToPost, onSuccess, onError);
   };
 
@@ -257,11 +271,11 @@ const Search = () => {
                 container
                 item
                 xs={12}
-                sm={2}
-                md={3}
-                lg={1}
+                sm={3}
+                md={2}
+                lg={2}
               >
-                <Grid item xs={3} sm={4}>
+                <Grid item xs sm={4}>
                   <IconButton
                     edge="start"
                     onClick={goBack}
@@ -271,7 +285,7 @@ const Search = () => {
                     <ArrowBackIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs={3} sm={4}>
+                <Grid item xs sm={4}>
                   <IconButton
                     edge="start"
                     color="inherit"
@@ -281,7 +295,7 @@ const Search = () => {
                     <CachedIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs={3} sm={4}>
+                <Grid item xs sm={4}>
                   <IconButton
                     edge="start"
                     onClick={goHome}
@@ -291,7 +305,17 @@ const Search = () => {
                     <HomeIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs={3} className={classes.hideOnBig}>
+                <Grid item xs>
+                  <IconButton
+                    edge="start"
+                    onClick={() => update({folderModal: true })}
+                    color="inherit"
+                    aria-label="menu"
+                  >
+                    <CreateNewFolderIcon />
+                  </IconButton>
+                </Grid>
+                <Grid item xs className={classes.hideOnBig}>
                   <IconButton
                     edge="start"
                     onClick={handleUploadModal}
@@ -305,9 +329,9 @@ const Search = () => {
               <Grid
                 item
                 className={classes.sectionDesktop}
-                sm={8}
+                sm={7}
                 md={7}
-                lg={10}
+                lg={9}
               >
                 <Box display="flex">
                   <Typography variant="h6" className={classes.title}>
@@ -337,7 +361,9 @@ const Search = () => {
         </AppBar>
         <Grid container className={classes.inline}>
           {!state.files || state.shouldUpdate ? <LinearProgress /> : ''}
-          <div className={classes.container}>{state.files ? items() : ''}</div>
+          <div className={classes.container}>
+            {state.files ? items() : ''}
+          </div>
         </Grid>
         <MovingBar
           movingFile={state.movingFile}
@@ -346,6 +372,42 @@ const Search = () => {
           cancel={cancelMoving}
           theme={globalState.theme}
         />
+        <Dialog 
+          open={state.folderModal}
+          className={classes.modal}
+          onClose={() => handleClose(state, true)}
+        >
+          <Paper className={classes.paperMod}>
+            <Grid item container xs={12} justify="center">
+              <Grid item>
+              <img
+                src={getIcon(false)}
+                width="164"
+                height="164"
+                alt="file"
+              />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  defaultValue={state.folderName}
+                  variant="outlined"
+                  style={{ textAlign: 'center' }}
+                  onChange={(e) => update({ folderName: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12} style={{ paddingTop: '15px' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => newFolder(state.folderName, globalState.folder, onSuccess, onError)}
+                >
+                  Aceptar
+                </Button>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Dialog>
       </Box>
       <FileInfoModal
         open={!!state.fileForModal}

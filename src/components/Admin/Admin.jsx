@@ -1,16 +1,18 @@
-import React, { useContext } from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
+import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 /**Icons */
@@ -19,22 +21,28 @@ import FolderSpecialIcon from '@material-ui/icons/FolderSpecial';
 import HowToRegIcon from '@material-ui/icons/HowToReg';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import WarningIcon from '@material-ui/icons/Warning';
-import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import React, { useContext } from 'react';
 import {
   Link as RouterLink,
   Route,
   Switch,
-  useLocation,
+  useLocation
 } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
-import FilesTableContainer from './Files/FilesTable';
 import Details from './Details';
+import FilesTableContainer from './Files/FilesTable';
 import UsersTableContainer from './Users/UsersTable';
 
-const useStyles = makeStyles({
+
+const drawerWidth = 240;
+
+const useStyles = makeStyles((theme) => ({
   main: {
     display: 'grid',
+    [theme.breakpoints.down('xs')]: {
+      display: 'flex'
+    },
     gridTemplateColumns: '250px 1fr',
     height: '100%',
     overflow: 'auto',
@@ -42,7 +50,6 @@ const useStyles = makeStyles({
     '& .right-column': {
       height: '100%',
       overflow: 'auto',
-      paddingLeft: '10px',
     },
     '& .left-column': {
       boxShadow: '5px 0 5px -5px #333',
@@ -99,7 +106,10 @@ const useStyles = makeStyles({
       height: '100%',
     },
   },
-});
+  drawerPaper: {
+    width: drawerWidth,
+  },
+}));
 
 const routes = [
   {
@@ -142,9 +152,11 @@ reactLink.displayName = 'reactLink';
 const reducer = (state, action) => ({ ...state, ...action });
 
 const Admin = (props) => {
+  const { window } = props;
   const classes = useStyles();
   const location = useLocation();
-  const { state: globalState } = useContext(saduwux);
+  const theme = useTheme();
+  const { state: globalState, dispatch} = useContext(saduwux);
 
   const [state, setState] = React.useReducer(reducer, {
     selectedIndex: 0,
@@ -205,46 +217,79 @@ const Admin = (props) => {
     return className;
   };
 
-  const listItems = () =>
-    routes.map((route, index) => (
-      <React.Fragment key={index}>
-        <ListItem
-          button
-          component={reactLink}
-          to={props.match.path + route.link}
-          selected={state.selectedIndex === index}
-        >
-          <ListItemAvatar>
-            <Avatar>
-              <route.component />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary={route.primaryText}
-            secondary={route.helperText}
-          />
-        </ListItem>
-        <Divider />
-      </React.Fragment>
-    ));
+  const listItems = () => {
+    return(
+    <List
+      subheader={
+        <ListSubheader component="div" id="subheader">
+          Configuraciones
+        </ListSubheader>
+      }
+    > 
+      {routes.map((route, index) => (
+        <React.Fragment key={index}>
+          <ListItem
+            button
+            component={reactLink}
+            to={props.match.path + route.link}
+            selected={state.selectedIndex === index}
+            onClick={() => handleDrawerToggle()}
+          >
+            <ListItemAvatar>
+              <Avatar>
+                <route.component />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary={route.primaryText}
+              secondary={route.helperText}
+            />
+          </ListItem>
+          <Divider />
+        </React.Fragment> 
+      ))}
+    </List>
+    )}
+
+  const container = window !== undefined ? () => window().document.body : undefined;
+
+  const handleDrawerToggle = () => {
+    dispatch({ type: 'update', payload: { mobileOpen: false } })
+  };
 
   const spinner = <Spinner useDark={globalState.theme} />;
 
   return (
     <Box component="main" display="flex" className={mainClass()}>
-      <Box component="div" className="left-column">
-        <List
-          className={classes.root}
-          subheader={
-            <ListSubheader component="div" id="subheader">
-              Configuraciones
-            </ListSubheader>
-          }
+      <Hidden smUp implementation="css">
+        <Drawer
+          container={container}
+          variant="temporary"
+          anchor={theme.direction = "right"}
+          open={globalState.mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
         >
           {listItems()}
-        </List>
-      </Box>
-
+        </Drawer>
+      </Hidden>
+      <Hidden xsDown implementation="css">
+        <Drawer
+          className={`min-h100`}
+          classes={{
+            paper: `position-static`,
+          }}
+          variant="permanent"
+          open
+        >
+          {listItems()}
+        </Drawer>
+      </Hidden>
       <Box component="div" className="right-column">
         <Switch>
           <Route exact path={props.match.path} component={WelcomeAdmin} />
@@ -386,6 +431,3 @@ const RequestSnack = ({ onClose, onExit, open, data }) => {
   );
 };
 
-/* <Route exact path={this.props.match.path} component={HomeDefault} />
-<Route path={`${this.props.match.path}/one`} component={HomePageOne} />
-<Route path={`${this.props.match.path}/two`} component={HomePageTwo} /> */

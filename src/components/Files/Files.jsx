@@ -87,7 +87,7 @@ const Files = ({ file, move: { setMovingFile, movingFile }, ...props }) => {
   const anchorRef = React.useRef(null);
   const prevOpen = React.useRef(state.open);
   const nameToShow =
-    name.length > 30 ? name.substring(0, 27).trim() + '...' + ext : name;
+    name.length > 20 ? name.substring(0, 27).trim() + '...' + ext : name;
 
   React.useEffect(() => {
     if (prevOpen.current && !state.open) {
@@ -172,6 +172,7 @@ const Files = ({ file, move: { setMovingFile, movingFile }, ...props }) => {
         variant="body2"
         className={props.useTheme ? classes.text : ''}
         style={{ overflowWrap: 'break-word' }}
+        //noWrap="true"
       >
         {nameToShow}
       </Typography>
@@ -183,7 +184,7 @@ const Files = ({ file, move: { setMovingFile, movingFile }, ...props }) => {
   if (!isFile) {
     return (
       <Grid
-        style={{ height: '120px' }}
+        
         item
         xs={4}
         sm={3}

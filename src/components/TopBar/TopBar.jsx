@@ -1,12 +1,14 @@
 import AppBar from '@material-ui/core/AppBar';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import Switch from '@material-ui/core/Switch';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import SearchIcon from '@material-ui/icons/Search';
 import FilterDramaIcon from '@material-ui/icons/FilterDrama';
+import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import React, { useContext } from 'react';
 import { saduwux } from '../SF/Context';
 import { useLocation } from 'react-router-dom';
@@ -70,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const routes = [`busqueda`, `lista`];
+const routes = [`busqueda`, `admin`];
 
 const reactLink = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
@@ -80,21 +82,15 @@ reactLink.displayName = 'reactLink';
 const TopBar = () => {
   const classes = useStyles();
   const location = useLocation();
+  const matches = useMediaQuery(theme => theme.breakpoints.down('xs'));
 
   const {
     state: {
       search,
-      theme,
-      user: { usuario },
+      user: { usuario, nivel },
     },
     dispatch,
   } = useContext(saduwux);
-
-  const handleCheck = (event) =>
-    dispatch({
-      type: 'update',
-      payload: { theme: event.target.checked },
-    });
 
   const searchBar = () => {
     if (!routes.some((route) => location.pathname.includes(route))) {
@@ -121,14 +117,33 @@ const TopBar = () => {
     );
   };
 
+  const menuOpen = () => {
+    if (nivel !== 5 || !location.pathname.includes('admin') || !matches) {
+      return '';
+    } 
+    return (
+      <IconButton
+        aria-label="delete"
+        onClick={()=> dispatch({
+          type: 'update',
+          payload: {
+            mobileOpen: true
+          }
+        })}
+      >
+        <MenuOpenIcon/>
+      </IconButton>
+    );
+  }
+
   return (
     <AppBar className={classes.appBar}>
       <Toolbar>
         <FilterDramaIcon className={classes.icon} />
-        <Typography className={classes.title} variant="h5" noWrap>
+        <Typography className={classes.title} variant="h5" >
           Cloudster
         </Typography>
-        {searchBar()}
+        { searchBar() }
         <div className={classes.grow} />
         <Link
           component={reactLink}
@@ -141,13 +156,7 @@ const TopBar = () => {
             <Typography>{usuario}</Typography>
           </Box>
         </Link>
-        <Switch
-          checked={theme}
-          onChange={handleCheck}
-          value="theme"
-          color={theme ? '' : 'primary'}
-          inputProps={{ 'aria-label': 'primary checkbox' }}
-        />
+        { menuOpen() }
       </Toolbar>
     </AppBar>
   );

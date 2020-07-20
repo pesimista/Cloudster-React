@@ -24,6 +24,7 @@ const initialValue = {
   theme: false,
   search: '',
   logStatus: 1,
+  mobileOpen: false
 };
 
 /** @params {logStatus}
