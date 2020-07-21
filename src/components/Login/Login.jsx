@@ -71,12 +71,12 @@ const initialState = {
   username: '',
   password: '',
   isLoading: false,
+  severity: 'success',
 };
 
 const reducer = (state, action) => {
   return { ...state, ...action };
 };
-
 
 const Login = () => {
   const history = useHistory();
@@ -110,12 +110,26 @@ const Login = () => {
       .then(handleFetch)
       .then((data) => {
         localStorage.setItem('token', 'bearer ' + data.token);
-        dispatch({ type: 'login', payload: { user: data.user } });
-        update({ open: true, message: 'Inicio de sesión exitoso!' });
+        dispatch({
+          type: 'login',
+          payload: {
+            user: data.user,
+          },
+        });
+        update({
+          open: true,
+          message: 'Inicio de sesión exitoso!',
+          severity: 'success',
+        });
         setTimeout(() => history.push('/busqueda'), 500);
       })
       .catch((error) => {
-        update({ open: true, message: error.message, isLoading: false });
+        update({
+          open: true,
+          message: error.message,
+          isLoading: false,
+          severity: 'error',
+        });
       });
   };
 
@@ -192,7 +206,7 @@ const Login = () => {
             onClose={handleClose}
             autoHideDuration={6000}
           >
-            <Alert onClose={handleClose} severity="success">
+            <Alert onClose={handleClose} severity={state.severity}>
               {state.message}
             </Alert>
           </Snackbar>

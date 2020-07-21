@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 300,
       maxWidth: 480,
       width: '100%',
+      padding: '0 10px',
       '& .MuiSvgIcon-root': {
         fontSize: 200,
         width: '100%',
@@ -125,7 +126,7 @@ const Details = ({ type = 'files', onResponse, loadingComponent, dark }) => {
     ''
   ) : (
     <Grid xs={6} item>
-      <Typography align='center' variant='subtitle1' component='p'>
+      <Typography align="center" variant="subtitle1" component="p">
         <strong>{state.parsedSize} </strong>
         Almacenados
       </Typography>
@@ -136,16 +137,16 @@ const Details = ({ type = 'files', onResponse, loadingComponent, dark }) => {
     <Grid
       container
       className={`${classes.main} ${dark ? classes.dark : classes.dim}`}
-      justify='center'
+      justify="center"
     >
       <Grid
         container
         item
-        direction='column'
-        justify='center'
-        alignItems='center'
-        wrap='nowrap'
-        className='card-box'
+        direction="column"
+        justify="center"
+        alignItems="center"
+        wrap="nowrap"
+        className="card-box"
       >
         <Card raised={false}>
           <CardHeader title={noun} />
@@ -153,43 +154,43 @@ const Details = ({ type = 'files', onResponse, loadingComponent, dark }) => {
           <CardContent>
             <Grid
               container
-              direction='row'
-              justify='center'
-              alignItems='center'
+              direction="row"
+              justify="center"
+              alignItems="center"
             >
               <Grid
                 xs={12}
                 item
                 container
-                direction='row'
-                justify='center'
-                alignItems='center'
+                direction="row"
+                justify="center"
+                alignItems="center"
               >
-                <Typography className='files' variant='h2' component='h2'>
+                <Typography className="files" variant="h2" component="h2">
                   {state.total}
                 </Typography>
                 <Typography
                   style={{ paddingLeft: 5 }}
-                  variant='h6'
-                  component='h2'
+                  variant="h6"
+                  component="h2"
                 >
                   {noun} en el servidor
                 </Typography>
               </Grid>
               <Grid xs={6} item>
-                <Typography align='center' variant='subtitle1' component='p'>
+                <Typography align="center" variant="subtitle1" component="p">
                   <strong>{state.available} </strong>
                   {noun === 'Archivos' ? 'Disponibles' : 'Activos'}
                 </Typography>
               </Grid>
               <Grid xs={6} item>
-                <Typography align='center' variant='subtitle1' component='p'>
+                <Typography align="center" variant="subtitle1" component="p">
                   <strong>{state.disabled} </strong>
                   Suspendidos
                 </Typography>
               </Grid>
               <Grid xs={6} item>
-                <Typography align='center' variant='subtitle1' component='p'>
+                <Typography align="center" variant="subtitle1" component="p">
                   <strong>{state.actions} </strong>
                   {noun === 'Archivos'
                     ? 'Archivos descargados'
@@ -207,16 +208,16 @@ const Details = ({ type = 'files', onResponse, loadingComponent, dark }) => {
       <Grid
         container
         item
-        direction='column'
-        justify='center'
-        alignItems='center'
-        wrap='nowrap'
-        className='card-box'
+        direction="column"
+        justify="center"
+        alignItems="center"
+        wrap="nowrap"
+        className="card-box"
       >
         <Card raised={false}>
           <CardHeader title={'Resumen de ' + noun} />
           <Divider />
-          <CardContent className='center'>
+          <CardContent className="center">
             <DetailsPieChart data={state.chartData} />
           </CardContent>
         </Card>
@@ -237,18 +238,18 @@ const DetailsPieChart = ({ data = dummy }) => {
     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
   ));
   return (
-    <ResponsiveContainer width='85%' aspect={1}>
+    <ResponsiveContainer width="85%" aspect={1}>
       <PieChart width={730} height={250}>
         <Pie
           data={data}
-          dataKey='value'
-          nameKey='name'
-          cx='50%'
-          cy='50%'
-          fill='#8884d8'
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          fill="#8884d8"
           paddingAngle={2}
-          innerRadius='40%'
-          legendType='square'
+          innerRadius="40%"
+          legendType="square"
           label
         >
           <Label />
@@ -258,7 +259,7 @@ const DetailsPieChart = ({ data = dummy }) => {
           layout={matches ? 'vertical' : 'horizontal'}
           verticalAlign={matches ? 'middle' : 'bottom'}
           align={matches ? 'left' : 'center'}
-          iconType='square'
+          iconType="square"
         />
       </PieChart>
     </ResponsiveContainer>

@@ -82,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
   movingBar: {
     width: '100%',
     display: 'flex',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     padding: '0.25rem 1rem',
     borderTop: '1px solid grey',
@@ -109,24 +110,15 @@ const initialState = {
   files: null,
   shouldUpdate: false,
   movingFile: '',
+  isMoving: false,
   folderModal: false,
   folderName: 'Nueva Carpeta',
 };
 
 const reducer = (state, action) => {
-  if (action.type !== 'shouldUpdate') {
-    return { ...state, ...action };
-  }
   return {
     ...state,
-    shouldUpdate: !state.shouldUpdate,
-    uploadModal: false,
-    folderModal: false,
-    fileModal: '',
-    open: action.open,
-    message: action.message || '',
-    severity: action.severity || '',
-    folderName: 'Nueva Carpeta',
+    ...action,
   };
 };
 
@@ -139,17 +131,22 @@ const Search = () => {
 
   React.useEffect(() => {
     if (state.shouldUpdate) {
-      update({ type: 'shouldUpdate' });
+      update({ shouldUpdate: false });
     }
-    fetch(`/api/files/${globalState.folder}/files`, {
+    const headers = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('token'),
       },
-    })
+    };
+
+    fetch(`/api/files/${globalState.folder}/files`, headers)
       .then(handleFetch)
-      .then((response) => update({ files: sort(response) }))
+      .then((response) => {
+        console.log(response);
+        update({ files: sort(response) });
+      })
       .catch((mistake) =>
         console.log(`/api/files/${globalState.folder}/files`, mistake.message)
       );
@@ -201,10 +198,9 @@ const Search = () => {
   /**
    * @param {inputFile} fileToPost The data to be posted
    */
-
   const onSuccess = (mensaje) => {
     update({
-      type: 'shouldUpdate',
+      shouldUpdate: true,
       open: true,
       message: mensaje,
       severity: 'success',
@@ -225,6 +221,35 @@ const Search = () => {
     update({ movingFile: null });
   };
   const moveFile = () => {
+    const headers = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('token'),
+      },
+    };
+    update({ isMoving: true });
+    fetch(`/api/files/${globalState.folder}/${state.movingFile.ino}`, headers)
+      .then(handleFetch)
+      .then((res) => {
+        update({
+          shouldUpdate: true,
+          movingFile: '',
+          open: true,
+          message: res.message,
+          severity: 'success',
+          isMoving: false,
+        });
+      })
+      .catch((error) => {
+        update({
+          open: true,
+          movingFile: '',
+          message: error.message,
+          severity: 'error',
+          isMoving: false,
+        });
+      });
     // fetch state.moving file => globalState.folder
   };
   /** */
@@ -287,7 +312,7 @@ const Search = () => {
                     edge="start"
                     color="inherit"
                     aria-label="menu"
-                    onClick={() => update({ type: 'shouldUpdate' })}
+                    onClick={() => update({ shouldUpdate: true })}
                   >
                     <CachedIcon />
                   </IconButton>
@@ -366,6 +391,7 @@ const Search = () => {
           move={moveFile}
           cancel={cancelMoving}
           theme={globalState.theme}
+          isMoving={state.isMoving}
         />
         <Dialog
           open={state.folderModal}
@@ -432,7 +458,14 @@ const Search = () => {
   );
 };
 
-const MovingBar = ({ movingFile: file, className, move, cancel, theme }) => {
+const MovingBar = ({
+  movingFile: file,
+  className,
+  move,
+  cancel,
+  theme,
+  isMoving,
+}) => {
   if (!file) {
     return '';
   }
@@ -459,6 +492,7 @@ const MovingBar = ({ movingFile: file, className, move, cancel, theme }) => {
       <div>
         <Button
           disableElevation
+          disabled={isMoving}
           onClick={() => cancel()}
           size="large"
           startIcon={<CancelIcon />}
@@ -468,6 +502,7 @@ const MovingBar = ({ movingFile: file, className, move, cancel, theme }) => {
         </Button>
         <Button
           disableElevation
+          disabled={isMoving}
           onClick={() => move()}
           size="large"
           endIcon={<SendIcon />}

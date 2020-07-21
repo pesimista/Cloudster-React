@@ -23,11 +23,7 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import WarningIcon from '@material-ui/icons/Warning';
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext } from 'react';
-import {
-  Route,
-  Switch,
-  useLocation
-} from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { reactLink } from '../SF/helpers';
 import Details from './Details';
@@ -232,7 +228,7 @@ const Admin = (props) => {
     return (
       <List
         subheader={
-          <ListSubheader component='div' id='subheader'>
+          <ListSubheader component="div" id="subheader">
             Configuraciones
           </ListSubheader>
         }
@@ -273,11 +269,11 @@ const Admin = (props) => {
   const spinner = <Spinner useDark={globalState.theme} />;
 
   return (
-    <Box component='main' display='flex' className={mainClass()}>
-      <Hidden smUp implementation='css'>
+    <Box component="main" display="flex" className={mainClass()}>
+      <Hidden smUp implementation="css">
         <Drawer
           container={container}
-          variant='temporary'
+          variant="temporary"
           anchor={(theme.direction = 'right')}
           open={globalState.mobileOpen}
           onClose={handleDrawerToggle}
@@ -291,19 +287,19 @@ const Admin = (props) => {
           {listItems()}
         </Drawer>
       </Hidden>
-      <Hidden xsDown implementation='css'>
+      <Hidden xsDown implementation="css">
         <Drawer
           className={`min-h100`}
           classes={{
             paper: `position-static`,
           }}
-          variant='permanent'
+          variant="permanent"
           open
         >
           {listItems()}
         </Drawer>
       </Hidden>
-      <Box component='div' className='right-column'>
+      <Box component="div" className="right-column">
         <Switch>
           <Route exact path={props.match.path} component={WelcomeAdmin} />
           <Route
@@ -321,7 +317,7 @@ const Admin = (props) => {
             path={`${props.match.path}/archivos/detalles`}
             render={() => (
               <Details
-                key='files'
+                key="files"
                 dark={globalState.theme}
                 onResponse={addBar}
                 loadingComponent={spinner}
@@ -344,18 +340,15 @@ const Admin = (props) => {
             path={`${props.match.path}/usuarios/detalles`}
             render={() => (
               <Details
-                key='users'
+                key="users"
                 dark={globalState.theme}
-                type='users'
+                type="users"
                 onResponse={addBar}
                 loadingComponent={spinner}
               />
             )}
           />
-          <Route
-            path={`${props.match.path}/reportes`}
-            component={Reports}
-          />
+          <Route path={`${props.match.path}/reportes`} component={Reports} />
         </Switch>
       </Box>
       <RequestSnack
@@ -373,22 +366,22 @@ export default Admin;
 const WelcomeAdmin = () => {
   return (
     <Box
-      textAlign='center'
-      display='flex'
-      justifyContent='center'
-      alignItems='center'
-      className='min-h100'
+      textAlign="center"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      className="min-h100"
       style={{ width: '100%' }}
     >
       <Card>
         <CardContent style={{ paddingBottom: '0px' }}>
-          <Typography variant='h5' component='h2'>
+          <Typography variant="h5" component="h2">
             ¡Bienvenido!
           </Typography>
-          <Typography variant='body2' component='p'>
+          <Typography variant="body2" component="p">
             Desde esta página puedes gestionar el contenido de Cloudster.
           </Typography>
-          <Typography variant='body2' component='p'>
+          <Typography variant="body2" component="p">
             Procede con precaución.
           </Typography>
 
@@ -401,7 +394,7 @@ const WelcomeAdmin = () => {
 
 const Spinner = () => {
   return (
-    <div className='spinner-container'>
+    <div className="spinner-container">
       <CircularProgress size={100} thickness={5} />
     </div>
   );
@@ -427,7 +420,7 @@ const RequestSnack = ({ onClose, onExit, open, data }) => {
       <MuiAlert
         severity={type || 'success'}
         elevation={6}
-        variant='filled'
+        variant="filled"
         onClose={onClose}
       >
         {message}

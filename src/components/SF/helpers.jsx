@@ -3,9 +3,7 @@
  */
 //SVG
 import React from 'react';
-import {
-  Link as RouterLink,
-} from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import folder from './svg/folder.svg';
 import audio from './svg/Papirus-Team-Papirus-audio.svg';
 import program from './svg/Papirus-Team-Papirus-Mimetypes-App-x-msdos-program.svg';
