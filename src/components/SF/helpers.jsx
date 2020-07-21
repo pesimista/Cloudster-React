@@ -2,6 +2,10 @@
  * @typedef {import('../SF/typedefs.jsx').inputFile} inputFile
  */
 //SVG
+import React from 'react';
+import {
+  Link as RouterLink,
+} from 'react-router-dom';
 import folder from './svg/folder.svg';
 import audio from './svg/Papirus-Team-Papirus-audio.svg';
 import program from './svg/Papirus-Team-Papirus-Mimetypes-App-x-msdos-program.svg';
@@ -21,6 +25,11 @@ import jar from './svg/Papirus-Team-Papirus-Mimetypes-Text-x-java.svg';
 import video from './svg/Papirus-Team-Papirus-video.svg';
 import zerosize from './svg/Papirus-Team-Papirus-zerosize.svg';
 //SVG
+
+export const reactLink = React.forwardRef((props, ref) => (
+  <RouterLink innerRef={ref} {...props} />
+));
+reactLink.displayName = 'reactLink';
 
 export const handleFetch = (response) => {
   return response.json().then((json) => {

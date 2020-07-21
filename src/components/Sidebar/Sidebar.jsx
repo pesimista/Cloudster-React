@@ -12,8 +12,9 @@ import FolderIcon from '@material-ui/icons/Folder';
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import BuildIcon from '@material-ui/icons/Build';
 import React from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
+import { reactLink } from '../SF/helpers';
 import green from '@material-ui/core/colors/green';
 
 const routes = [`/busqueda`, `/reproductor`, `/perfil`, `/admin`];
@@ -23,11 +24,6 @@ const routesComponents = [
   AccountCircleIcon,
   BuildIcon,
 ];
-
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
 
 const useStyles = makeStyles((theme) => ({
   aside: {

@@ -13,9 +13,9 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import CloudIcon from '@material-ui/icons/Cloud';
 import React, { useContext, useReducer } from 'react';
-import { Link as RouterLink, useHistory, withRouter } from 'react-router-dom';
+import { useHistory, withRouter } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
-import { handleFetch } from '../SF/helpers';
+import { handleFetch, reactLink } from '../SF/helpers';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -69,11 +69,6 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
 }));
-
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
 
 const initialState = {
   activeStep: 0,

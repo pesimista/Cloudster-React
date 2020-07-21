@@ -1,20 +1,20 @@
 import AppBar from '@material-ui/core/AppBar';
+import Box from '@material-ui/core/Box';
+import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
+import Link from '@material-ui/core/Link';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import SearchIcon from '@material-ui/icons/Search';
 import FilterDramaIcon from '@material-ui/icons/FilterDrama';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
+import SearchIcon from '@material-ui/icons/Search';
 import React, { useContext } from 'react';
-import { saduwux } from '../SF/Context';
 import { useLocation } from 'react-router-dom';
-import { Link as RouterLink } from 'react-router-dom';
-import Link from '@material-ui/core/Link';
-import Box from '@material-ui/core/Box';
+import { saduwux } from '../SF/Context';
+import { reactLink } from '../SF/helpers';
 
 const useStyles = makeStyles((theme) => ({
   grow: { flexGrow: 1 },
@@ -73,11 +73,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const routes = [`busqueda`, `admin`];
-
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
 
 const TopBar = () => {
   const classes = useStyles();

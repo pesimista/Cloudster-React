@@ -13,8 +13,8 @@ import CloudIcon from '@material-ui/icons/Cloud';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext, useReducer } from 'react';
-import { Link as RouterLink, Redirect, useHistory } from 'react-router-dom';
-import { handleFetch } from '../SF/helpers';
+import { Redirect, useHistory } from 'react-router-dom';
+import { handleFetch, reactLink } from '../SF/helpers';
 import { saduwux } from '../SF/Context';
 
 const useStyles = makeStyles((theme) => ({
@@ -71,11 +71,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
 
 const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;

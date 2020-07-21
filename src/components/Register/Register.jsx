@@ -15,9 +15,9 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import CloudIcon from '@material-ui/icons/Cloud';
 import React, { useContext, useReducer } from 'react';
-import { Link as RouterLink, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
-import { handleFetch, structuteChecker } from '../SF/helpers';
+import { handleFetch, structuteChecker, reactLink } from '../SF/helpers';
 import Container from '@material-ui/core/Container';
 import MuiAlert from '@material-ui/lab/Alert';
 
@@ -43,11 +43,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
 }));
-
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
 
 const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;

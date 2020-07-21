@@ -12,29 +12,27 @@ import CardHeader from '@material-ui/core/CardHeader';
 import { green } from '@material-ui/core/colors';
 import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
+import SvgIcon from '@material-ui/core/SvgIcon/SvgIcon';
+import Switch from '@material-ui/core/Switch';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DescriptionIcon from '@material-ui/icons/Description';
 import FolderIcon from '@material-ui/icons/Folder';
 import SettingsIcon from '@material-ui/icons/Settings';
-import SvgIcon from '@material-ui/core/SvgIcon/SvgIcon';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useContext } from 'react';
-import { Link as RouterLink, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { Cell, Label, Legend, Pie, PieChart } from 'recharts';
 import { saduwux } from '../SF/Context';
-import { handleFetch } from '../SF/helpers';
+import { handleFetch, reactLink } from '../SF/helpers';
 
 const useStyles = makeStyles(() => ({
   avatar: { backgroundColor: green[500] },
@@ -57,11 +55,6 @@ const useStyles = makeStyles(() => ({
     color: 'white',
   },
 }));
-
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
 
 const initialState = {
   files: [],
