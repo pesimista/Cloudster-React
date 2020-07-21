@@ -20,6 +20,10 @@ import { saduwux } from '../SF/Context';
 import { handleFetch, structuteChecker, reactLink } from '../SF/helpers';
 import Container from '@material-ui/core/Container';
 import MuiAlert from '@material-ui/lab/Alert';
+import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg'
+import backgroundimg2 from '../SF/Media/late_in_the_afternoon_by_itsendy_ddy13pr-fullview.jpg'
+import backgroundimg3 from '../SF/Media/meteors_by_itsendy_ddxgt2k-fullview.jpg'
+import backgroundimg4 from '../SF/Media/dawn_by_itsendy_ddwkses-fullview.jpg'
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -27,6 +31,15 @@ const useStyles = makeStyles((theme) => ({
     gridColumnEnd: '3',
     gridRowStart: '1',
     gridRowEnd: '3',
+    display: 'flex',
+    placeContent: 'center',
+    alignItems: 'center',
+    backgroundImage: `url(${backgroundimg1})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
   button: {
     marginTop: theme.spacing(1),
@@ -318,81 +331,85 @@ const Register = () => {
     }
   };
   return (
-    <Container className={classes.main} component="main" maxWidth="lg">
-      <Box textAlign="center">
-        <Link component={reactLink} to="/">
-          <IconButton>
-            <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
-          </IconButton>
-        </Link>
-        <Typography component="h1" variant="h5">
-          Registrarse
-        </Typography>
-      </Box>
-      <Stepper activeStep={state.activeStep} orientation="vertical">
-        {steps.map((label, index) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-            <StepContent>
-              <Typography component={'span'}>
-                {getStepContent(index)}
-              </Typography>
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  disabled={state.activeStep === 0}
-                  onClick={handleBack}
-                  className={classes.button}
-                >
-                  Volver
-                </Button>
-                <Button
-                  disabled={
-                    (index === 0 &&
-                      (state.nombre.length < 2 ||
-                        state.apellido.length < 2 ||
-                        state.password.length < 6 ||
-                        state.password !== state.password2)) ||
-                    (index === 1 &&
-                      (state.respuesta1.length < 3 ||
-                        state.respuesta2.length < 3)) ||
-                    (index === 2 && state.user.length < 3)
-                  }
-                  variant="contained"
-                  color="primary"
-                  onClick={handleClick}
-                  className={classes.button}
-                >
-                  {state.activeStep === steps.length - 1
-                    ? 'Registrarse'
-                    : 'Siguiente'}
-                </Button>
-              </div>
-            </StepContent>
-          </Step>
-        ))}
-      </Stepper>
-      <Box>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={state.open}
-          autoHideDuration={6000}
-          onClose={handleClose}
-        >
-          <Alert onClose={handleClose} severity="error">
-            {state.message}
-          </Alert>
-        </Snackbar>
-      </Box>
+    <Box className={classes.main} component="main" >
+      <Container maxWidth="lg">
       <Paper square elevation={0} className={classes.pdd}>
-        <Typography>Ya tienes cuenta?</Typography>
-        <Link component={reactLink} to="/login">
-          <Button className={classes.button}>Inicia Sesión!</Button>
-        </Link>
-      </Paper>
-    </Container>
+        <Box textAlign="center">
+          <Link component={reactLink} to="/">
+            <IconButton>
+              <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
+            </IconButton>
+          </Link>
+          <Typography component="h1" variant="h5">
+            Registrarse
+          </Typography>
+        </Box>
+        </Paper>
+        <Stepper activeStep={state.activeStep} orientation="vertical">
+          {steps.map((label, index) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+              <StepContent>
+                <Typography component={'span'}>
+                  {getStepContent(index)}
+                </Typography>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Button
+                    disabled={state.activeStep === 0}
+                    onClick={handleBack}
+                    className={classes.button}
+                  >
+                    Volver
+                  </Button>
+                  <Button
+                    disabled={
+                      (index === 0 &&
+                        (state.nombre.length < 2 ||
+                          state.apellido.length < 2 ||
+                          state.password.length < 6 ||
+                          state.password !== state.password2)) ||
+                      (index === 1 &&
+                        (state.respuesta1.length < 3 ||
+                          state.respuesta2.length < 3)) ||
+                      (index === 2 && state.user.length < 3)
+                    }
+                    variant="contained"
+                    color="primary"
+                    onClick={handleClick}
+                    className={classes.button}
+                  >
+                    {state.activeStep === steps.length - 1
+                      ? 'Registrarse'
+                      : 'Siguiente'}
+                  </Button>
+                </div>
+              </StepContent>
+            </Step>
+          ))}
+        </Stepper>
+        <Box>
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            open={state.open}
+            autoHideDuration={6000}
+            onClose={handleClose}
+          >
+            <Alert onClose={handleClose} severity="error">
+              {state.message}
+            </Alert>
+          </Snackbar>
+        </Box>
+        <Paper square elevation={0} className={classes.pdd}>
+          <Typography>Ya tienes cuenta?</Typography>
+          <Link component={reactLink} to="/login">
+            <Button className={classes.button}>Inicia Sesión!</Button>
+          </Link>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

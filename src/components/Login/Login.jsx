@@ -1,6 +1,5 @@
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
@@ -15,6 +14,7 @@ import React, { useContext, useReducer } from 'react';
 import { useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, reactLink } from '../SF/helpers';
+import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg'
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -25,8 +25,12 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     placeContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'cyan',
-    maxWidth: 'auto',
+    backgroundImage: `url(${backgroundimg1})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
 
     '& .MuiButtonBase-root': { padding: '0px' },
 
@@ -145,7 +149,7 @@ const Login = () => {
   };
 
   return (
-    <Container component="main" className={classes.main}>
+    <Box component="main" className={classes.main}>
       <Box
         className={classes.box}
         display="flex"
@@ -224,7 +228,7 @@ const Login = () => {
           </Grid>
         </Grid>
       </Box>
-    </Container>
+    </Box>
   );
 };
 

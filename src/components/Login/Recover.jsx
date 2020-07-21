@@ -16,6 +16,7 @@ import React, { useContext, useReducer } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, reactLink } from '../SF/helpers';
+import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg'
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -29,12 +30,18 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     flexDirection: 'column',
     maxWidth: 'auto',
+    backgroundImage: `url(${backgroundimg1})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
   box: {
     padding: '1rem 3rem',
     backgroundColor: '#fff',
     borderRadius: '1rem',
-    maxWidth: '400px',
+    maxWidth: '100%',
   },
   form: {
     margin: '0',
@@ -339,71 +346,75 @@ const Recover = () => {
   };
 
   return (
-    <Container component="main" className={classes.main}>
-      <Box
-        className={classes.box}
-        flexDirection="column"
-        alignItems="center"
-        textAlign="center"
-      >
-        <Link to="/" component={reactLink}>
-          <IconButton>
-            <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
-          </IconButton>
-        </Link>
-        <Typography component="h1" variant="h5">
-          Recuperar Contraseña
-        </Typography>
-        <Stepper
-          activeStep={state.activeStep}
-          style={{ padding: '0px 0px 24px' }}
-          alternativeLabel
+    <Box className={classes.main}>
+      <Container component="main" maxWidth="sm">
+        <Box
+          className={classes.box}
+          flexDirection="column"
+          alignItems="center"
+          textAlign="center"
         >
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <Divider />
-        <form autoComplete="off" className={classes.form} onSubmit={handleNext}>
-          <div className={classes.instructions}>
-            {getStepContent(state.activeStep)}
-          </div>
+          <Link to="/" component={reactLink}>
+            <IconButton>
+              <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
+            </IconButton>
+          </Link>
+          <Typography component="h1" variant="h5">
+            Recuperar Contraseña
+          </Typography>
+          <Stepper
+            activeStep={state.activeStep}
+            style={{ padding: '0px 0px 24px' }}
+            alternativeLabel
+          >
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <Divider />
+          <form autoComplete="off" className={classes.form} onSubmit={handleNext}>
+            <div className={classes.instructions}>
+              {getStepContent(state.activeStep)}
+            </div>
 
-          <Box width={1} className={classes.bottonContainer}>
-            <Button
-              disabled={!state.activeStep || state.isLoading}
-              onClick={handleBack}
-              className={classes.backButton}
-              type="button"
-            >
-              &lt; Volver
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={invalid()}
-              type="submit"
-            >
-              {state.activeStep === steps.length - 1 ? 'Aceptar' : 'Siguiente'}
-            </Button>
-          </Box>
-        </form>
-      </Box>
-      <Grid container>
-        <Grid item xs>
-          <Link component={reactLink} to="/login" color="secondary">
-            Volver a inicio de sesión
-          </Link>
-        </Grid>
-        <Grid item>
-          <Link component={reactLink} to="/register">
-            Registrarse
-          </Link>
-        </Grid>
-      </Grid>
-    </Container>
+            <Box width={1} className={classes.bottonContainer}>
+              <Button
+                disabled={!state.activeStep || state.isLoading}
+                onClick={handleBack}
+                className={classes.backButton}
+                type="button"
+              >
+                &lt; Volver
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={invalid()}
+                type="submit"
+              >
+                {state.activeStep === steps.length - 1 ? 'Aceptar' : 'Siguiente'}
+              </Button>
+            </Box>
+          </form>
+          <Divider style={{margin: '10px'}} />
+          <Grid container justify="space-between">
+            <Grid item >
+              <Link component={reactLink} to="/login" color="secondary">
+                Volver a inicio de sesión
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link component={reactLink} to="/register">
+                Registrarse
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+        
+      </Container>
+    </Box>
   );
 };
 

@@ -16,6 +16,10 @@ import React, { useContext, useReducer } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 import { handleFetch, reactLink } from '../SF/helpers';
 import { saduwux } from '../SF/Context';
+import backgroundimg from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg'
+import backgroundimg2 from '../SF/Media/late_in_the_afternoon_by_itsendy_ddy13pr-fullview.jpg'
+import backgroundimg3 from '../SF/Media/meteors_by_itsendy_ddxgt2k-fullview.jpg'
+import backgroundimg4 from '../SF/Media/dawn_by_itsendy_ddwkses-fullview.jpg'
 
 const useStyles = makeStyles((theme) => ({
   grow: { flexGrow: 1 },
@@ -35,14 +39,20 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
-  form: { marginTop: theme.spacing(8) },
+  form: { 
+    marginTop: theme.spacing(8),
+    fontSize:"6rem",
+    [theme.breakpoints.down('xs')]: {
+      fontSize:"4rem"
+    },
+  },
   appBar: {
     position: 'static',
     gridColumnStart: 1,
     gridColumnEnd: 3,
   },
   image: {
-    backgroundImage: 'url(https://source.unsplash.com/random)', //'url(' + View + ')',
+    backgroundImage: `url(${backgroundimg})`, //'url(' + View + ')',
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
@@ -107,10 +117,9 @@ const Welcome = () => {
 
   const handleLogin = (event) => {
     event.preventDefault();
-    if (invalid()) {
+    if (invalid()) { 
       return;
     }
-
     const { signInUser, signInPassword } = state;
     update({ block: true });
     fetch('/api/users/login', {
@@ -147,22 +156,22 @@ const Welcome = () => {
     return <Redirect to="/busqueda" />;
   } else {
     return (
-      <React.Fragment>
+      <React.Fragment className={classes.image}>
         <AppBar className={classes.appBar}>
           <Toolbar>
             <Container maxWidth="lg" className={classes.sectionDesktop}>
               <Link component={reactLink} to="/login" underline="none">
                 <Button size="large">
-                  <Typography fontWeight="fontWeightBold">
+                  <Box fontWeight="fontWeightBold">
                     Iniciar Sesión
-                  </Typography>
+                  </Box>
                 </Button>
               </Link>
               <Link component={reactLink} to="/register" underline="none">
                 <Button size="large">
-                  <Typography fontWeight="fontWeightBold">
+                  <Box fontWeight="fontWeightBold">
                     Registrarse
-                  </Typography>
+                  </Box>
                 </Button>
               </Link>
             </Container>
@@ -174,32 +183,31 @@ const Welcome = () => {
               underline="none"
             >
               <Button size="large">
-                <Typography fontWeight="fontWeightBold">Registrarse</Typography>
+                <Box fontWeight="fontWeightBold">Registrarse</Box>
               </Button>
             </Link>
           </Toolbar>
         </AppBar>
 
-        <Grid container component="main" className={classes.root}>
+        <Grid container component="main" className={classes.root} >
           <Grid
             item
             xs={12}
             sm={8}
             md={5}
-            component={Paper}
-            elevation={6}
             square
+            style={{alignSelf: "center"}}
           >
             <div>
-              <Box color="secondary.main" className={classes.form}>
+              <Box color="secondary.main" className={classes.form}  textAlign="center" >
                 <CloudIcon color="primary" fontSize="inherit" />
                 Cloudster
               </Box>
-              <Typography variant="h4">
+              <Typography variant="h4" align="center">
                 Una forma sencilla de compartir tus archivos sin limites de
                 plataforma.
               </Typography>
-              <Box display={{ xs: 'block', sm: 'none' }}>
+              <Box display={{ xs: 'block', sm: 'none' }} textAlign="center">
                 <Link component={reactLink} to="/login" underline="none">
                   <Button size="large" color="primary" variant="contained">
                     Iniciar Sesión
@@ -207,7 +215,7 @@ const Welcome = () => {
                 </Link>
               </Box>
             </div>
-            <Box display={{ xs: 'none', sm: 'block' }}>
+            <Box display={{ xs: 'none', sm: 'block' }} >
               <form onSubmit={handleLogin}>
                 <Container maxWidth={'xs'}>
                   <TextField

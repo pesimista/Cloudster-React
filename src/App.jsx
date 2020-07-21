@@ -31,6 +31,10 @@ import Admin from './components/Admin/Admin';
 import { saduwux } from './components/SF/Context';
 import { handleFetch } from './components/SF/helpers';
 import ProtectedRoute from './components/SF/ProtectedRoute';
+import backgroundimg1 from './components/SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg'
+import backgroundimg2 from './components/SF/Media/late_in_the_afternoon_by_itsendy_ddy13pr-fullview.jpg'
+import backgroundimg3 from './components/SF/Media/meteors_by_itsendy_ddxgt2k-fullview.jpg'
+import backgroundimg4 from './components/SF/Media/dawn_by_itsendy_ddwkses-fullview.jpg'
 
 const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
@@ -38,6 +42,14 @@ const useStyles = makeStyles((theme) => ({
   theme: {
     backgroundColor: theme.palette.background.default,
     color: theme.palette.text.primary,
+  },
+  fullBackg: {
+    backgroundImage: `url(${backgroundimg4})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
   useDark: {
     backgroundColor: '#393d46',
@@ -169,7 +181,7 @@ const App = () => {
   const switchView = () => {
     return (
       <div
-        className={`container ${state.theme ? classes.useDark : ''} min-h100`}
+        className={`container ${state.theme ? classes.useDark : ''} min-h100`} 
       >
         <Route
           component={TopBar}
@@ -196,9 +208,9 @@ const App = () => {
 
         <Switch>
           <Route exact path="/" component={Welcome} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/recover" component={Recover} />
-          <Route exact path="/register" component={Register} />
+          <Route className={classes.fullBackg} exact path="/login" component={Login} />
+          <Route className={classes.fullBackg} exact path="/recover" component={Recover} />
+          <Route className={classes.fullBackg} exact path="/register" component={Register} />
           <Route exact path="/notlogged" component={RequireLogin} />
           <ProtectedRoute
             exact

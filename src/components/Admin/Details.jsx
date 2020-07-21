@@ -218,7 +218,7 @@ const Details = ({ type = 'files', onResponse, loadingComponent, dark }) => {
           <CardHeader title={'Resumen de ' + noun} />
           <Divider />
           <CardContent className="center">
-            <DetailsPieChart data={state.chartData} />
+            <DetailsPieChart data={state.chartData.slice(10)} />
           </CardContent>
         </Card>
       </Grid>

@@ -340,7 +340,7 @@ const Search = () => {
                 <Grid item xs className={classes.hideOnBig}>
                   <IconButton
                     edge="start"
-                    onClick={handleUploadModal}
+                    onClick={() => handleUploadModal()}
                     color="inherit"
                     aria-label="upload"
                   >
