@@ -22,7 +22,7 @@ const tableColumns = [
   { key: 'ino', label: 'ID', align: 'left' },
   { key: 'name', label: 'Nombre del archivo', align: 'left' },
   { key: 'nivel', label: 'Nivel', align: 'right' },
-  { key: 'lastChanged', label: 'Última modificación', align: 'right' },
+  { key: 'lastModified', label: 'Última modificación', align: 'right' },
   { key: 'size', label: 'Tamaño', align: 'right' },
   { key: 'dependency', label: 'En carpeta', align: 'right' },
   { key: '', label: '', align: 'right' },
@@ -250,8 +250,8 @@ const TableContent = ({
             />
           );
           break;
-        case 'lastChanged':
-          constent = new Date(value[col.key]).toLocaleString('es-VE');
+        case 'lastModified':
+          constent = new Date(value[col.key] || value.birthtime).toLocaleString('es-VE');
           break;
         case '': {
           const title = value.available ? 'Dar de baja' : 'Restaurar';

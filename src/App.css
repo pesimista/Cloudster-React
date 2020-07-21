@@ -20,3 +20,10 @@
   font-weight: bold;
   border-radius: 0px;
 }
+
+@media (max-width: 600px) {
+  .container {  
+    grid-template-rows: [header] 64px [main-content] 1fr [sidebar] 52px;
+    grid-template-columns: [main-content] 1fr;
+  }
+}

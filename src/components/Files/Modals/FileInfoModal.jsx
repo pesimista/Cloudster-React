@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 const FileInfoModal = ({ file, handleClose, open }) => {
   const classes = useStyles();
+  const date = new Date(file.lastModified || file.birthtime).toLocaleString('es-VE');
   if (!file) return '';
   else
     return (
@@ -58,24 +59,21 @@ const FileInfoModal = ({ file, handleClose, open }) => {
                     {file.name}
                   </Typography>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={8}>
                   <Typography variant="body2" color="textSecondary">
-                    Extensión:
+                    Subido por:
                   </Typography>
                   <Typography gutterBottom variant="subtitle1">
-                    {file.ext}
+                    {file.upBy}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     Última modificación:
                   </Typography>
                   <Typography gutterBottom variant="subtitle1">
-                    {(file.lastModified
-                      ? new Date(file.lastModified)
-                      : new Date(file.lastChanged)
-                    ).toLocaleString('es-VE')}
+                    {date}
                   </Typography>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={4}>
                   <Typography variant="body2" color="textSecondary">
                     Tamaño:
                   </Typography>

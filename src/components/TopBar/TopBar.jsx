@@ -21,6 +21,10 @@ const useStyles = makeStyles((theme) => ({
     position: 'static',
     gridColumnStart: 1,
     gridColumnEnd: 3,
+    [theme.breakpoints.down('xs')]: {
+      gridColumnStart: 1,
+      gridColumnEnd: 2,
+    }
   },
   menuButton: { marginRight: theme.spacing(2) },
   inputRoot: { color: 'inherit' },
