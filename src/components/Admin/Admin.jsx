@@ -27,13 +27,12 @@ import {
   Link as RouterLink,
   Route,
   Switch,
-  useLocation
+  useLocation,
 } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import Details from './Details';
 import FilesTableContainer from './Files/FilesTable';
 import UsersTableContainer from './Users/UsersTable';
-
 
 const drawerWidth = 240;
 
@@ -41,7 +40,11 @@ const useStyles = makeStyles((theme) => ({
   main: {
     display: 'grid',
     [theme.breakpoints.down('xs')]: {
-      display: 'flex'
+      display: 'flex',
+      width: '100%',
+      '& .MuiBox-root': {
+        width: '100%',
+      },
     },
     gridTemplateColumns: '250px 1fr',
     height: '100%',
@@ -156,7 +159,7 @@ const Admin = (props) => {
   const classes = useStyles();
   const location = useLocation();
   const theme = useTheme();
-  const { state: globalState, dispatch} = useContext(saduwux);
+  const { state: globalState, dispatch } = useContext(saduwux);
 
   const [state, setState] = React.useReducer(reducer, {
     selectedIndex: 0,
@@ -218,43 +221,45 @@ const Admin = (props) => {
   };
 
   const listItems = () => {
-    return(
-    <List
-      subheader={
-        <ListSubheader component="div" id="subheader">
-          Configuraciones
-        </ListSubheader>
-      }
-    > 
-      {routes.map((route, index) => (
-        <React.Fragment key={index}>
-          <ListItem
-            button
-            component={reactLink}
-            to={props.match.path + route.link}
-            selected={state.selectedIndex === index}
-            onClick={() => handleDrawerToggle()}
-          >
-            <ListItemAvatar>
-              <Avatar>
-                <route.component />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={route.primaryText}
-              secondary={route.helperText}
-            />
-          </ListItem>
-          <Divider />
-        </React.Fragment> 
-      ))}
-    </List>
-    )}
+    return (
+      <List
+        subheader={
+          <ListSubheader component="div" id="subheader">
+            Configuraciones
+          </ListSubheader>
+        }
+      >
+        {routes.map((route, index) => (
+          <React.Fragment key={index}>
+            <ListItem
+              button
+              component={reactLink}
+              to={props.match.path + route.link}
+              selected={state.selectedIndex === index}
+              onClick={() => handleDrawerToggle()}
+            >
+              <ListItemAvatar>
+                <Avatar>
+                  <route.component />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={route.primaryText}
+                secondary={route.helperText}
+              />
+            </ListItem>
+            <Divider />
+          </React.Fragment>
+        ))}
+      </List>
+    );
+  };
 
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   const handleDrawerToggle = () => {
-    dispatch({ type: 'update', payload: { mobileOpen: false } })
+    dispatch({ type: 'update', payload: { mobileOpen: false } });
   };
 
   const spinner = <Spinner useDark={globalState.theme} />;
@@ -265,7 +270,7 @@ const Admin = (props) => {
         <Drawer
           container={container}
           variant="temporary"
-          anchor={theme.direction = "right"}
+          anchor={(theme.direction = 'right')}
           open={globalState.mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
@@ -361,6 +366,7 @@ const WelcomeAdmin = () => {
       justifyContent="center"
       alignItems="center"
       className="min-h100"
+      style={{ width: '100%' }}
     >
       <Card>
         <CardContent style={{ paddingBottom: '0px' }}>
@@ -430,4 +436,3 @@ const RequestSnack = ({ onClose, onExit, open, data }) => {
     </Snackbar>
   );
 };
-

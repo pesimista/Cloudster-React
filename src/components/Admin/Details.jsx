@@ -19,12 +19,12 @@ import {
 import { handleFetch } from '../SF/helpers';
 import CloudQueueIcon from '@material-ui/icons/CloudQueue';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     height: '100%',
     '& .card-box': {
       minWidth: 300,
-      maxWidth: 500,
+      maxWidth: 480,
       width: '100%',
       '& .MuiSvgIcon-root': {
         fontSize: 200,
@@ -35,10 +35,13 @@ const useStyles = makeStyles(() => ({
       },
       '& .MuiCard-root': {
         minWidth: 300,
-        maxWidth: 500,
+        maxWidth: 480,
         margin: '1rem',
         width: '100%',
         height: 'min-content',
+        [theme.breakpoints.down('sm')]: {
+          maxWidth: 'calc(100vw - 1rem)',
+        },
         '& .MuiCardContent-root:last-child': {
           paddingBottom: 16,
         },
@@ -204,7 +207,7 @@ const Details = ({ type = 'files', onResponse, loadingComponent, dark }) => {
       <Grid
         container
         item
-        direction="row"
+        direction="column"
         justify="center"
         alignItems="center"
         wrap="nowrap"

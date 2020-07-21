@@ -198,7 +198,6 @@ const Search = () => {
     update({ folderModal: false });
   };
 
-  
   /**
    * @param {inputFile} fileToPost The data to be posted
    */
@@ -208,13 +207,11 @@ const Search = () => {
       type: 'shouldUpdate',
       open: true,
       message: mensaje,
-      severity: 'success'
+      severity: 'success',
     });
-  }
+  };
 
-
-  const onError = (mistake) =>
-  update({ open: true, message: mistake.message });
+  const onError = (mistake) => update({ open: true, message: mistake.message });
 
   const uploadFile = (fileToPost) => {
     postFile(fileToPost, onSuccess, onError);
@@ -275,7 +272,7 @@ const Search = () => {
                 md={2}
                 lg={2}
               >
-                <Grid item xs sm={4}>
+                <Grid item xs sm={3}>
                   <IconButton
                     edge="start"
                     onClick={goBack}
@@ -285,7 +282,7 @@ const Search = () => {
                     <ArrowBackIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs sm={4}>
+                <Grid item xs sm={3}>
                   <IconButton
                     edge="start"
                     color="inherit"
@@ -295,7 +292,7 @@ const Search = () => {
                     <CachedIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs sm={4}>
+                <Grid item xs sm={3}>
                   <IconButton
                     edge="start"
                     onClick={goHome}
@@ -305,10 +302,10 @@ const Search = () => {
                     <HomeIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs sm={3}>
                   <IconButton
                     edge="start"
-                    onClick={() => update({folderModal: true })}
+                    onClick={() => update({ folderModal: true })}
                     color="inherit"
                     aria-label="menu"
                   >
@@ -361,9 +358,7 @@ const Search = () => {
         </AppBar>
         <Grid container className={classes.inline}>
           {!state.files || state.shouldUpdate ? <LinearProgress /> : ''}
-          <div className={classes.container}>
-            {state.files ? items() : ''}
-          </div>
+          <div className={classes.container}>{state.files ? items() : ''}</div>
         </Grid>
         <MovingBar
           movingFile={state.movingFile}
@@ -372,7 +367,7 @@ const Search = () => {
           cancel={cancelMoving}
           theme={globalState.theme}
         />
-        <Dialog 
+        <Dialog
           open={state.folderModal}
           className={classes.modal}
           onClose={() => handleClose(state, true)}
@@ -380,12 +375,7 @@ const Search = () => {
           <Paper className={classes.paperMod}>
             <Grid item container xs={12} justify="center">
               <Grid item>
-              <img
-                src={getIcon(false)}
-                width="164"
-                height="164"
-                alt="file"
-              />
+                <img src={getIcon(false)} width="164" height="164" alt="file" />
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -400,7 +390,14 @@ const Search = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => newFolder(state.folderName, globalState.folder, onSuccess, onError)}
+                  onClick={() =>
+                    newFolder(
+                      state.folderName,
+                      globalState.folder,
+                      onSuccess,
+                      onError
+                    )
+                  }
                 >
                   Aceptar
                 </Button>

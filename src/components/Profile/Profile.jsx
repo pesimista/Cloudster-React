@@ -82,7 +82,8 @@ const Profile = () => {
 
   /** @type {context}*/
   const {
-    state: { user, theme }, dispatch
+    state: { user, theme },
+    dispatch,
   } = useContext(saduwux);
   const [state, update] = React.useReducer(reducer, initialState);
 
@@ -110,7 +111,7 @@ const Profile = () => {
     dispatch({
       type: 'update',
       payload: { theme: event.target.checked },
-  });
+    });
 
   const files = () =>
     state.files.map((file, index) => {
@@ -175,28 +176,33 @@ const Profile = () => {
                       to="/configuracion"
                       underline="none"
                     >
-                      <Button variant="contained" color="primary" startIcon={<SettingsIcon />}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<SettingsIcon />}
+                      >
                         Configuración
                       </Button>
                     </Link>
                   </Box>
                 </CardActions>
                 <FormControlLabel
-                control={
-                <Switch
-                  checked={theme}
-                  onChange={handleCheck}
-                  value="theme"
-                  color={theme ? 'default' : 'primary'}
-                  inputProps={{ 'aria-label': 'primary checkbox' }}
-                />}
-                label="Cambiar tema"
+                  control={
+                    <Switch
+                      checked={theme}
+                      onChange={handleCheck}
+                      value="theme"
+                      color={theme ? 'default' : 'primary'}
+                      inputProps={{ 'aria-label': 'primary checkbox' }}
+                    />
+                  }
+                  label="Cambiar tema"
                 />
               </Card>
             </Grid>
           </Grid>
           <Grid item container xs>
-            <Grid item xs={12} >
+            <Grid item xs={12}>
               <Card className={classes.card}>
                 <CardHeader title="Archivos Subidos" />
                 <Divider />

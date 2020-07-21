@@ -22,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    
   },
 }));
 
@@ -61,7 +60,11 @@ const FileInfoModal = ({ file, handleClose, open }) => {
                   <Typography variant="body2" color="textSecondary">
                     Nombre:
                   </Typography>
-                  <Typography gutterBottom variant="subtitle1" style={{ wordWrap: "break-word" }}>
+                  <Typography
+                    gutterBottom
+                    variant="subtitle1"
+                    style={{ wordWrap: 'break-word' }}
+                  >
                     {file.name}
                   </Typography>
                 </Grid>

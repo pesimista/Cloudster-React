@@ -82,7 +82,7 @@ reactLink.displayName = 'reactLink';
 const TopBar = () => {
   const classes = useStyles();
   const location = useLocation();
-  const matches = useMediaQuery(theme => theme.breakpoints.down('xs'));
+  const matches = useMediaQuery((theme) => theme.breakpoints.down('xs'));
 
   const {
     state: {
@@ -120,30 +120,32 @@ const TopBar = () => {
   const menuOpen = () => {
     if (nivel !== 5 || !location.pathname.includes('admin') || !matches) {
       return '';
-    } 
+    }
     return (
       <IconButton
         aria-label="delete"
-        onClick={()=> dispatch({
-          type: 'update',
-          payload: {
-            mobileOpen: true
-          }
-        })}
+        onClick={() =>
+          dispatch({
+            type: 'update',
+            payload: {
+              mobileOpen: true,
+            },
+          })
+        }
       >
-        <MenuOpenIcon/>
+        <MenuOpenIcon />
       </IconButton>
     );
-  }
+  };
 
   return (
     <AppBar className={classes.appBar}>
       <Toolbar>
         <FilterDramaIcon className={classes.icon} />
-        <Typography className={classes.title} variant="h5" >
+        <Typography className={classes.title} variant="h5">
           Cloudster
         </Typography>
-        { searchBar() }
+        {searchBar()}
         <div className={classes.grow} />
         <Link
           component={reactLink}
@@ -156,7 +158,7 @@ const TopBar = () => {
             <Typography>{usuario}</Typography>
           </Box>
         </Link>
-        { menuOpen() }
+        {menuOpen()}
       </Toolbar>
     </AppBar>
   );

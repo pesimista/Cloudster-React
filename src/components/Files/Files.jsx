@@ -183,15 +183,7 @@ const Files = ({ file, move: { setMovingFile, movingFile }, ...props }) => {
 
   if (!isFile) {
     return (
-      <Grid
-        
-        item
-        xs={4}
-        sm={3}
-        md={2}
-        lg={1}
-        className={classes.modal}
-      >
+      <Grid item xs={4} sm={3} md={2} lg={1} className={classes.modal}>
         <Box
           onClick={() => updateFolder(ino)}
           onContextMenu={(e) => e.preventDefault()}

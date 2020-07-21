@@ -17,7 +17,12 @@ export const useStyles = makeStyles({
   a: { color: '#228dff' },
   p0: { padding: '0px' },
   text: { color: '#fff' },
-  elevation0: { boxShadow: 'none', borderRadius: 0, maxHeight: '100%' },
+  elevation0: {
+    boxShadow: 'none',
+    borderRadius: 0,
+    maxHeight: '100%',
+    minHeight: '100%',
+  },
   imageContainer: {
     display: 'flex',
     flexDirection: 'row',
