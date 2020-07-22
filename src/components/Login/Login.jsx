@@ -14,7 +14,7 @@ import React, { useContext, useReducer } from 'react';
 import { useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, reactLink } from '../SF/helpers';
-import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg'
+import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
 
 const useStyles = makeStyles((theme) => ({
   main: {

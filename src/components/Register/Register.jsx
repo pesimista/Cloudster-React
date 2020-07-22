@@ -20,10 +20,7 @@ import { saduwux } from '../SF/Context';
 import { handleFetch, structuteChecker, reactLink } from '../SF/helpers';
 import Container from '@material-ui/core/Container';
 import MuiAlert from '@material-ui/lab/Alert';
-import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg'
-import backgroundimg2 from '../SF/Media/late_in_the_afternoon_by_itsendy_ddy13pr-fullview.jpg'
-import backgroundimg3 from '../SF/Media/meteors_by_itsendy_ddxgt2k-fullview.jpg'
-import backgroundimg4 from '../SF/Media/dawn_by_itsendy_ddwkses-fullview.jpg'
+import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -331,19 +328,19 @@ const Register = () => {
     }
   };
   return (
-    <Box className={classes.main} component="main" >
+    <Box className={classes.main} component="main">
       <Container maxWidth="lg">
-      <Paper square elevation={0} className={classes.pdd}>
-        <Box textAlign="center">
-          <Link component={reactLink} to="/">
-            <IconButton>
-              <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
-            </IconButton>
-          </Link>
-          <Typography component="h1" variant="h5">
-            Registrarse
-          </Typography>
-        </Box>
+        <Paper square elevation={0}>
+          <Box textAlign="center">
+            <Link component={reactLink} to="/">
+              <IconButton>
+                <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
+              </IconButton>
+            </Link>
+            <Typography component="h1" variant="h5">
+              Registrarse
+            </Typography>
+          </Box>
         </Paper>
         <Stepper activeStep={state.activeStep} orientation="vertical">
           {steps.map((label, index) => (
@@ -402,10 +399,15 @@ const Register = () => {
             </Alert>
           </Snackbar>
         </Box>
-        <Paper square elevation={0} className={classes.pdd}>
-          <Typography>Ya tienes cuenta?</Typography>
+        <Paper
+          style={{ textAlign: 'center' }}
+          square
+          elevation={0}
+          className={classes.pdd}
+        >
+          <Typography>¿Ya tienes cuenta?</Typography>
           <Link component={reactLink} to="/login">
-            <Button className={classes.button}>Inicia Sesión!</Button>
+            <Button className={classes.button}>¡Inicia Sesión!</Button>
           </Link>
         </Paper>
       </Container>

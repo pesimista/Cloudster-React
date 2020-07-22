@@ -16,7 +16,7 @@ import React, { useContext, useReducer } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, reactLink } from '../SF/helpers';
-import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg'
+import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
     gridColumnEnd: '3',
     gridRowStart: '1',
     gridRowEnd: '3',
-    backgroundColor: 'cyan',
     display: 'flex',
     placeContent: 'center',
     alignItems: 'center',
@@ -374,7 +373,11 @@ const Recover = () => {
             ))}
           </Stepper>
           <Divider />
-          <form autoComplete="off" className={classes.form} onSubmit={handleNext}>
+          <form
+            autoComplete="off"
+            className={classes.form}
+            onSubmit={handleNext}
+          >
             <div className={classes.instructions}>
               {getStepContent(state.activeStep)}
             </div>
@@ -394,13 +397,15 @@ const Recover = () => {
                 disabled={invalid()}
                 type="submit"
               >
-                {state.activeStep === steps.length - 1 ? 'Aceptar' : 'Siguiente'}
+                {state.activeStep === steps.length - 1
+                  ? 'Aceptar'
+                  : 'Siguiente'}
               </Button>
             </Box>
           </form>
-          <Divider style={{margin: '10px'}} />
+          <Divider style={{ margin: '10px' }} />
           <Grid container justify="space-between">
-            <Grid item >
+            <Grid item>
               <Link component={reactLink} to="/login" color="secondary">
                 Volver a inicio de sesión
               </Link>
@@ -412,7 +417,6 @@ const Recover = () => {
             </Grid>
           </Grid>
         </Box>
-        
       </Container>
     </Box>
   );

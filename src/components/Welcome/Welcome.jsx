@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -16,10 +15,7 @@ import React, { useContext, useReducer } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 import { handleFetch, reactLink } from '../SF/helpers';
 import { saduwux } from '../SF/Context';
-import backgroundimg from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg'
-import backgroundimg2 from '../SF/Media/late_in_the_afternoon_by_itsendy_ddy13pr-fullview.jpg'
-import backgroundimg3 from '../SF/Media/meteors_by_itsendy_ddxgt2k-fullview.jpg'
-import backgroundimg4 from '../SF/Media/dawn_by_itsendy_ddwkses-fullview.jpg'
+import backgroundimg from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
 
 const useStyles = makeStyles((theme) => ({
   grow: { flexGrow: 1 },
@@ -38,26 +34,32 @@ const useStyles = makeStyles((theme) => ({
         color: 'rgba(0, 0, 0, 0.26)',
       },
     },
+    '& .image, &': {
+      backgroundImage: `url(${backgroundimg})`, //'url(' + View + ')',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor:
+        theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    },
+    '& .align-self': {
+      alignSelf: 'center',
+      height: '100%',
+      padding: '20px',
+      backgroundColor: 'rgba(255,255,255,0.9)',
+    },
   },
-  form: { 
+  form: {
     marginTop: theme.spacing(8),
-    fontSize:"6rem",
+    fontSize: '2rem',
     [theme.breakpoints.down('xs')]: {
-      fontSize:"4rem"
+      fontSize: '2rem',
     },
   },
   appBar: {
     position: 'static',
     gridColumnStart: 1,
     gridColumnEnd: 3,
-  },
-  image: {
-    backgroundImage: `url(${backgroundimg})`, //'url(' + View + ')',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor:
-      theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
   },
   sectionDesktop: {
     display: 'none',
@@ -117,7 +119,7 @@ const Welcome = () => {
 
   const handleLogin = (event) => {
     event.preventDefault();
-    if (invalid()) { 
+    if (invalid()) {
       return;
     }
     const { signInUser, signInPassword } = state;
@@ -162,16 +164,12 @@ const Welcome = () => {
             <Container maxWidth="lg" className={classes.sectionDesktop}>
               <Link component={reactLink} to="/login" underline="none">
                 <Button size="large">
-                  <Box fontWeight="fontWeightBold">
-                    Iniciar Sesión
-                  </Box>
+                  <Box fontWeight="fontWeightBold">Iniciar Sesión</Box>
                 </Button>
               </Link>
               <Link component={reactLink} to="/register" underline="none">
                 <Button size="large">
-                  <Box fontWeight="fontWeightBold">
-                    Registrarse
-                  </Box>
+                  <Box fontWeight="fontWeightBold">Registrarse</Box>
                 </Button>
               </Link>
             </Container>
@@ -189,21 +187,19 @@ const Welcome = () => {
           </Toolbar>
         </AppBar>
 
-        <Grid container component="main" className={classes.root} >
-          <Grid
-            item
-            xs={12}
-            sm={8}
-            md={5}
-            square
-            style={{alignSelf: "center"}}
-          >
-            <div>
-              <Box color="secondary.main" className={classes.form}  textAlign="center" >
+        <Grid container component="main" className={classes.root}>
+          <Grid item xs={12} sm={8} md={5} square className="align-self">
+            <div style={{ marginBottom: '1rem' }}>
+              <Box
+                style={{ marginBottom: '1rem' }}
+                color="secondary.main"
+                className={classes.form}
+                textAlign="center"
+              >
                 <CloudIcon color="primary" fontSize="inherit" />
                 Cloudster
               </Box>
-              <Typography variant="h4" align="center">
+              <Typography variant="subtitle" align="center">
                 Una forma sencilla de compartir tus archivos sin limites de
                 plataforma.
               </Typography>
@@ -215,7 +211,7 @@ const Welcome = () => {
                 </Link>
               </Box>
             </div>
-            <Box display={{ xs: 'none', sm: 'block' }} >
+            <Box display={{ xs: 'none', sm: 'block' }}>
               <form onSubmit={handleLogin}>
                 <Container maxWidth={'xs'}>
                   <TextField
@@ -261,7 +257,7 @@ const Welcome = () => {
               </form>
             </Box>
           </Grid>
-          <Grid item xs={false} sm={4} md={7} className={classes.image} />
+          <Grid item xs={false} sm={4} md={7} />
         </Grid>
         <Snackbar
           anchorOrigin={{

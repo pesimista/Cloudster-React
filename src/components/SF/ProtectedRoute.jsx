@@ -13,7 +13,7 @@ const ProtectedRoute = ({
   const { state } = useContext(saduwux);
   console.log(requireLogin, !state.logStatus, requireAdmin, state.user.nivel);
   const getComponent = () => {
-    if (requireLogin && !state.logStatus && !location.pathname===" ") {
+    if (requireLogin && !state.logStatus && !location.pathname === ' ') {
       return (
         <Route>
           <Redirect to={redirectTo} />
