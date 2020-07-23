@@ -1,30 +1,57 @@
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
-import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
-import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import Snackbar from '@material-ui/core/Snackbar';
-//import { makeStyles, Typography, Box, Tabs, Tab, Container, TextField, MenuItem, Button} from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import TextField from '@material-ui/core/TextField';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MuiAlert from '@material-ui/lab/Alert';
+import EnhancedEncryptionIcon from '@material-ui/icons/EnhancedEncryption';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import ChangePasswordDialog from '../Admin/Users/ChangePasswordDialog';
 import { saduwux } from '../SF/Context';
 import { handleFetch } from '../SF/helpers';
 
 const useStyles = makeStyles((theme) => ({
+  main: {
+    width: '100%',
+    display: 'flex',
+    alignItems:' center',
+    justifyContent: 'center',
+    '& form':{
+      padding: 20,
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      '& .buttons-container': {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        padding: 10
+      },
+    },
+    '& .MuiFormControl-root':{
+      margin: '0.5rem 0',
+    },
+    [theme.breakpoints.down('xs')]: {
+      alignItems: 'flex-start',
+      height: '100%',
+      overflow: 'auto',
+      '& .MuiContainer-root': {
+        display: 'none',
+      }
+    },
+  },
   root: {
     '& .MuiTab-wrapper': {
       justifyContent: 'flex-start',
@@ -33,9 +60,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: 400,
     display: 'flex',
-    [theme.breakpoints.down('xs')]: {
-      display: 'none',
-    },
+    
   },
   list: {
     width: '100%',
@@ -47,6 +72,25 @@ const useStyles = makeStyles((theme) => ({
   },
   sectionMobile: {
     display: 'block',
+    marginTop: '1rem',
+    maxWidth: 'calc(100vw - 2rem)',
+    width: 'calc(100vw - 2rem)',
+    height: 400,
+    '& .MuiAccordionDetails-root': {
+      minHeight: 250,
+      '& #vertical-tabpanel-1': {
+        width: '100%',
+        '& > *': {
+          display: 'flex',
+          alignItems: 'center',
+          height: '100%'
+        }
+      },
+      '& #vertical-tabpanel-2': {
+        width: '100%',
+        maxWidth: '100%',
+      }
+    },
     [theme.breakpoints.up('sm')]: {
       display: 'none',
     },
@@ -55,6 +99,13 @@ const useStyles = makeStyles((theme) => ({
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+const pattern = {
+  nombre: new RegExp(`^[A-Z'\\s]*$`, 'i'),
+  apellido: new RegExp(`^[A-Z'\\s]*$`, 'i'),
+  respuesta1: new RegExp(`^[A-Z'0-9\\s]*$`, 'i'),
+  respuesta2: new RegExp(`^[A-Z'0-9\\s]*$`, 'i')
 }
 
 const ExpansionPanel = withStyles({
@@ -72,7 +123,7 @@ const ExpansionPanel = withStyles({
     },
   },
   expanded: {},
-})(MuiExpansionPanel);
+})(Accordion);
 
 const ExpansionPanelSummary = withStyles({
   root: {
@@ -90,13 +141,13 @@ const ExpansionPanelSummary = withStyles({
     },
   },
   expanded: {},
-})(MuiExpansionPanelSummary);
+})(AccordionSummary);
 
 const ExpansionPanelDetails = withStyles((theme) => ({
   root: {
     padding: theme.spacing(2),
   },
-}))(MuiExpansionPanelDetails);
+}))(AccordionDetails);
 
 const questions = [
   { id: '1', pregunta: '¿Cuál es el nombre de tu mejor amigo?' },
@@ -131,15 +182,14 @@ const initialState = {
   open: false,
   value: 0,
   message: '',
-  expanded: 'panel1',
   nombre: '',
   apellido: '',
-  password: '',
-  password2: '',
+  changePassword: false,
   pregunta1: 1,
   pregunta2: 2,
   respuesta1: '',
   respuesta2: '',
+  isLoading: false
 };
 
 const userReducer = (state, payload) => {
@@ -148,17 +198,15 @@ const userReducer = (state, payload) => {
 
 const ProfileSettings = () => {
   const classes = useStyles();
-  const matches = useMediaQuery((theme) => theme.breakpoints.up('sm'));
+  const { state: { user }, dispatch } = React.useContext(saduwux)
 
-  const [state, update] = React.useReducer(userReducer, initialState);
-  const {
-    state: { user },
-    dispatch,
-  } = React.useContext(saduwux);
+  const [state, update] = React.useReducer(userReducer, {
+    ...initialState,
+    pregunta1: user.pregunta1,
+    pregunta2: user.pregunta2,
+  });
 
-  const [, updatePassword0] = React.useState('');
-
-  const a11yProps = (index) => {
+  const tapProps = (index) => {
     return {
       id: `vertical-tab-${index}`,
       'aria-controls': `vertical-tabpanel-${index}`,
@@ -171,12 +219,6 @@ const ProfileSettings = () => {
         return JSON.stringify({
           nombre: state.nombre,
           apellido: state.apellido,
-        });
-      }
-      case 1: {
-        return JSON.stringify({
-          password: state.password,
-          confirmpassword: state.password2,
         });
       }
       case 2: {
@@ -194,33 +236,110 @@ const ProfileSettings = () => {
     }
   };
 
-  const handleUpdate = () => {
-    if (state.value === 1 && state.password2 !== state.password1) {
-      alert('Marico las contraseñas no coinciden');
+  const invalid = () => {
+    switch(state.value) {
+      case 2: {
+        const { pregunta1, pregunta2, respuesta1, respuesta2 } = state;
+        return respuesta1.trim().length < 3
+          || respuesta2.trim().length < 3
+          || pregunta1 === pregunta2;
+      }
+      case 0: {
+        return state.nombre.trim().length < 2 || state.apellido.trim().length < 2;
+      }
+      default: return true;
+    }
+  }
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    if (invalid() || state.value === 1) {
+      // alert('Marico las contraseñas no coinciden');
       return;
     }
-    fetch(`/api/users/${user.id}`, {
+    update({isLoading: true});
+    const headers = {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('token'),
       },
-      body: getPartialInfo(state.value),
-    })
+      body: getPartialInfo(state.value)
+    };
+    fetch(`/api/users/${user.id}`, headers)
       .then(handleFetch)
       .then((res) => {
         localStorage.setItem('token', 'bearer ' + res.token);
-        dispatch({ type: 'update', payload: { user: res.user } });
+        dispatch({
+          type: 'update',
+          payload: {
+            user: res.user
+          }
+        });
         update({
+          ...initialState,
+          value: state.value,
+          pregunta1: res.user.pregunta1,
+          pregunta2: res.user.pregunta2,
           open: true,
+          isLoading: false,
+          severity: 'success',
           message: 'Cambios guardados satisfactoriamente!',
         });
       })
       .catch((mistake) => {
-        console.log(mistake);
-        update({ open: true, message: mistake.message });
+        update({
+          open: true,
+          message: mistake.message,
+          severity: 'success',
+          isLoading: false
+        });
       });
   };
+
+  const handleChange = (event) => {
+    const {target} = event;
+    if(!pattern[target.name] || target.value.trim().match(pattern[target.name])) {
+      update({[target.name] : target.value})
+    }
+  }
+  const handleChangePassword = (data)  => {
+    if (!data) {
+      update({ changePassword: null });
+      return;
+    }
+    update({ isLoading: true, changePassword: null });
+    const headers = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('token'),
+      },
+      body: JSON.stringify({ password: data.password }),
+    };
+
+    fetch(`/api/users/${data.userID}`, headers)
+      .then(handleFetch)
+      .then(() => {
+        update({
+          isLoading: false,
+          open: true,
+          message: 'Contraseña cambiada',
+          severity: 'success'
+        });
+      })
+      .catch((err) => {
+        update({
+          isLoading: false,
+          open: true,
+          message: err.message,
+          severity: 'error'
+        });
+      });
+  };
+  const setChangePassword = ()  => {
+    update({ changePassword:  user})
+  }
 
   const mapPreguntas = questions.map((P, index) => {
     return (
@@ -231,133 +350,8 @@ const ProfileSettings = () => {
     );
   });
 
-  const content = (
-    <React.Fragment>
-      <TabPanel value={state.value} index={0}>
-        <Grid container>
-          <Grid xs={12}>
-            <TextField
-              onChange={(e) => update({ nombre: e.target.value })}
-              defaultValue={user.nombre}
-              id="outlined-basic"
-              label="Nombre"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid xs={12}>
-            <TextField
-              onChange={(e) => update({ apellido: e.target.value })}
-              defaultValue={user.apellido}
-              id="outlined-basic"
-              label="Apellido"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-        </Grid>
-      </TabPanel>
-      <TabPanel value={state.value} index={1}>
-        <Grid container>
-          <Grid xs={12}>
-            <TextField
-              onChange={(e) => updatePassword0(e.target.value)}
-              id="outlined-password-input"
-              label="Contraseña actual"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid xs={12}>
-            <TextField
-              onChange={(e) => update({ password: e.target.value })}
-              error={state.password.length < 6}
-              id="outlined-password-input"
-              label="Nueva contraseña"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid xs={12}>
-            <TextField
-              onChange={(e) => update({ password2: e.target.value })}
-              error={
-                state.password2.length < 6 || state.password !== state.password2
-              }
-              id="outlined-password-input"
-              label="Confirmar nueva contraseña"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-        </Grid>
-      </TabPanel>
-      <TabPanel value={state.value} index={2}>
-        <Grid container>
-          <Grid item xs={12}>
-            <TextField
-              id="outlined-select-currency"
-              select
-              label="Primera pregunta"
-              value={state.pregunta1}
-              onChange={(e) => update({ pregunta1: e.target.value })}
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            >
-              {mapPreguntas}
-            </TextField>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              onChange={(e) => update({ respuesta1: e.target.value })}
-              id="outlined-basic"
-              value={state.respuesta1}
-              label="Respuesta "
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              id="outlined-select-currency"
-              select
-              label="Segunda pregunta"
-              value={state.pregunta2}
-              onChange={(e) => update({ pregunta2: e.target.value })}
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            >
-              {mapPreguntas}
-            </TextField>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              onChange={(e) => update({ respuesta2: e.target.value })}
-              id="outlined-basic"
-              value={state.respuesta2}
-              label="Respuesta "
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-        </Grid>
-      </TabPanel>
-    </React.Fragment>
-  );
-  if (!user.id) return <Redirect to="/notlogged" />;
-
-  const handleChange = (panel) => (event, newExpanded) => {
-    update({ expanded: newExpanded ? panel : false });
-    update({ value: panel === 'panel1' ? 0 : panel === 'panel2' ? 1 : 2 });
+  const handleTapChange = (event, value) => {
+    update({ value })
   };
 
   const handleClose = (event, reason) => {
@@ -368,8 +362,143 @@ const ProfileSettings = () => {
     update({ open: false });
   };
 
+  const getTap = (index) => {
+    switch(index) {
+      case 2: {
+        return (
+          <Grid container>
+            <Grid item xs={12}>
+              <TextField
+                select
+                onChange={handleChange}
+                value={state.pregunta1}
+                name="pregunta1"
+                required
+                label="Primera pregunta"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              >
+                { mapPreguntas }
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                onChange={handleChange}
+                value={state.respuesta1}
+                name="respuesta1"
+                required
+                label="Respuesta "
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                select
+                onChange={handleChange}
+                value={state.pregunta2}
+                name="pregunta2"
+                required
+                label="Segunda pregunta"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              >
+                {mapPreguntas}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                onChange={handleChange}
+                value={state.respuesta2}
+                name="respuesta2"
+                required
+                label="Respuesta "
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              />
+            </Grid>
+          </Grid>
+        );
+      }
+      case 1: {
+        return (
+          <Grid
+            container
+            direction="row"
+            align="center"
+            justify="center"
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              type="button"
+              onClick={setChangePassword}
+              startIcon={<EnhancedEncryptionIcon />}
+            >
+              Cambiar contraseña
+            </Button>
+          </Grid>
+        );
+      }
+      default: {
+        return (
+          <Grid container>
+            <Grid item xs={12}>
+              <TextField
+                onChange={(e) => handleChange(e)}
+                value={state.nombre}
+                required
+                name="nombre"
+                label={`Nombre (${user.nombre})`}
+                variant="outlined"
+                fullWidth
+                helperText="El nombre debe contener al menos 2 catacteres"
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                onChange={(e) => handleChange(e)}
+                value={state.apellido}
+                name="apellido"
+                required
+                label={`Apellido (${user.apellido})`}
+                helperText="El apellido debe contener al menos 2 catacteres"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              />
+            </Grid>
+          </Grid>
+        );
+      }
+    }
+  }
+
+  const content = (
+    <React.Fragment>
+      {[0,1,2].map(index => (
+        <TabPanel key={`panel-${index}`} value={state.value} index={index}>
+          {getTap(index)}
+        </TabPanel>
+      ))}
+    </React.Fragment>
+  );
+
+  const getClasses = () =>{
+    let className = classes.main;
+    return className;
+  }
+
   return (
-    <Box width={1} display={matches ? 'flex' : 'block'} alignItems="center">
+    <Box
+      component="main"
+      className={getClasses()}
+    >
       <Container maxWidth="md">
         <Paper className={classes.root}>
           <Tabs
@@ -377,106 +506,150 @@ const ProfileSettings = () => {
             variant="fullWidth"
             value={state.value}
             indicatorColor="primary"
-            onChange={(event, newValue) => update({ value: newValue })}
+            onChange={handleTapChange}
             aria-label="Configuracion de perfil"
             className={classes.tabs}
           >
-            <Tab label="Perfil" {...a11yProps(0)} />
-            <Tab label="Contraseña" {...a11yProps(1)} />
-            <Tab label="Preguntas Secretas" {...a11yProps(2)} />
+            <Tab label="Perfil" {...tapProps(0)} />
+            <Tab label="Contraseña" {...tapProps(1)} />
+            <Tab label="Preguntas Secretas" {...tapProps(2)} />
           </Tabs>
-          <Container maxWidth="sm">
+          <form
+            autoComplete="off"
+            onSubmit={handleUpdate}
+          >
             {content}
-            <Button
-              disabled={
-                state.value === 0
-                  ? state.nombre.length <= 1 && state.apellido.length <= 1
-                  : false ||
-                    /*state.value===1 ? state. las contraseñas aqui*/
-                    state.value === 2
-                  ? state.respuesta1.length <= 0 && state.respuesta2.length <= 0
-                  : false
-              }
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              onClick={handleUpdate}
-            >
-              {' '}
-              Guardar
-            </Button>
-          </Container>
+            {
+              state.value !== 1 && (
+                <Box className="buttons-container">
+                  <Button
+                    disabled={invalid()}
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    className={classes.button}
+                  >
+                    {' '}
+                    Guardar
+                  </Button>
+                </Box>
+              )
+            }
+          </form>
         </Paper>
       </Container>
+      
       <Box className={classes.sectionMobile}>
         <ExpansionPanel
           square
-          expanded={state.expanded === 'panel1'}
-          onChange={handleChange('panel1')}
+          id="panel2"
+          expanded={!state.value}
+          onChange={() => handleTapChange('', 0)}
         >
-          <ExpansionPanelSummary
-            aria-controls="panel1d-content"
-            id="panel1d-header"
+          <ExpansionPanelSummary 
+            expandIcon={<ExpandMoreIcon />}
+            id="p1d-header"
           >
             <Typography className={classes.heading}>
-              Expansion Panel 1
+              Perfil
             </Typography>
           </ExpansionPanelSummary>
-          <ExpansionPanelDetails>{content}</ExpansionPanelDetails>
+          <ExpansionPanelDetails>
+            <form
+              onSubmit={handleUpdate}
+            >
+              { getTap(0) }
+              
+              <Button
+                disabled={state.nombre.length <= 1 && state.apellido.length <= 1}
+                variant="contained"
+                color="primary"
+                type="submit"
+                className={classes.button}
+              >
+                {' '}
+                Guardar
+              </Button>
+            
+            </form>
+          </ExpansionPanelDetails>
         </ExpansionPanel>
+
         <ExpansionPanel
           square
-          expanded={state.expanded === 'panel2'}
-          onChange={handleChange('panel2')}
+          id="panel2"
+          expanded={state.value === 1}
+          onChange={() => handleTapChange('', 1)}
         >
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
+            id="p2d-header"
           >
             <Typography className={classes.heading}>
-              Expansion Panel 1
+              Contraseña
             </Typography>
           </ExpansionPanelSummary>
-          <ExpansionPanelDetails>{content}</ExpansionPanelDetails>
+          <ExpansionPanelDetails>
+            { getTap(1) }
+          </ExpansionPanelDetails>
         </ExpansionPanel>
+
         <ExpansionPanel
           square
-          expanded={state.expanded === 'panel3'}
-          onChange={handleChange('panel3')}
+          id="panel3"
+          expanded={state.value === 2}
+          onChange={() => handleTapChange('', 2)}
         >
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
+            id="p1d-header"
           >
             <Typography className={classes.heading}>
-              Expansion Panel 1
+              Preguntas secretas
             </Typography>
           </ExpansionPanelSummary>
-          <ExpansionPanelDetails>{content}</ExpansionPanelDetails>
+          <ExpansionPanelDetails>
+            <form
+              onSubmit={handleUpdate}
+            >
+              { getTap(2) }
+              <Button
+                disabled={state.respuesta1.length < 2 && state.respuesta2.length < 2}
+                variant="contained"
+                color="primary"
+                type="submit"
+                className={classes.button}
+              >
+                {' '}
+                Guardar
+              </Button>
+            </form>
+          </ExpansionPanelDetails>
         </ExpansionPanel>
       </Box>
-      <Box display={{ xs: 'block', sm: 'none' }}>
-        <Toolbar variant="dense" />
-      </Box>
-      <Box>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          open={state.open}
-          autoHideDuration={6000}
-          onClose={handleClose}
-        >
-          <Alert onClose={handleClose} severity="success">
-            {state.message}
-          </Alert>
-        </Snackbar>
-      </Box>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        open={state.open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity={state.severity || "success"}>
+          {state.message}
+        </Alert>
+      </Snackbar>
+      <ChangePasswordDialog
+        user={state.changePassword}
+        handleClose={handleChangePassword}
+      />
     </Box>
   );
 };
 
 export default ProfileSettings;
+
+// <Box display={{ xs: 'block', sm: 'none' }}>
+//   <Toolbar variant="dense" />
+// </Box>

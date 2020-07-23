@@ -14,6 +14,9 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 0,
     margin: 'auto',
     maxWidth: 700,
+    [theme.breakpoints.down('xs')]: {
+      maxWidth: 300,
+    },
   },
   modal: {
     display: 'flex',
@@ -24,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
 
 const FileInfoModal = ({ file, handleClose, open }) => {
   const classes = useStyles();
+  const date = new Date(file.lastModified || file.birthtime).toLocaleString(
+    'es-VE'
+  );
   if (!file) return '';
   else
     return (
@@ -37,7 +43,7 @@ const FileInfoModal = ({ file, handleClose, open }) => {
         </DialogTitle>
         {/*-------------------------GRID----------------------------*/}
         <Paper className={classes.paperMod}>
-          <Grid container spacing={2}>
+          <Grid container spacing={1} justify="center">
             <Grid item>
               <div className={classes.image}>
                 <img
@@ -48,34 +54,35 @@ const FileInfoModal = ({ file, handleClose, open }) => {
                 />
               </div>
             </Grid>
-            <Grid item xs={12} sm container>
+            <Grid item xs={12} sm={8} container>
               <Grid item xs container direction="row" spacing={2}>
                 <Grid item xs={12}>
                   <Typography variant="body2" color="textSecondary">
                     Nombre:
                   </Typography>
-                  <Typography gutterBottom variant="subtitle1">
+                  <Typography
+                    gutterBottom
+                    variant="subtitle1"
+                    style={{ wordWrap: 'break-word' }}
+                  >
                     {file.name}
                   </Typography>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={8}>
                   <Typography variant="body2" color="textSecondary">
-                    Extensión:
+                    Subido por:
                   </Typography>
                   <Typography gutterBottom variant="subtitle1">
-                    {file.ext}
+                    {file.upBy}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     Última modificación:
                   </Typography>
                   <Typography gutterBottom variant="subtitle1">
-                    {(file.lastModified
-                      ? new Date(file.lastModified)
-                      : new Date(file.lastChanged)
-                    ).toLocaleString('es-VE')}
+                    {date}
                   </Typography>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={4}>
                   <Typography variant="body2" color="textSecondary">
                     Tamaño:
                   </Typography>

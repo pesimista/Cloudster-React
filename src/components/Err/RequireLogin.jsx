@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -7,18 +6,26 @@ import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import { reactLink } from '../SF/helpers';
+import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
 
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
-
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   box: {
     gridColumnStart: '1',
     gridColumnEnd: '3',
     gridRowStart: '1',
     gridRowEnd: '3',
+    backgroundImage: `url(${backgroundimg1})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    [theme.breakpoints.down('xs')]: {
+      gridColumnStart: '1',
+      gridColumnEnd: '2',
+      gridRowStart: '1',
+      gridRowEnd: '4',
+      
+    },
   },
   card: { minWidth: 275 },
   title: { fontSize: 14 },
@@ -29,7 +36,7 @@ const useStyles = makeStyles({
     margin: '0 2px',
     transform: 'scale(0.8)',
   },
-});
+}));
 
 const RequireLogin = () => {
   const classes = useStyles();

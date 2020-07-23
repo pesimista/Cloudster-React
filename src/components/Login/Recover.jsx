@@ -1,7 +1,10 @@
+import Card from '@material-ui/core/Card';
 import Box from '@material-ui/core/Box';
+import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
+import Snackbar from '@material-ui/core/Snackbar';
 import Divider from '@material-ui/core/Divider';
+import MuiAlert from '@material-ui/lab/Alert';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
@@ -13,9 +16,11 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import CloudIcon from '@material-ui/icons/Cloud';
 import React, { useContext, useReducer } from 'react';
-import { Link as RouterLink, useHistory, withRouter } from 'react-router-dom';
+import md5 from 'md5';
+import { useHistory, withRouter } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
-import { handleFetch } from '../SF/helpers';
+import { handleFetch, reactLink } from '../SF/helpers';
+import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -23,18 +28,37 @@ const useStyles = makeStyles((theme) => ({
     gridColumnEnd: '3',
     gridRowStart: '1',
     gridRowEnd: '3',
-    backgroundColor: 'cyan',
     display: 'flex',
     placeContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
     maxWidth: 'auto',
+    backgroundImage: `url(${backgroundimg1})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+
+    [theme.breakpoints.down('xs')]: {
+      gridColumnStart: '1',
+      gridColumnEnd: '2',
+      gridRowStart: '1',
+      gridRowEnd: '4',
+      '& .MuiCard-root': {
+        maxWidth: 'calc(100vw - 30px)',
+        padding: '1rem'
+      }
+    },
+    '& .MuiIconButton-root': {
+      padding: 0,
+    },
   },
   box: {
     padding: '1rem 3rem',
     backgroundColor: '#fff',
     borderRadius: '1rem',
-    maxWidth: '400px',
+    maxWidth: '100%',
   },
   form: {
     margin: '0',
@@ -42,8 +66,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
-  button: {
-    marginRight: theme.spacing(1),
+  backButton: {
+    color: 'rgba(0, 0, 0, 0.8)',
+    borderColor: 'rgba(0, 0, 0, 0.8)'
   },
   bottonContainer: {
     marginTop: '1rem',
@@ -63,17 +88,16 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   instructions: {
-    maxWidth: '75%',
+    width: '275px',
   },
   mRight: {
     flexGrow: 1,
   },
 }));
 
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
+const Alert = (props) => {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
 const initialState = {
   activeStep: 0,
@@ -87,7 +111,11 @@ const initialState = {
   respuesta2: '',
   password: '',
   password2: '',
+  open: false,
+  message: '',
+  severity: 'success',
 };
+
 const reducer = (state, action) => {
   if (action) {
     return { ...state, ...action };
@@ -167,12 +195,21 @@ const Recover = () => {
         });
       })
       .catch((e) => {
-        console.log(e);
         update({
+          open: true,
+          message: e.message,
+          severity: 'error',
           touched: false,
           isLoading: false,
         });
       });
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    update({ open: false });
   };
 
   const handleQuestions = () => {
@@ -197,8 +234,10 @@ const Recover = () => {
         });
       })
       .catch((e) => {
-        alert(e);
         update({
+          open: true,
+          message: e.message,
+          severity: 'error',
           touched: false,
           isLoading: false,
         });
@@ -213,7 +252,7 @@ const Recover = () => {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('token'),
       },
-      body: JSON.stringify({ password: state.password }),
+      body: JSON.stringify({ password: md5(state.password) }),
     };
 
     fetch(`/api/users/${state.id_usuario}`, headers)
@@ -227,8 +266,13 @@ const Recover = () => {
         history.push('/busqueda');
       })
       .catch((err) => {
-        console.log('ERROR', err);
-        update({ touched: false, isLoading: false });
+        update({
+          open: true,
+          message: err.message,
+          severity: 'error',
+          touched: false,
+          isLoading: false
+        });
       });
   };
 
@@ -344,71 +388,100 @@ const Recover = () => {
   };
 
   return (
-    <Container component="main" className={classes.main}>
-      <Box
-        className={classes.box}
-        flexDirection="column"
-        alignItems="center"
-        textAlign="center"
-      >
-        <Link to="/" component={reactLink}>
-          <IconButton>
-            <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
-          </IconButton>
-        </Link>
-        <Typography component="h1" variant="h5">
-          Recuperar Contraseña
-        </Typography>
-        <Stepper
-          activeStep={state.activeStep}
-          style={{ padding: '0px 0px 24px' }}
-          alternativeLabel
-        >
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <Divider />
-        <form autoComplete="off" className={classes.form} onSubmit={handleNext}>
-          <div className={classes.instructions}>
-            {getStepContent(state.activeStep)}
-          </div>
-
-          <Box width={1} className={classes.bottonContainer}>
-            <Button
-              disabled={!state.activeStep || state.isLoading}
-              onClick={handleBack}
-              className={classes.backButton}
-              type="button"
-            >
-              &lt; Volver
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={invalid()}
-              type="submit"
-            >
-              {state.activeStep === steps.length - 1 ? 'Aceptar' : 'Siguiente'}
-            </Button>
+    <Box component="main" className={classes.main}>
+      <Card className={classes.box}>
+        <CardContent>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+          >
+            <Link to="/" component={reactLink}>
+              <IconButton>
+                <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
+              </IconButton>
+            </Link>
+            <Typography color="secondary" component="h2" variant="h4">
+              Cloudster
+            </Typography>
+            <Typography component="h6" variant="h6">
+              Recuperar contraseña
+            </Typography>
           </Box>
-        </form>
-      </Box>
-      <Grid container>
-        <Grid item xs>
-          <Link component={reactLink} to="/login" color="secondary">
-            Volver a inicio de sesión
-          </Link>
-        </Grid>
-        <Grid item>
-          <Link component={reactLink} to="/register">
-            Registrarse
-          </Link>
-        </Grid>
-      </Grid>
-    </Container>
+          <Stepper
+            activeStep={state.activeStep}
+            style={{ padding: '0px 0px 24px' }}
+            alternativeLabel
+          >
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <Divider />
+          <form
+            autoComplete="off"
+            className={classes.form}
+            onSubmit={handleNext}
+          >
+            <div className={classes.instructions}>
+              {getStepContent(state.activeStep)}
+            </div>
+
+            <Box width={1} className={classes.bottonContainer}>
+              <Button
+                disabled={!state.activeStep || state.isLoading}
+                onClick={handleBack}
+                className={classes.backButton}
+                type="button"
+                variant="outlined"
+              >
+                Volver
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={invalid()}
+                type="submit"
+              >
+                {state.activeStep === steps.length - 1
+                  ? 'Aceptar'
+                  : 'Siguiente'}
+              </Button>
+            </Box>
+          </form>
+
+          <Divider style={{ margin: '0.5rem 0' }} />
+          <Grid container justify="space-between">
+            <Grid item>
+              <Link component={reactLink} to="/login">
+                Inicias sesión
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link component={reactLink} to="/register" color="secondary">
+                Registrarse
+              </Link>
+            </Grid>
+          </Grid>
+
+        </CardContent>
+      </Card>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={state.open}
+        onClose={handleClose}
+        autoHideDuration={6000}
+      >
+        <Alert onClose={handleClose} severity={state.severity}>
+          {state.message}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 };
 

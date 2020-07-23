@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -13,9 +12,10 @@ import CloudIcon from '@material-ui/icons/Cloud';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext, useReducer } from 'react';
-import { Link as RouterLink, Redirect, useHistory } from 'react-router-dom';
-import { handleFetch } from '../SF/helpers';
+import { Redirect, useHistory } from 'react-router-dom';
+import { handleFetch, reactLink } from '../SF/helpers';
 import { saduwux } from '../SF/Context';
+import backgroundimg from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
 
 const useStyles = makeStyles((theme) => ({
   grow: { flexGrow: 1 },
@@ -34,20 +34,32 @@ const useStyles = makeStyles((theme) => ({
         color: 'rgba(0, 0, 0, 0.26)',
       },
     },
+    '& .image, &': {
+      backgroundImage: `url(${backgroundimg})`, //'url(' + View + ')',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor:
+        theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    },
+    '& .align-self': {
+      alignSelf: 'center',
+      height: '100%',
+      padding: '20px',
+      backgroundColor: 'rgba(255,255,255,0.9)',
+    },
   },
-  form: { marginTop: theme.spacing(8) },
+  form: {
+    marginTop: theme.spacing(8),
+    fontSize: '2rem',
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '2rem',
+    },
+  },
   appBar: {
     position: 'static',
     gridColumnStart: 1,
     gridColumnEnd: 3,
-  },
-  image: {
-    backgroundImage: 'url(https://source.unsplash.com/random)', //'url(' + View + ')',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor:
-      theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
   },
   sectionDesktop: {
     display: 'none',
@@ -71,11 +83,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
 
 const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -115,7 +122,6 @@ const Welcome = () => {
     if (invalid()) {
       return;
     }
-
     const { signInUser, signInPassword } = state;
     update({ block: true });
     fetch('/api/users/login', {
@@ -150,131 +156,124 @@ const Welcome = () => {
 
   if (logStatus === 2) {
     return <Redirect to="/busqueda" />;
-  } else {
-    return (
-      <React.Fragment>
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <Container maxWidth="lg" className={classes.sectionDesktop}>
-              <Link component={reactLink} to="/login" underline="none">
-                <Button size="large">
-                  <Typography fontWeight="fontWeightBold">
-                    Iniciar Sesión
-                  </Typography>
-                </Button>
-              </Link>
-              <Link component={reactLink} to="/register" underline="none">
-                <Button size="large">
-                  <Typography fontWeight="fontWeightBold">
-                    Registrarse
-                  </Typography>
-                </Button>
-              </Link>
-            </Container>
-            <div className={classes.grow} />
-            <Link
-              className={classes.sectionMobile}
-              component={reactLink}
-              to="/register"
-              underline="none"
-            >
+  }
+  return (
+    <React.Fragment className={classes.image}>
+      <AppBar className={classes.appBar}>
+        <Toolbar>
+          <Container maxWidth="lg" className={classes.sectionDesktop}>
+            <Link component={reactLink} to="/login" underline="none">
               <Button size="large">
-                <Typography fontWeight="fontWeightBold">Registrarse</Typography>
+                <Box fontWeight="fontWeightBold">Iniciar Sesión</Box>
               </Button>
             </Link>
-          </Toolbar>
-        </AppBar>
-
-        <Grid container component="main" className={classes.root}>
-          <Grid
-            item
-            xs={12}
-            sm={8}
-            md={5}
-            component={Paper}
-            elevation={6}
-            square
+            <Link component={reactLink} to="/register" underline="none">
+              <Button size="large">
+                <Box fontWeight="fontWeightBold">Registrarse</Box>
+              </Button>
+            </Link>
+          </Container>
+          <div className={classes.grow} />
+          <Link
+            className={classes.sectionMobile}
+            component={reactLink}
+            to="/register"
+            underline="none"
           >
-            <div>
-              <Box color="secondary.main" className={classes.form}>
-                <CloudIcon color="primary" fontSize="inherit" />
+            <Button size="large">
+              <Box fontWeight="fontWeightBold">Registrarse</Box>
+            </Button>
+          </Link>
+        </Toolbar>
+      </AppBar>
+
+      <Grid container component="main" className={classes.root}>
+        <Grid item xs={12} sm={8} md={5} square className="align-self">
+          <div style={{ marginBottom: '1rem' }}>
+            <Box
+              style={{ marginBottom: '1rem' }}
+              color="secondary.main"
+              className={classes.form}
+              textAlign="center"
+            >
+              <CloudIcon color="primary" fontSize="inherit" />
                 Cloudster
               </Box>
-              <Typography variant="h4">
-                Una forma sencilla de compartir tus archivos sin limites de
-                plataforma.
+            <Typography variant="subtitle" align="center">
+              Una forma sencilla de compartir tus archivos sin limites de
+              plataforma.
               </Typography>
-              <Box display={{ xs: 'block', sm: 'none' }}>
-                <Link component={reactLink} to="/login" underline="none">
-                  <Button size="large" color="primary" variant="contained">
-                    Iniciar Sesión
+            <Box display={{ xs: 'block', sm: 'none' }} textAlign="center">
+              <Link component={reactLink} to="/login" underline="none">
+                <Button size="large" color="primary" variant="contained">
+                  Iniciar Sesión
                   </Button>
-                </Link>
-              </Box>
-            </div>
-            <Box display={{ xs: 'none', sm: 'block' }}>
-              <form onSubmit={handleLogin}>
-                <Container maxWidth={'xs'}>
-                  <TextField
-                    name="signInUser"
-                    value={state.signInUser}
-                    onChange={handleChangeTrim}
-                    id="username"
-                    label="Nombre de usuario"
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    disabled={state.block}
-                  />
-                  <TextField
-                    name="signInPassword"
-                    value={state.signInPassword}
-                    onChange={handleChangeTrim}
-                    id="password"
-                    label="Contraseña"
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    type="password"
-                    disabled={state.block}
-                  />
-                  <Button
-                    disabled={state.block || invalid()}
-                    className={classes.submit}
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    type="submit"
-                  >
-                    Iniciar Sesión
-                  </Button>
-                  <Link component={reactLink} to="/recover" color="secondary">
-                    Olvidé mi contraseña
-                  </Link>
-                </Container>
-              </form>
+              </Link>
             </Box>
-          </Grid>
-          <Grid item xs={false} sm={4} md={7} className={classes.image} />
+          </div>
+          <Box display={{ xs: 'none', sm: 'block' }}>
+            <form onSubmit={handleLogin}>
+              <Container maxWidth={'xs'}>
+                <TextField
+                  name="signInUser"
+                  value={state.signInUser}
+                  onChange={handleChangeTrim}
+                  id="username"
+                  label="Nombre de usuario"
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  disabled={state.block}
+                />
+                <TextField
+                  name="signInPassword"
+                  value={state.signInPassword}
+                  onChange={handleChangeTrim}
+                  id="password"
+                  label="Contraseña"
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  type="password"
+                  disabled={state.block}
+                />
+                <Button
+                  disabled={state.block || invalid()}
+                  className={classes.submit}
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  type="submit"
+                >
+                  Iniciar Sesión
+                  </Button>
+                <Link component={reactLink} to="/recover" color="secondary">
+                  Olvidé mi contraseña
+                  </Link>
+              </Container>
+            </form>
+          </Box>
         </Grid>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={state.open}
-          onClose={handleClose}
-          autoHideDuration={6000}
-        >
-          <Alert onClose={handleClose} severity="success">
-            {state.message}
-          </Alert>
-        </Snackbar>
-      </React.Fragment>
-    );
-  }
+        <Grid item xs={false} sm={4} md={7} />
+      </Grid>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={state.open}
+        onClose={handleClose}
+        autoHideDuration={6000}
+      >
+        <Alert onClose={handleClose} severity="success">
+          {state.message}
+        </Alert>
+      </Snackbar>
+    </React.Fragment>
+  );
+
 };
 export default Welcome;

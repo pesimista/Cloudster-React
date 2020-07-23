@@ -1,5 +1,4 @@
 import React from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -7,7 +6,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { handleFetch } from '../../SF/helpers';
 import EnhancedEncryptionIcon from '@material-ui/icons/EnhancedEncryption';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -18,7 +16,6 @@ import {
   TableHeader,
   ConfirmDialog,
 } from '../tableStyles';
-import { makeStyles } from '@material-ui/core/styles';
 import CloudQueueIcon from '@material-ui/icons/CloudQueue';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 
@@ -48,20 +45,14 @@ const reducer = (state, action) => {
   };
 };
 
-const UserTableContainer = ({ useTheme, adminID }) => {
+const UserTableContainer = ({
+  useTheme,
+  adminID,
+  onResponse,
+  loadingComponent,
+  criteria,
+}) => {
   const classes = useStyles();
-  const { main } = makeStyles(() => ({
-    main: {
-      minHeight: '100%',
-      minWidth: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      '& .MuiCircularProgress-colorPrimary': {
-        color: useTheme ? '#fff' : '#4caf50',
-      },
-    },
-  }))();
 
   const [state, setState] = React.useReducer(reducer, {
     ...initialState,
@@ -80,26 +71,29 @@ const UserTableContainer = ({ useTheme, adminID }) => {
         Authorization: localStorage.getItem('token'),
       },
     };
-
+    setState({ shouldUpdate: false });
     fetch(`/api/admin/users`, headers)
       .then(handleFetch)
       .then((users) => {
-        users = users.map((user) => ({
+        users = users.map((user, index) => ({
           ...user,
           short: user.id.slice(-5),
           updating: adminID === user.id,
+          index,
         }));
         setState({ userList: users });
       })
-      .catch((mistake) => alert('salio mal' + mistake.message));
-  }, [shouldUpdate, adminID]);
+      .catch((mistake) => {
+        onResponse({
+          key: new Date().getTime(),
+          type: 'error',
+          message: mistake.message,
+        });
+      });
+  }, [shouldUpdate, adminID, onResponse]);
 
   if (!userList) {
-    return (
-      <div className={main}>
-        <CircularProgress size={100} thickness={5} />
-      </div>
-    );
+    return loadingComponent;
   }
 
   const setUpdate = (index, value = true) => {
@@ -123,19 +117,26 @@ const UserTableContainer = ({ useTheme, adminID }) => {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('token'),
       },
-      body: JSON.stringify({
-        nivel: value,
-      }),
+      body: JSON.stringify({ nivel: value }),
     };
 
     fetch(`/api/users/${name}`, headers)
       .then(handleFetch)
-      .then((data) => {
-        console.log(data);
+      .then((res) => {
         setState({ shouldUpdate: true });
+        onResponse({
+          key: new Date().getTime(),
+          type: 'success',
+          message: res.response,
+        });
       })
       .catch((err) => {
-        console.log(err);
+        setState({ shouldUpdate: true });
+        onResponse({
+          key: new Date().getTime(),
+          type: 'error',
+          message: err.message,
+        });
       });
   };
 
@@ -158,11 +159,20 @@ const UserTableContainer = ({ useTheme, adminID }) => {
     fetch(`/api/users/${data.userID}`, headers)
       .then(handleFetch)
       .then((res) => {
-        console.log(res);
         setUpdate(data.index, false);
+        onResponse({
+          key: new Date().getTime(),
+          type: 'success',
+          message: res.response,
+        });
       })
       .catch((err) => {
-        console.log(err);
+        setUpdate(data.index, false);
+        onResponse({
+          key: new Date().getTime(),
+          type: 'error',
+          message: err.message,
+        });
       });
   };
 
@@ -170,8 +180,8 @@ const UserTableContainer = ({ useTheme, adminID }) => {
     setState({ ...state, changePassword: { ...user, index } });
   };
 
-  const handleSuspend = (res) => {
-    if (!res) {
+  const handleSuspend = (closeEvent) => {
+    if (!closeEvent) {
       setState({ userToSuspend: null });
       return;
     }
@@ -190,16 +200,38 @@ const UserTableContainer = ({ useTheme, adminID }) => {
     fetch(`/api/users/${user.id}`, headers)
       .then(handleFetch)
       .then((res) => {
-        console.log(res);
         toggleSuspend(user.index);
+        onResponse({
+          key: new Date().getTime(),
+          type: 'success',
+          message: res.response,
+        });
       })
       .catch((err) => {
-        console.log(err);
+        setUpdate(state.userToSuspend.index, false);
+        onResponse({
+          key: new Date().getTime(),
+          type: 'error',
+          message: err.message,
+        });
       });
   };
 
   const setSuspend = (user, index) => {
+    if (adminID === user.id) {
+      return;
+    }
     setState({ ...state, userToSuspend: { ...user, index } });
+  };
+
+  const confirmText = () => {
+    if (!state.userToSuspend) {
+      return '';
+    }
+    if (state.userToSuspend.active) {
+      return `¿Seguro deseas suspender a ${state.userToSuspend.usuario}?`;
+    }
+    return `¿Seguro deseas reactivar la cuenta de ${state.userToSuspend.usuario}?`;
   };
 
   return (
@@ -217,6 +249,7 @@ const UserTableContainer = ({ useTheme, adminID }) => {
             onChangeSelect={handleLevelChage}
             onClickLock={setHandlePassword}
             onClickTrash={setSuspend}
+            criteria={criteria}
             key="12gey12"
           />
         </Table>
@@ -229,9 +262,7 @@ const UserTableContainer = ({ useTheme, adminID }) => {
         open={state.userToSuspend}
         handleClose={handleSuspend}
         theme={useTheme}
-        text={`¿Seguro deseas suspender a ${
-          state.userToSuspend && state.userToSuspend.usuario
-        }?`}
+        text={confirmText()}
       />
     </React.Fragment>
   );
@@ -242,11 +273,20 @@ export default UserTableContainer;
 const TableContent = ({
   classes,
   data,
-  onChange,
+  onChangeSelect,
   onClickLock,
   onClickTrash,
+  criteria = '',
 }) => {
-  const content = data.map((value, index) => {
+  const regex = new RegExp(criteria, 'ig');
+  const content = data.reduce((collection, value) => {
+    const match =
+      value.usuario.match(regex) ||
+      value.nombre.match(regex) ||
+      value.apellido.match(regex);
+    if (criteria && !match) {
+      return collection;
+    }
     const cells = tableColumns.map((col, i) => {
       let constent = value[col.key];
       switch (col.key) {
@@ -259,7 +299,7 @@ const TableContent = ({
               nivel={value.nivel}
               identifier={value.id}
               disabled={value.updating}
-              onChange={(target) => onChange(target, index)}
+              onChange={(target) => onChangeSelect(target, value.index)}
             />
           );
           break;
@@ -269,7 +309,10 @@ const TableContent = ({
         case 'nombre':
           constent = `${value.nombre} ${value.apellido}`;
           break;
-        case '':
+        case '': {
+          const title = value.active
+            ? 'Suspender usuario'
+            : 'Reactivar usuario';
           constent = (
             <React.Fragment>
               <Tooltip title="Cambiar contraseña">
@@ -277,18 +320,18 @@ const TableContent = ({
                   <IconButton
                     disabled={value.updating}
                     aria-label="edit-password"
-                    onClick={() => onClickLock(value, index)}
+                    onClick={() => onClickLock(value, value.index)}
                   >
                     <EnhancedEncryptionIcon />
                   </IconButton>
                 </span>
               </Tooltip>
-              <Tooltip title="Suspender usuario">
+              <Tooltip title={title}>
                 <span>
                   <IconButton
                     disabled={value.updating}
                     aria-label="delete"
-                    onClick={() => onClickTrash(value, index)}
+                    onClick={() => onClickTrash(value, value.index)}
                   >
                     {value.active ? <CloudQueueIcon /> : <CloudOffIcon />}
                   </IconButton>
@@ -297,6 +340,7 @@ const TableContent = ({
             </React.Fragment>
           );
           break;
+        }
         default:
           break;
       }
@@ -314,7 +358,7 @@ const TableContent = ({
         </TableCell>
       );
     });
-    console.log(value);
+
     const rowClass = () => {
       switch (true) {
         case value.updating:
@@ -326,11 +370,12 @@ const TableContent = ({
       }
     };
 
-    return (
+    const row = (
       <TableRow className={rowClass()} key={`row-${value.id}`}>
         {cells}
       </TableRow>
     );
+    return [...collection, row];
   }, []);
   return <TableBody>{content}</TableBody>;
 };

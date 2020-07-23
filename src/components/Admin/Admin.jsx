@@ -1,16 +1,18 @@
-import React, { useContext } from 'react';
-
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
+import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 /**Icons */
@@ -19,33 +21,47 @@ import FolderSpecialIcon from '@material-ui/icons/FolderSpecial';
 import HowToRegIcon from '@material-ui/icons/HowToReg';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import WarningIcon from '@material-ui/icons/Warning';
-import PropTypes from 'prop-types';
-import {
-  Link as RouterLink,
-  Route,
-  Switch,
-  useLocation,
-} from 'react-router-dom';
+import MuiAlert from '@material-ui/lab/Alert';
+import React, { useContext } from 'react';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
+import { reactLink } from '../SF/helpers';
+import Details from './Details';
 import FilesTableContainer from './Files/FilesTable';
 import UsersTableContainer from './Users/UsersTable';
+import Reports from './Reports/Reports';
 
-const useStyles = makeStyles({
+const drawerWidth = 240;
+
+const useStyles = makeStyles((theme) => ({
   main: {
     display: 'grid',
+    [theme.breakpoints.down('xs')]: {
+      display: 'flex',
+      width: '100%',
+      '& .MuiBox-root': {
+        width: '100%',
+      },
+    },
     gridTemplateColumns: '250px 1fr',
     height: '100%',
     overflow: 'auto',
-
+    '& .spinner-container': {
+      minHeight: '100%',
+      minWidth: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     '& .right-column': {
       height: '100%',
       overflow: 'auto',
-      paddingLeft: '10px',
     },
-    '& .left-column': {
+    '& .MuiList-root': {
       boxShadow: '5px 0 5px -5px #333',
       width: '100%',
       height: '100%',
+      oveflow: 'auto',
       zIndex: '10',
       '& .MuiAvatar-root': {
         backgroundColor: 'transparent',
@@ -56,25 +72,42 @@ const useStyles = makeStyles({
       '& .MuiListItem-root:hover': {
         backgroundColor: 'rgba(0,0,0,0.3)',
       },
+      '& .MuiListSubheader-root': {
+        position: 'static',
+        fontWeight: '500',
+        fontSize: '18px',
+        color: '#000',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+      },
     },
   },
   dim: {
     backgroundColor: '#fff9c4',
-    '& .left-column': {
+    '& .MuiList-root': {
       backgroundColor: '#ffa726',
       '& .MuiSvgIcon-root': {
         color: '#000',
       },
     },
+    '& .MuiCircularProgress-colorPrimary': {
+      color: '#4caf50',
+    },
   },
   dark: {
     backgroundColor: '#393d46',
-    '& .left-column': {
+    '& .MuiList-root': {
       backgroundColor: '#666',
       color: '#fff',
       '& .MuiSvgIcon-root': {
         color: '#fff',
       },
+      '& .MuiListSubheader-root': {
+        color: '#fff',
+        borderBottomColor: '#cecece',
+      },
+    },
+    '& .MuiCircularProgress-colorPrimary': {
+      color: '#fff',
     },
   },
   card: {
@@ -85,7 +118,10 @@ const useStyles = makeStyles({
       height: '100%',
     },
   },
-});
+  drawerPaper: {
+    width: drawerWidth,
+  },
+}));
 
 const routes = [
   {
@@ -120,48 +156,67 @@ const routes = [
   },
 ];
 
-const reactLink = React.forwardRef((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
-reactLink.displayName = 'reactLink';
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component='div'
-      role='tabpanel'
-      hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box>{children}</Box>}
-    </Typography>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
+const reducer = (state, action) => ({ ...state, ...action });
 
 const Admin = (props) => {
+  const { window } = props;
   const classes = useStyles();
   const location = useLocation();
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const theme = useTheme();
+  const { state: globalState, dispatch } = useContext(saduwux);
+
+  const [state, setState] = React.useReducer(reducer, {
+    selectedIndex: 0,
+    snackPack: [],
+    open: false,
+    messageInfo: undefined,
+  });
 
   React.useEffect(() => {
     const x = routes.findIndex((route) => {
       const link = props.match.path + route.link;
       return location.pathname === link;
     });
-    setSelectedIndex(x);
+    setState({ selectedIndex: x });
   }, [location.pathname, props.match.path]);
 
-  const { state: globalState } = useContext(saduwux);
+  React.useEffect(() => {
+    if (state.snackPack.length && !state.messageInfo) {
+      // Set a new snack when we don't have an active one
+      setState({
+        messageInfo: { ...state.snackPack[0] },
+        snackPack: state.snackPack.slice(1),
+        open: true,
+      });
+    } else if (state.snackPack.length && state.open) {
+      // Close an active snack when a new one is added
+      setState({ open: false, messageInfo: undefined });
+    }
+  }, [state]);
+
+  const addBar = (data) => {
+    setState({
+      snackPack: [
+        ...state.snackPack,
+        {
+          key: new Date().getTime(),
+          type: data.type,
+          message: data.message,
+        },
+      ],
+    });
+  };
+
+  const closeBar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setState({ open: false, messageInfo: undefined });
+  };
+
+  const exitBar = () => {
+    setState({ messageInfo: undefined });
+  };
 
   const mainClass = () => {
     let className = classes.main;
@@ -169,50 +224,105 @@ const Admin = (props) => {
     return className;
   };
 
-  const listItems = () =>
-    routes.map((route, index) => (
-      <React.Fragment key={index}>
-        <ListItem
-          button
-          component={reactLink}
-          to={props.match.path + route.link}
-          selected={selectedIndex === index}
-        >
-          <ListItemAvatar>
-            <Avatar>
-              <route.component />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary={route.primaryText}
-            secondary={route.helperText}
-          />
-        </ListItem>
-        <Divider />
-      </React.Fragment>
-    ));
+  const listItems = () => {
+    return (
+      <List
+        subheader={
+          <ListSubheader component="div" id="subheader">
+            Configuraciones
+          </ListSubheader>
+        }
+      >
+        {routes.map((route, index) => (
+          <React.Fragment key={index}>
+            <ListItem
+              button
+              component={reactLink}
+              to={props.match.path + route.link}
+              selected={state.selectedIndex === index}
+              onClick={() => handleDrawerToggle()}
+            >
+              <ListItemAvatar>
+                <Avatar>
+                  <route.component />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={route.primaryText}
+                secondary={route.helperText}
+              />
+            </ListItem>
+            <Divider />
+          </React.Fragment>
+        ))}
+      </List>
+    );
+  };
+
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
+
+  const handleDrawerToggle = () => {
+    dispatch({ type: 'update', payload: { mobileOpen: false } });
+  };
+
+  const spinner = <Spinner useDark={globalState.theme} />;
 
   return (
     <Box component="main" display="flex" className={mainClass()}>
-      <Box component="div" className="left-column">
-        <List
-          className={classes.root}
-          subheader={
-            <ListSubheader component="div" id="subheader">
-              Configuraciones
-            </ListSubheader>
-          }
+      <Hidden smUp implementation="css">
+        <Drawer
+          container={container}
+          variant="temporary"
+          anchor={(theme.direction = 'right')}
+          open={globalState.mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
         >
           {listItems()}
-        </List>
-      </Box>
-
+        </Drawer>
+      </Hidden>
+      <Hidden xsDown implementation="css">
+        <Drawer
+          className={`min-h100`}
+          classes={{
+            paper: `position-static`,
+          }}
+          variant="permanent"
+          open
+        >
+          {listItems()}
+        </Drawer>
+      </Hidden>
       <Box component="div" className="right-column">
         <Switch>
           <Route exact path={props.match.path} component={WelcomeAdmin} />
           <Route
             path={`${props.match.path}/archivos/lista`}
-            render={() => <FilesTableContainer useTheme={globalState.theme} />}
+            render={() => (
+              <FilesTableContainer
+                useTheme={globalState.theme}
+                criteria={globalState.search}
+                onResponse={addBar}
+                loadingComponent={spinner}
+              />
+            )}
+          />
+          <Route
+            path={`${props.match.path}/archivos/detalles`}
+            render={() => (
+              <Details
+                key="files"
+                dark={globalState.theme}
+                onResponse={addBar}
+                loadingComponent={spinner}
+              />
+            )}
           />
           <Route
             path={`${props.match.path}/usuarios/lista`}
@@ -220,11 +330,33 @@ const Admin = (props) => {
               <UsersTableContainer
                 useTheme={globalState.theme}
                 adminID={globalState.user.id}
+                criteria={globalState.search}
+                onResponse={addBar}
+                loadingComponent={spinner}
               />
             )}
           />
+          <Route
+            path={`${props.match.path}/usuarios/detalles`}
+            render={() => (
+              <Details
+                key="users"
+                dark={globalState.theme}
+                type="users"
+                onResponse={addBar}
+                loadingComponent={spinner}
+              />
+            )}
+          />
+          <Route path={`${props.match.path}/reportes`} component={Reports} />
         </Switch>
       </Box>
+      <RequestSnack
+        onClose={closeBar}
+        onExit={exitBar}
+        data={state.messageInfo}
+        open={state.open}
+      />
     </Box>
   );
 };
@@ -239,6 +371,7 @@ const WelcomeAdmin = () => {
       justifyContent="center"
       alignItems="center"
       className="min-h100"
+      style={{ width: '100%' }}
     >
       <Card>
         <CardContent style={{ paddingBottom: '0px' }}>
@@ -259,6 +392,39 @@ const WelcomeAdmin = () => {
   );
 };
 
-/* <Route exact path={this.props.match.path} component={HomeDefault} />
-<Route path={`${this.props.match.path}/one`} component={HomePageOne} />
-<Route path={`${this.props.match.path}/two`} component={HomePageTwo} /> */
+const Spinner = () => {
+  return (
+    <div className="spinner-container">
+      <CircularProgress size={100} thickness={5} />
+    </div>
+  );
+};
+
+const RequestSnack = ({ onClose, onExit, open, data }) => {
+  if (!open) {
+    return '';
+  }
+  const { message, type, key } = data;
+  return (
+    <Snackbar
+      key={key || 'asdgaryisthebest'}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      open={open}
+      onClose={onClose}
+      onExited={onExit}
+      autoHideDuration={2000}
+    >
+      <MuiAlert
+        severity={type || 'success'}
+        elevation={6}
+        variant="filled"
+        onClose={onClose}
+      >
+        {message}
+      </MuiAlert>
+    </Snackbar>
+  );
+};

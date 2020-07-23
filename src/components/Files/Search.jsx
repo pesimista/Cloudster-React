@@ -18,16 +18,21 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CachedIcon from '@material-ui/icons/Cached';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import HomeIcon from '@material-ui/icons/Home';
+import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import MuiAlert from '@material-ui/lab/Alert';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
-import { handleFetch, postFile } from '../SF/helpers';
+import { handleFetch, postFile, newFolder } from '../SF/helpers';
 import Files from './Files';
 import FileInfoModal from './Modals/FileInfoModal';
 import UploadFileModal from './Modals/UploadFileModal';
 import SendIcon from '@material-ui/icons/Send';
 import CancelIcon from '@material-ui/icons/Cancel';
+import Paper from '@material-ui/core/Paper';
+import Dialog from '@material-ui/core/Dialog';
+import TextField from '@material-ui/core/TextField';
+import { getIcon } from '../SF/helpers';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -77,11 +82,18 @@ const useStyles = makeStyles((theme) => ({
   movingBar: {
     width: '100%',
     display: 'flex',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     padding: '0.25rem 1rem',
     borderTop: '1px solid grey',
   },
   inline: { display: 'inline' },
+  hideOnBig: {
+    display: 'none',
+    [theme.breakpoints.down('xs')]: {
+      display: 'inline-block',
+    },
+  },
 }));
 
 const Alert = (props) => {
@@ -98,20 +110,15 @@ const initialState = {
   files: null,
   shouldUpdate: false,
   movingFile: '',
+  isMoving: false,
+  folderModal: false,
+  folderName: 'Nueva Carpeta',
 };
 
 const reducer = (state, action) => {
-  if (action.type !== 'shouldUpdate') {
-    return { ...state, ...action };
-  }
   return {
     ...state,
-    shouldUpdate: !state.shouldUpdate,
-    uploadModal: false,
-    fileModal: '',
-    open: action.open,
-    message: action.message || '',
-    severity: action.severity || '',
+    ...action,
   };
 };
 
@@ -124,20 +131,31 @@ const Search = () => {
 
   React.useEffect(() => {
     if (state.shouldUpdate) {
-      update({ type: 'shouldUpdate' });
+      update({shouldUpdate: false, files: null})
+      return;
     }
-    fetch(`/api/files/${globalState.folder}/files`, {
+    const headers = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('token'),
       },
-    })
+    };
+
+    fetch(`/api/files/${globalState.folder}/files`, headers)
       .then(handleFetch)
-      .then((response) => update({ files: sort(response) }))
-      .catch((mistake) =>
-        console.log(`/api/files/${globalState.folder}/files`, mistake.message)
-      );
+      .then((response) => {
+        update({
+          files: sort(response)
+        });
+      })
+      .catch((mistake) => {
+        update({
+          open: true,
+          message: mistake.message,
+          severity: 'error',
+        });
+      });
   }, [globalState.folder, state.shouldUpdate]);
 
   /**--------------------- Navigators ----------------------*/
@@ -170,7 +188,7 @@ const Search = () => {
     if (!data && !closing) update({ uploadModal: true });
     else if (data) uploadFile({ ...data, folder: globalState.folder });
 
-    if (closing) update({ uploadModal: false });
+    if (closing) update({ uploadModal: false});
   };
 
   /** Closes the snackbar
@@ -179,24 +197,33 @@ const Search = () => {
    */
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') return;
-    update({ open: false });
+    update({ open: false, folderModal: false, folderName: 'Nueva carpeta'});
   };
 
   /**
    * @param {inputFile} fileToPost The data to be posted
    */
+  const onSuccess = (mensaje) => {
+    update({
+      shouldUpdate: true,
+      open: true,
+      folderModal: false,
+      folderName: 'Nueva carpeta',
+      message: mensaje,
+      severity: 'success',
+    });
+  };
+
+  const folderNameChange = (e) => {
+    const pattern = new RegExp('^[\\w\\s\\-]*$', 'i');
+    if (e.target.value.match(pattern)) {
+      update({ folderName: e.target.value });
+    }
+  }
+
+  const onError = (mistake) => update({ open: true, message: mistake.message });
+
   const uploadFile = (fileToPost) => {
-    const onSuccess = () =>
-      update({
-        type: 'shouldUpdate',
-        open: true,
-        message: 'Archivo subido satisfactoriamente!',
-        severity: 'success',
-      });
-
-    const onError = (mistake) =>
-      update({ open: true, message: mistake.message });
-
     postFile(fileToPost, onSuccess, onError);
   };
 
@@ -208,6 +235,35 @@ const Search = () => {
     update({ movingFile: null });
   };
   const moveFile = () => {
+    const headers = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('token'),
+      },
+    };
+    update({ isMoving: true });
+    fetch(`/api/files/${globalState.folder}/${state.movingFile.ino}`, headers)
+      .then(handleFetch)
+      .then((res) => {
+        update({
+          shouldUpdate: true,
+          movingFile: '',
+          open: true,
+          message: res.message,
+          severity: 'success',
+          isMoving: false,
+        });
+      })
+      .catch((error) => {
+        update({
+          open: true,
+          movingFile: '',
+          message: error.message,
+          severity: 'error',
+          isMoving: false,
+        });
+      });
     // fetch state.moving file => globalState.folder
   };
   /** */
@@ -251,11 +307,11 @@ const Search = () => {
                 container
                 item
                 xs={12}
-                sm={2}
-                md={3}
-                lg={1}
+                sm={3}
+                md={2}
+                lg={2}
               >
-                <Grid item xs={4}>
+                <Grid item xs sm={3}>
                   <IconButton
                     edge="start"
                     onClick={goBack}
@@ -265,17 +321,17 @@ const Search = () => {
                     <ArrowBackIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs sm={3}>
                   <IconButton
                     edge="start"
                     color="inherit"
                     aria-label="menu"
-                    onClick={() => update({ type: 'shouldUpdate' })}
+                    onClick={() => update({ shouldUpdate: true })}
                   >
                     <CachedIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs sm={3}>
                   <IconButton
                     edge="start"
                     onClick={goHome}
@@ -285,13 +341,33 @@ const Search = () => {
                     <HomeIcon />
                   </IconButton>
                 </Grid>
+                <Grid item xs sm={3}>
+                  <IconButton
+                    edge="start"
+                    onClick={() => update({ folderModal: true })}
+                    color="inherit"
+                    aria-label="menu"
+                  >
+                    <CreateNewFolderIcon />
+                  </IconButton>
+                </Grid>
+                <Grid item xs className={classes.hideOnBig}>
+                  <IconButton
+                    edge="start"
+                    onClick={() => handleUploadModal()}
+                    color="inherit"
+                    aria-label="upload"
+                  >
+                    <CloudUploadIcon />
+                  </IconButton>
+                </Grid>
               </Grid>
               <Grid
                 item
                 className={classes.sectionDesktop}
-                sm={8}
+                sm={7}
                 md={7}
-                lg={10}
+                lg={9}
               >
                 <Box display="flex">
                   <Typography variant="h6" className={classes.title}>
@@ -329,8 +405,47 @@ const Search = () => {
           move={moveFile}
           cancel={cancelMoving}
           theme={globalState.theme}
+          isMoving={state.isMoving}
         />
       </Box>
+        <Dialog
+          open={state.folderModal}
+          className={classes.modal}
+          onClose={() => handleClose(state, true)}
+        >
+          <Paper className={classes.paperMod}>
+            <Grid item container xs={12} justify="center">
+              <Grid item>
+                <img src={getIcon(false)} width="164" height="164" alt="file" />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  value={state.folderName}
+                  variant="outlined"
+                  style={{ textAlign: 'center' }}
+                  onChange={folderNameChange}
+                />
+              </Grid>
+              <Grid item xs={12} style={{ paddingTop: '15px' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() =>
+                    newFolder(
+                      state.folderName,
+                      globalState.folder,
+                      onSuccess,
+                      onError
+                    )
+                  }
+                >
+                  Aceptar
+                </Button>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Dialog>
       <FileInfoModal
         open={!!state.fileForModal}
         file={state.fileForModal}
@@ -357,7 +472,14 @@ const Search = () => {
   );
 };
 
-const MovingBar = ({ movingFile: file, className, move, cancel, theme }) => {
+const MovingBar = ({
+  movingFile: file,
+  className,
+  move,
+  cancel,
+  theme,
+  isMoving,
+}) => {
   if (!file) {
     return '';
   }
@@ -384,6 +506,7 @@ const MovingBar = ({ movingFile: file, className, move, cancel, theme }) => {
       <div>
         <Button
           disableElevation
+          disabled={isMoving}
           onClick={() => cancel()}
           size="large"
           startIcon={<CancelIcon />}
@@ -393,6 +516,7 @@ const MovingBar = ({ movingFile: file, className, move, cancel, theme }) => {
         </Button>
         <Button
           disableElevation
+          disabled={isMoving}
           onClick={() => move()}
           size="large"
           endIcon={<SendIcon />}

@@ -10,7 +10,7 @@ import {
   makeStyles,
   ThemeProvider,
 } from '@material-ui/core/styles';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 /** Componentes */
 import RequireLogin from './components/Err/RequireLogin';
@@ -23,7 +23,6 @@ import Register from './components/Register/Register';
 import Reproductor from './components/Reproductor/Reproductor';
 import Sidebar from './components/Sidebar/Sidebar';
 import TopBar from './components/TopBar/TopBar';
-import Welcome from './components/Welcome/Welcome';
 import NotFound from './components/Err/NotFound';
 import Admin from './components/Admin/Admin';
 
@@ -31,6 +30,7 @@ import Admin from './components/Admin/Admin';
 import { saduwux } from './components/SF/Context';
 import { handleFetch } from './components/SF/helpers';
 import ProtectedRoute from './components/SF/ProtectedRoute';
+import backgroundimg4 from './components/SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
 
 const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
@@ -39,9 +39,20 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
     color: theme.palette.text.primary,
   },
-  useDark: {
+  fullBackg: {
+    backgroundImage: `url(${backgroundimg4})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  dark: {
     backgroundColor: '#393d46',
   },
+  dim: {
+    backgroundColor: '#fff9c4',
+  }
 }));
 
 const prins = createMuiTheme({
@@ -139,13 +150,17 @@ const App = () => {
   /** Verificacion de token on init */
   useFetchUser(() => {
     const token = localStorage.getItem('token');
+    const usingDark = localStorage.getItem('theme');
     if (!token) {
       dispatch({ type: 'update', payload: { logStatus: 0 } });
       localStorage.clear();
       return;
     }
 
-    dispatch({ type: 'update', payload: { logStatus: 1 } });
+    dispatch({
+      type: 'update',
+      payload: { logStatus: 1, theme: Boolean(usingDark) },
+    });
     fetch(`/api/users/token`, {
       method: 'GET',
       headers: {
@@ -164,7 +179,8 @@ const App = () => {
   const switchView = () => {
     return (
       <div
-        className={`container ${state.theme ? classes.useDark : ''} min-h100`}
+        className={`container ${state.theme ? classes.dark : classes.dim}
+        ${!state.logStatus ? 'initial-height' : ''}`}
       >
         <Route
           component={TopBar}
@@ -190,15 +206,30 @@ const App = () => {
         />
 
         <Switch>
-          <Route exact path="/" component={Welcome} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/recover" component={Recover} />
-          <Route exact path="/register" component={Register} />
+          <Route exact path="/" render={() => <Redirect to='/login'/>} />
+          <Route
+            className={classes.fullBackg}
+            exact
+            path="/login"
+            component={Login}
+          />
+          <Route
+            className={classes.fullBackg}
+            exact
+            path="/recover"
+            component={Recover}
+          />
+          <Route
+            className={classes.fullBackg}
+            exact
+            path="/register"
+            component={Register}
+          />
           <Route exact path="/notlogged" component={RequireLogin} />
           <ProtectedRoute
             exact
             path="/reproductor"
-            render={() => <div style={{ display: 'none' }}></div>}
+            component={Reproductor}
           />
           <ProtectedRoute exact path="/busqueda" component={Search} />
           <ProtectedRoute exact path="/perfil" component={Profile} />
@@ -208,20 +239,9 @@ const App = () => {
             component={ProfileSettings}
           />
           <ProtectedRoute requireAdmin path="/admin" component={Admin} />
-          <Route component={NotFound} />
+          <Route path='/404' component={NotFound} />
+          <Redirect from='*' to='/404' />
         </Switch>
-
-        <ProtectedRoute
-          path={[
-            '/perfil',
-            '/configuracion',
-            '/busqueda',
-            '/transfers',
-            '/reproductor',
-            '/admin',
-          ]}
-          component={Reproductor}
-        />
       </div>
     );
   };

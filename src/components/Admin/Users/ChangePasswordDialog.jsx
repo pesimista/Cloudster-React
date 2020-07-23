@@ -6,12 +6,16 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import md5 from 'md5';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   paperMod: {
     padding: '0px 1.5rem 1rem',
     margin: 'auto',
     minWidth: '340px',
+    [theme.breakpoints.down('xs')]: {
+      minWidth: '100%'
+    },
     '& p': {
       color: 'red',
       '&:empty': {
@@ -88,7 +92,7 @@ const ChangePasswordDialog = ({ user, handleClose }) => {
 
     handleClose({
       index: user.index,
-      password: state.password,
+      password: md5(state.password),
       userID: user.id,
     });
   };

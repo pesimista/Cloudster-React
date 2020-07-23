@@ -4,13 +4,11 @@ import { Redirect, Route } from 'react-router-dom';
 
 const ProtectedRoute = ({
   requireAdmin = false,
-  redirectToAdmin = '/notFound',
   requireLogin = true,
   redirectTo = '/notlogged',
   ...props
 }) => {
   const { state } = useContext(saduwux);
-  console.log(requireLogin, !state.logStatus, requireAdmin, state.user.nivel);
   const getComponent = () => {
     if (requireLogin && !state.logStatus) {
       return (
@@ -22,7 +20,7 @@ const ProtectedRoute = ({
     if (requireAdmin && state.user.nivel < 5) {
       return (
         <Route>
-          <Redirect to={redirectToAdmin || redirectTo} />
+          <Redirect to='/busqueda' />
         </Route>
       );
     }

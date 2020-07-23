@@ -17,7 +17,12 @@ export const useStyles = makeStyles({
   a: { color: '#228dff' },
   p0: { padding: '0px' },
   text: { color: '#fff' },
-  elevation0: { boxShadow: 'none', borderRadius: 0, maxHeight: '100%' },
+  elevation0: {
+    boxShadow: 'none',
+    borderRadius: 0,
+    maxHeight: '100%',
+    minHeight: '100%',
+  },
   imageContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -35,8 +40,19 @@ export const useStyles = makeStyles({
     '& .MuiTableCell-body ': {
       padding: '8px',
     },
-    '& .MuiTableRow-root.disabled': {
-      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    '& .MuiTableRow-root': {
+      '&.disabled': {
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      },
+      '&.suspended': {
+        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+      },
+    },
+    '& .MuiButtonBase-root': {
+      color: 'rgba(0, 0, 0, 0.9)',
+      '&.Mui-disabled': {
+        color: 'rgba(0, 0, 0, 0.3)',
+      },
     },
   },
   dark: {
@@ -47,8 +63,13 @@ export const useStyles = makeStyles({
     '& .MuiTableBody-root': {
       backgroundColor: '#393d46',
     },
-    '& .MuiTableRow-root.disabled': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    '& .MuiTableRow-root': {
+      '&.disabled': {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      },
+      '&.suspended': {
+        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+      },
     },
     '& .MuiTableCell-body ': {
       padding: '8px',
@@ -123,7 +144,7 @@ export const ConfirmDialog = ({
     return '';
   }
 
-  const classes = makeStyles(() => ({
+  const classes = makeStyles((theme) => ({
     dim: {
       '& .MuiDialogTitle-root': {
         backgroundColor: '#4caf50',
@@ -150,9 +171,12 @@ export const ConfirmDialog = ({
       margin: 'auto',
       paddingTop: '8px',
       minWidth: '340px',
+      [theme.breakpoints.down('xs')]: {
+        minWidth: '100%'
+      },
       '& h2': {
         textAlign: 'center',
-        paddingBottom: '1rem',
+        padding: '0.5rem 3rem 1rem',
         fontSize: '1rem',
       },
       '& .MuiButton-root': {
