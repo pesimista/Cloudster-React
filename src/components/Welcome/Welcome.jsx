@@ -156,124 +156,124 @@ const Welcome = () => {
 
   if (logStatus === 2) {
     return <Redirect to="/busqueda" />;
-  } else {
-    return (
-      <React.Fragment className={classes.image}>
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <Container maxWidth="lg" className={classes.sectionDesktop}>
-              <Link component={reactLink} to="/login" underline="none">
-                <Button size="large">
-                  <Box fontWeight="fontWeightBold">Iniciar Sesión</Box>
-                </Button>
-              </Link>
-              <Link component={reactLink} to="/register" underline="none">
-                <Button size="large">
-                  <Box fontWeight="fontWeightBold">Registrarse</Box>
-                </Button>
-              </Link>
-            </Container>
-            <div className={classes.grow} />
-            <Link
-              className={classes.sectionMobile}
-              component={reactLink}
-              to="/register"
-              underline="none"
-            >
+  }
+  return (
+    <React.Fragment className={classes.image}>
+      <AppBar className={classes.appBar}>
+        <Toolbar>
+          <Container maxWidth="lg" className={classes.sectionDesktop}>
+            <Link component={reactLink} to="/login" underline="none">
+              <Button size="large">
+                <Box fontWeight="fontWeightBold">Iniciar Sesión</Box>
+              </Button>
+            </Link>
+            <Link component={reactLink} to="/register" underline="none">
               <Button size="large">
                 <Box fontWeight="fontWeightBold">Registrarse</Box>
               </Button>
             </Link>
-          </Toolbar>
-        </AppBar>
+          </Container>
+          <div className={classes.grow} />
+          <Link
+            className={classes.sectionMobile}
+            component={reactLink}
+            to="/register"
+            underline="none"
+          >
+            <Button size="large">
+              <Box fontWeight="fontWeightBold">Registrarse</Box>
+            </Button>
+          </Link>
+        </Toolbar>
+      </AppBar>
 
-        <Grid container component="main" className={classes.root}>
-          <Grid item xs={12} sm={8} md={5} square className="align-self">
-            <div style={{ marginBottom: '1rem' }}>
-              <Box
-                style={{ marginBottom: '1rem' }}
-                color="secondary.main"
-                className={classes.form}
-                textAlign="center"
-              >
-                <CloudIcon color="primary" fontSize="inherit" />
+      <Grid container component="main" className={classes.root}>
+        <Grid item xs={12} sm={8} md={5} square className="align-self">
+          <div style={{ marginBottom: '1rem' }}>
+            <Box
+              style={{ marginBottom: '1rem' }}
+              color="secondary.main"
+              className={classes.form}
+              textAlign="center"
+            >
+              <CloudIcon color="primary" fontSize="inherit" />
                 Cloudster
               </Box>
-              <Typography variant="subtitle" align="center">
-                Una forma sencilla de compartir tus archivos sin limites de
-                plataforma.
+            <Typography variant="subtitle" align="center">
+              Una forma sencilla de compartir tus archivos sin limites de
+              plataforma.
               </Typography>
-              <Box display={{ xs: 'block', sm: 'none' }} textAlign="center">
-                <Link component={reactLink} to="/login" underline="none">
-                  <Button size="large" color="primary" variant="contained">
-                    Iniciar Sesión
+            <Box display={{ xs: 'block', sm: 'none' }} textAlign="center">
+              <Link component={reactLink} to="/login" underline="none">
+                <Button size="large" color="primary" variant="contained">
+                  Iniciar Sesión
                   </Button>
-                </Link>
-              </Box>
-            </div>
-            <Box display={{ xs: 'none', sm: 'block' }}>
-              <form onSubmit={handleLogin}>
-                <Container maxWidth={'xs'}>
-                  <TextField
-                    name="signInUser"
-                    value={state.signInUser}
-                    onChange={handleChangeTrim}
-                    id="username"
-                    label="Nombre de usuario"
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    disabled={state.block}
-                  />
-                  <TextField
-                    name="signInPassword"
-                    value={state.signInPassword}
-                    onChange={handleChangeTrim}
-                    id="password"
-                    label="Contraseña"
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    type="password"
-                    disabled={state.block}
-                  />
-                  <Button
-                    disabled={state.block || invalid()}
-                    className={classes.submit}
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    type="submit"
-                  >
-                    Iniciar Sesión
-                  </Button>
-                  <Link component={reactLink} to="/recover" color="secondary">
-                    Olvidé mi contraseña
-                  </Link>
-                </Container>
-              </form>
+              </Link>
             </Box>
-          </Grid>
-          <Grid item xs={false} sm={4} md={7} />
+          </div>
+          <Box display={{ xs: 'none', sm: 'block' }}>
+            <form onSubmit={handleLogin}>
+              <Container maxWidth={'xs'}>
+                <TextField
+                  name="signInUser"
+                  value={state.signInUser}
+                  onChange={handleChangeTrim}
+                  id="username"
+                  label="Nombre de usuario"
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  disabled={state.block}
+                />
+                <TextField
+                  name="signInPassword"
+                  value={state.signInPassword}
+                  onChange={handleChangeTrim}
+                  id="password"
+                  label="Contraseña"
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  type="password"
+                  disabled={state.block}
+                />
+                <Button
+                  disabled={state.block || invalid()}
+                  className={classes.submit}
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  type="submit"
+                >
+                  Iniciar Sesión
+                  </Button>
+                <Link component={reactLink} to="/recover" color="secondary">
+                  Olvidé mi contraseña
+                  </Link>
+              </Container>
+            </form>
+          </Box>
         </Grid>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={state.open}
-          onClose={handleClose}
-          autoHideDuration={6000}
-        >
-          <Alert onClose={handleClose} severity="success">
-            {state.message}
-          </Alert>
-        </Snackbar>
-      </React.Fragment>
-    );
-  }
+        <Grid item xs={false} sm={4} md={7} />
+      </Grid>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={state.open}
+        onClose={handleClose}
+        autoHideDuration={6000}
+      >
+        <Alert onClose={handleClose} severity="success">
+          {state.message}
+        </Alert>
+      </Snackbar>
+    </React.Fragment>
+  );
+
 };
 export default Welcome;

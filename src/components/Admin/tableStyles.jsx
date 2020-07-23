@@ -144,7 +144,7 @@ export const ConfirmDialog = ({
     return '';
   }
 
-  const classes = makeStyles(() => ({
+  const classes = makeStyles((theme) => ({
     dim: {
       '& .MuiDialogTitle-root': {
         backgroundColor: '#4caf50',
@@ -171,6 +171,9 @@ export const ConfirmDialog = ({
       margin: 'auto',
       paddingTop: '8px',
       minWidth: '340px',
+      [theme.breakpoints.down('xs')]: {
+        minWidth: '100%'
+      },
       '& h2': {
         textAlign: 'center',
         padding: '0.5rem 3rem 1rem',

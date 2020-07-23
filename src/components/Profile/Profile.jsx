@@ -10,7 +10,6 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import { green } from '@material-ui/core/colors';
-import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
@@ -22,22 +21,52 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
 import SvgIcon from '@material-ui/core/SvgIcon/SvgIcon';
 import Switch from '@material-ui/core/Switch';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DescriptionIcon from '@material-ui/icons/Description';
 import FolderIcon from '@material-ui/icons/Folder';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React, { useContext } from 'react';
-import { Redirect } from 'react-router-dom';
 import { Cell, Label, Legend, Pie, PieChart } from 'recharts';
 import { saduwux } from '../SF/Context';
 import { handleFetch, reactLink } from '../SF/helpers';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   avatar: { backgroundColor: green[500] },
   main: {
     overflow: 'auto',
+    height: '100%',
+    '& .card-box': {
+      minWidth: 300,
+      maxWidth: 480,
+      width: '100%',
+      padding: '0 10px',
+      textAlign: 'center',
+      '& .MuiCardHeader-root': {
+        textAlign: 'center',
+      },
+      '& .MuiCard-root': {
+        minWidth: 300,
+        maxWidth: 480,
+        margin: '1rem',
+        width: '100%',
+        height: 'min-content',
+        [theme.breakpoints.down('sm')]: {
+          maxWidth: 'calc(100vw - 1rem)',
+        },
+        '& .MuiCardContent-root:last-child': {
+          paddingBottom: 16,
+        },
+      },
+      '& .center': {
+        display: 'flex',
+        justifyContent: 'center',
+      },
+      '& .MuiButton-containedPrimary': {
+        boxShadow: 'none',
+        marginRight: 10
+      }
+    },
   },
   card: {
     minWidth: 300,
@@ -48,11 +77,25 @@ const useStyles = makeStyles(() => ({
     overflow: 'auto',
     maxHeight: 300,
   },
-  useDark: {
+  dark: {
     backgroundColor: '#393d46',
+    color: '#fff',
+    '& .files': {
+      color: '#4caf50',
+    },
+    '& .MuiButton-containedPrimary': {
+      border: '1px solid #fff',
+    }
   },
-  useLight: {
+  dim: {
+    backgroundColor: '#fff9c4',
     color: 'white',
+    '& .files': {
+      color: '#4caf50',
+    },
+    '& .MuiButton-containedPrimary': {
+      color: '#fff'
+    }
   },
 }));
 
@@ -67,8 +110,6 @@ const reducer = (state, action) => {
   return { ...state, ...action };
 };
 
-const route = window.location.hostname.replace(/(:)\d/g, '');
-
 const Profile = () => {
   const classes = useStyles();
   const matches = useMediaQuery((theme) => theme.breakpoints.up('sm'));
@@ -82,7 +123,7 @@ const Profile = () => {
 
   /** Algo así para buscar los archivos subidos por el usuario */
   React.useEffect(() => {
-    fetch(`http://${route}:1234/api/users/${user.id}/files`, {
+    fetch(`/api/users/${user.id}/files`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -91,20 +132,19 @@ const Profile = () => {
     })
       .then(handleFetch)
       .then((response) => update({ ...response, files: sort(response.files) }))
-      .catch((mistake) =>
-        console.log(`/api/files/${user.id}/files`, mistake.message)
-      );
+      .catch(() => {});
   }, [user.id, state.shouldUpdate]);
 
   /* const toFolder = () => {  //// Método para llevar al folder en el que se encuentra el archivo en el Search
 
   }*/
 
-  const handleCheck = (event) =>
+  const handleCheck = ({ target }) => {
     dispatch({
       type: 'update',
-      payload: { theme: event.target.checked },
+      payload: { theme: target.checked },
     });
+  }
 
   const files = () =>
     state.files.map((file, index) => {
@@ -118,85 +158,101 @@ const Profile = () => {
       );
     });
 
-  if (!user.id) return <Redirect to="/notlogged" />;
-
+  const getClasses = () =>{
+    let className = `${classes.main} `;
+    className += theme ? classes.dark : classes.dim;
+    return className;
+  }
   return (
-    <Box className={classes.main} component="main" width={1} textAlign="center">
-      <Container
-        className={theme ? classes.useDark : ''}
-        fixed
-        disableGutters
-        maxWidth="md"
+    <Grid
+      className={getClasses()}
+      container
+      justify="center"
+    >
+      <Grid
+        container
+        item
+        direction="column"
+        justify="center"
+        alignItems="center"
+        wrap="nowrap"
+        className="card-box"
       >
-        <Grid container alignItems="center">
-          <Grid item xs justify="center" container>
+        <Card raised={false}>
+          <CardHeader title="Perfil" />
+          <Divider />
+
+          <CardContent>
+            <Typography variant="h3">
+              {user.usuario}
+            </Typography>
+            <Box m={0.5}>
+              <Box display="flex" justifyContent="center">
+                <Avatar className={classes.avatar}>
+                  {user.nivel}
+                </Avatar>
+              </Box>
+              <Typography color="textSecondary">
+                Nivel de jerarquía
+              </Typography>
+            </Box>
+            <Divider />
+            <Box m={0.5}>
+              <Typography>
+                {user.nombre} {user.apellido}
+              </Typography>
+              <Typography>Miembro desde: {user.desde}</Typography>
+            </Box>
+            <Divider />
+
+            <Box m={0.5}>
+              <Typography>
+                Espacio en el servidor: {state.parsedSize}
+              </Typography>
+              <Typography>
+                Total de archivos subidos: {state.files.length}
+              </Typography>
+            </Box>
+            <Divider />
+
+          </CardContent>
+          <CardActions>
+            <Box mx="auto">
+              <Link
+                component={reactLink}
+                to="/configuracion"
+                underline="none"
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<SettingsIcon />}
+                >
+                  Configuración
+                </Button>
+              </Link>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={theme}
+                    onChange={handleCheck}
+                    value="theme"
+                    color={theme ? 'default' : 'primary'}
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                  />
+                }
+                label="Cambiar tema"
+              />
+            </Box>
+          </CardActions>
+        </Card>
+      </Grid>
+      {
+        !state.files.length ? 
+        '' : (
+          <Grid item container xs className='card-box'>
             <Grid item xs={12}>
-              <Card className={classes.card}>
-                <CardHeader title="Perfil" />
-                <Divider />
-                <CardContent>
-                  <Typography variant="h3">{user.usuario}</Typography>
-                  <Box m={0.5}>
-                    <Box display="flex" justifyContent="center">
-                      <Avatar className={classes.avatar}>{user.nivel}</Avatar>
-                    </Box>
-                    <Typography color="textSecondary">
-                      Nivel de jerarquía
-                    </Typography>
-                  </Box>
-                  <Divider />
-                  <Box m={0.5}>
-                    <Typography>
-                      {user.nombre} {user.apellido}
-                    </Typography>
-                    <Typography>Miembro desde: {user.desde}</Typography>
-                  </Box>
-                  <Divider />
-                  <Box m={0.5}>
-                    <Typography>
-                      Espacio en el servidor: {state.parsedSize}
-                    </Typography>
-                    <Typography>
-                      Total de archivos subidos: {state.files.length}
-                    </Typography>
-                  </Box>
-                  <Divider />
-                </CardContent>
-                <CardActions>
-                  <Box mx="auto">
-                    <Link
-                      component={reactLink}
-                      to="/configuracion"
-                      underline="none"
-                    >
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<SettingsIcon />}
-                      >
-                        Configuración
-                      </Button>
-                    </Link>
-                  </Box>
-                </CardActions>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={theme}
-                      onChange={handleCheck}
-                      value="theme"
-                      color={theme ? 'default' : 'primary'}
-                      inputProps={{ 'aria-label': 'primary checkbox' }}
-                    />
-                  }
-                  label="Cambiar tema"
-                />
-              </Card>
-            </Grid>
-          </Grid>
-          <Grid item container xs>
-            <Grid item xs={12}>
-              <Card className={classes.card}>
+              <Card raised={false}>
                 <CardHeader title="Archivos Subidos" />
                 <Divider />
                 <CardContent>
@@ -207,20 +263,21 @@ const Profile = () => {
               </Card>
             </Grid>
             <Grid item xs={12}>
-              <Card className={classes.card}>
+              <Card raised={false}>
                 <CardHeader title="Tipos de Archivos" />
                 <Divider />
                 <FileChartContent matches={matches} data={state.chartData} />
               </Card>
             </Grid>
           </Grid>
-        </Grid>
-      </Container>
-      <Box display={{ xs: 'flex', sm: 'none' }}>
-        <Toolbar variant="dense" />
-      </Box>
-    </Box>
+        )
+      }
+    </Grid>
   );
+      //   <Box display={{ xs: 'flex', sm: 'none' }}>
+      //     <Toolbar variant="dense" />
+      //   </Box>
+      // </Box>
 };
 
 const FileChartContent = ({ data, matches }) => {

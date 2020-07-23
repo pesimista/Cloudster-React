@@ -4,9 +4,29 @@ import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
 
 const useStyles = makeStyles((theme) => ({
-  root: { padding: theme.spacing(3, 2) },
+  root: {
+    gridColumnStart: '1',
+    gridColumnEnd: '3',
+    gridRowStart: '1',
+    gridRowEnd: '3',
+    backgroundImage: `url(${backgroundimg1})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    [theme.breakpoints.down('xs')]: {
+      gridColumnStart: '1',
+      gridColumnEnd: '2',
+      gridRowStart: '1',
+      gridRowEnd: '4',
+      
+    },
+    '& .MuiPaper-root': {
+      padding: theme.spacing(3, 2)
+    }
+  },
 }));
 
 const NotFound = () => {
@@ -19,9 +39,9 @@ const NotFound = () => {
       width={1}
       justifyContent="center"
       alignItems="center"
-      className="min-h100"
+      className={classes.root}
     >
-      <Paper className={classes.root}>
+      <Paper>
         <Typography variant="h5" component="h3">
           Lo sentimos!
         </Typography>

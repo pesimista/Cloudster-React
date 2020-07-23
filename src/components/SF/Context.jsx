@@ -18,7 +18,7 @@ const initialValue = {
     desde: '',
     nivel: 0,
   },
-  playing: 525906,
+  playing: 0,
   folder: 0,
   history: [],
   theme: false,
@@ -41,17 +41,15 @@ const Provider = saduwux.Provider;
 const reducer = (state, action) => {
   const { payload, type } = action;
   if (payload && typeof payload.theme !== 'undefined') {
-    localStorage.setItem('theme', payload.theme);
+    localStorage.setItem('theme', payload.theme || '');
   }
   switch (type) {
     case 'update': {
       const newState = { ...state, ...payload };
-      console.log(type, payload);
       return newState;
     }
     case 'login': {
       const newState = { ...state, ...payload, logStatus: 2 };
-      console.log(type, { ...payload, logStatus: 2 });
       return newState;
     }
     case 'moveForward': {
@@ -77,6 +75,7 @@ const reducer = (state, action) => {
     }
     case 'reset':
     default:
+      localStorage.clear();
       return { ...initialValue, logStatus: 0 };
   }
 };

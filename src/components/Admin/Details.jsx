@@ -103,7 +103,7 @@ const Details = ({ type = 'files', onResponse, loadingComponent, dark }) => {
     };
 
     setState(initialState);
-    fetch(`http://localhost:1234/api/admin/${type}/details`, headers)
+    fetch(`/api/admin/${type}/details`, headers)
       .then(handleFetch)
       .then((data) => {
         setTimeout(() => setState(data), 500);

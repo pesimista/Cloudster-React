@@ -47,33 +47,50 @@ const reducer = (state, action) => {
   return { ...state, ...action };
 };
 
+const reg = new RegExp('[!"#$%&\'()*+,./:;<=>?@[\\]^`{|}~]+', 'g');
+const pattern = new RegExp('^[\\w\\s\\-]*$', 'i');
+
 const UploadFileModal = ({ open, handleClose }) => {
   const classes = useStyles();
   const [state, update] = useReducer(reducer, initialState);
   const {
     state: { theme },
   } = useContext(saduwux);
-  const cleanState = () =>
+  const cleanState = () => {
     update({ fileFieldName: state.originalName, fileField: null });
+  }
 
   const onChange = (e) => {
-    let _ext = path.extname(e.target.files[0].name);
-    const nombre = path.basename(e.target.files[0].name, _ext);
+    const fileName = e.target.files[0].name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    let _ext = path.extname(fileName);
+    const nombre = path.basename(fileName, _ext);
     _ext = _ext.substring(1);
     update({
       fileField: e.target.files[0],
       ext: _ext,
-      fileFieldName: nombre,
-      originalName: nombre,
+      fileFieldName: nombre.replace(reg,''),
+      originalName: nombre.replace(reg, ''),
     });
   };
+
+  const changeName = (e) => {
+    if (e.target.value.match(pattern)) {
+      update({ fileFieldName: e.target.value });
+    }
+  }
+
+  const handleLocalClose = () => {
+    update({fileField: null});
+    handleClose('', true)
+  }
+
   if (!open) return '';
   else
     return (
       <Dialog
         open={open}
         className={classes.modal}
-        onClose={() => handleClose('', true)}
+        onClose={handleLocalClose}
       >
         <DialogTitle id="file-dialog-title" className={classes.title}>
           {!state.fileField
@@ -86,7 +103,7 @@ const UploadFileModal = ({ open, handleClose }) => {
               className={classes.input}
               state={state}
               theme={theme}
-              update={update}
+              changeName={changeName}
               onChange={onChange}
               cleanState={cleanState}
               handleClose={() => handleClose(state, true)}
@@ -102,7 +119,7 @@ const ModalContent = (props) => {
     className: classes,
     state,
     theme,
-    update,
+    changeName,
     onChange,
     cleanState,
     handleClose,
@@ -148,10 +165,10 @@ const ModalContent = (props) => {
         </Typography>
         <TextField
           fullWidth
-          defaultValue={state.fileFieldName}
+          value={state.fileFieldName}
           variant="outlined"
           style={{ textAlign: 'center' }}
-          onChange={(e) => update({ fileFieldName: e.target.value })}
+          onChange={changeName}
         />
       </Grid>
       <Grid item xs={6} style={{ paddingTop: '15px' }}>

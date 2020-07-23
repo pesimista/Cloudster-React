@@ -51,10 +51,6 @@ const reducer = (state, action) => {
     }
     case 'add': {
       const received = state.progress + action.progress;
-      console.log(`
-			Received ${received} bytes of ${state.total} 
-				${((received * 100) / state.total).toFixed(2)}%
-			`);
       return {
         ...state,
         progress: received,

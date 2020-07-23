@@ -10,7 +10,7 @@ import {
   makeStyles,
   ThemeProvider,
 } from '@material-ui/core/styles';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 /** Componentes */
 import RequireLogin from './components/Err/RequireLogin';
@@ -23,7 +23,6 @@ import Register from './components/Register/Register';
 import Reproductor from './components/Reproductor/Reproductor';
 import Sidebar from './components/Sidebar/Sidebar';
 import TopBar from './components/TopBar/TopBar';
-import Welcome from './components/Welcome/Welcome';
 import NotFound from './components/Err/NotFound';
 import Admin from './components/Admin/Admin';
 
@@ -48,9 +47,12 @@ const useStyles = makeStyles((theme) => ({
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
-  useDark: {
+  dark: {
     backgroundColor: '#393d46',
   },
+  dim: {
+    backgroundColor: '#fff9c4',
+  }
 }));
 
 const prins = createMuiTheme({
@@ -150,7 +152,6 @@ const App = () => {
     const token = localStorage.getItem('token');
     const usingDark = localStorage.getItem('theme');
     if (!token) {
-      console.log('No token');
       dispatch({ type: 'update', payload: { logStatus: 0 } });
       localStorage.clear();
       return;
@@ -178,7 +179,8 @@ const App = () => {
   const switchView = () => {
     return (
       <div
-        className={`container ${state.theme ? classes.useDark : ''} min-h100`}
+        className={`container ${state.theme ? classes.dark : classes.dim}
+        ${!state.logStatus ? 'initial-height' : ''}`}
       >
         <Route
           component={TopBar}
@@ -204,7 +206,7 @@ const App = () => {
         />
 
         <Switch>
-          <Route exact path="/" component={Welcome} />
+          <Route exact path="/" render={() => <Redirect to='/login'/>} />
           <Route
             className={classes.fullBackg}
             exact
@@ -227,7 +229,7 @@ const App = () => {
           <ProtectedRoute
             exact
             path="/reproductor"
-            render={() => <div style={{ display: 'none' }}></div>}
+            component={Reproductor}
           />
           <ProtectedRoute exact path="/busqueda" component={Search} />
           <ProtectedRoute exact path="/perfil" component={Profile} />
@@ -237,20 +239,9 @@ const App = () => {
             component={ProfileSettings}
           />
           <ProtectedRoute requireAdmin path="/admin" component={Admin} />
-          <Route component={NotFound} />
+          <Route path='/404' component={NotFound} />
+          <Redirect from='*' to='/404' />
         </Switch>
-
-        <ProtectedRoute
-          path={[
-            '/perfil',
-            '/configuracion',
-            '/busqueda',
-            '/transfers',
-            '/reproductor',
-            '/admin',
-          ]}
-          component={Reproductor}
-        />
       </div>
     );
   };

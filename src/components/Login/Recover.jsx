@@ -1,7 +1,10 @@
+import Card from '@material-ui/core/Card';
 import Box from '@material-ui/core/Box';
+import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
+import Snackbar from '@material-ui/core/Snackbar';
 import Divider from '@material-ui/core/Divider';
+import MuiAlert from '@material-ui/lab/Alert';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
@@ -13,6 +16,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import CloudIcon from '@material-ui/icons/Cloud';
 import React, { useContext, useReducer } from 'react';
+import md5 from 'md5';
 import { useHistory, withRouter } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, reactLink } from '../SF/helpers';
@@ -35,6 +39,20 @@ const useStyles = makeStyles((theme) => ({
       theme.palette.type === 'light' ? '#cecece' : theme.palette.grey[900],
     backgroundSize: 'cover',
     backgroundPosition: 'center',
+
+    [theme.breakpoints.down('xs')]: {
+      gridColumnStart: '1',
+      gridColumnEnd: '2',
+      gridRowStart: '1',
+      gridRowEnd: '4',
+      '& .MuiCard-root': {
+        maxWidth: 'calc(100vw - 30px)',
+        padding: '1rem'
+      }
+    },
+    '& .MuiIconButton-root': {
+      padding: 0,
+    },
   },
   box: {
     padding: '1rem 3rem',
@@ -48,8 +66,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
-  button: {
-    marginRight: theme.spacing(1),
+  backButton: {
+    color: 'rgba(0, 0, 0, 0.8)',
+    borderColor: 'rgba(0, 0, 0, 0.8)'
   },
   bottonContainer: {
     marginTop: '1rem',
@@ -69,12 +88,16 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   instructions: {
-    maxWidth: '75%',
+    width: '275px',
   },
   mRight: {
     flexGrow: 1,
   },
 }));
+
+const Alert = (props) => {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
 const initialState = {
   activeStep: 0,
@@ -88,7 +111,11 @@ const initialState = {
   respuesta2: '',
   password: '',
   password2: '',
+  open: false,
+  message: '',
+  severity: 'success',
 };
+
 const reducer = (state, action) => {
   if (action) {
     return { ...state, ...action };
@@ -168,12 +195,21 @@ const Recover = () => {
         });
       })
       .catch((e) => {
-        console.log(e);
         update({
+          open: true,
+          message: e.message,
+          severity: 'error',
           touched: false,
           isLoading: false,
         });
       });
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    update({ open: false });
   };
 
   const handleQuestions = () => {
@@ -198,8 +234,10 @@ const Recover = () => {
         });
       })
       .catch((e) => {
-        alert(e);
         update({
+          open: true,
+          message: e.message,
+          severity: 'error',
           touched: false,
           isLoading: false,
         });
@@ -214,7 +252,7 @@ const Recover = () => {
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('token'),
       },
-      body: JSON.stringify({ password: state.password }),
+      body: JSON.stringify({ password: md5(state.password) }),
     };
 
     fetch(`/api/users/${state.id_usuario}`, headers)
@@ -228,8 +266,13 @@ const Recover = () => {
         history.push('/busqueda');
       })
       .catch((err) => {
-        console.log('ERROR', err);
-        update({ touched: false, isLoading: false });
+        update({
+          open: true,
+          message: err.message,
+          severity: 'error',
+          touched: false,
+          isLoading: false
+        });
       });
   };
 
@@ -345,22 +388,26 @@ const Recover = () => {
   };
 
   return (
-    <Box className={classes.main}>
-      <Container component="main" maxWidth="sm">
-        <Box
-          className={classes.box}
-          flexDirection="column"
-          alignItems="center"
-          textAlign="center"
-        >
-          <Link to="/" component={reactLink}>
-            <IconButton>
-              <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
-            </IconButton>
-          </Link>
-          <Typography component="h1" variant="h5">
-            Recuperar Contraseña
-          </Typography>
+    <Box component="main" className={classes.main}>
+      <Card className={classes.box}>
+        <CardContent>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+          >
+            <Link to="/" component={reactLink}>
+              <IconButton>
+                <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
+              </IconButton>
+            </Link>
+            <Typography color="secondary" component="h2" variant="h4">
+              Cloudster
+            </Typography>
+            <Typography component="h6" variant="h6">
+              Recuperar contraseña
+            </Typography>
+          </Box>
           <Stepper
             activeStep={state.activeStep}
             style={{ padding: '0px 0px 24px' }}
@@ -388,8 +435,9 @@ const Recover = () => {
                 onClick={handleBack}
                 className={classes.backButton}
                 type="button"
+                variant="outlined"
               >
-                &lt; Volver
+                Volver
               </Button>
               <Button
                 variant="contained"
@@ -403,21 +451,36 @@ const Recover = () => {
               </Button>
             </Box>
           </form>
-          <Divider style={{ margin: '10px' }} />
+
+          <Divider style={{ margin: '0.5rem 0' }} />
           <Grid container justify="space-between">
             <Grid item>
-              <Link component={reactLink} to="/login" color="secondary">
-                Volver a inicio de sesión
+              <Link component={reactLink} to="/login">
+                Inicias sesión
               </Link>
             </Grid>
             <Grid item>
-              <Link component={reactLink} to="/register">
+              <Link component={reactLink} to="/register" color="secondary">
                 Registrarse
               </Link>
             </Grid>
           </Grid>
-        </Box>
-      </Container>
+
+        </CardContent>
+      </Card>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={state.open}
+        onClose={handleClose}
+        autoHideDuration={6000}
+      >
+        <Alert onClose={handleClose} severity={state.severity}>
+          {state.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

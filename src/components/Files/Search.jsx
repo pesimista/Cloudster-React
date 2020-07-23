@@ -131,7 +131,8 @@ const Search = () => {
 
   React.useEffect(() => {
     if (state.shouldUpdate) {
-      update({ shouldUpdate: false });
+      update({shouldUpdate: false, files: null})
+      return;
     }
     const headers = {
       method: 'GET',
@@ -144,12 +145,17 @@ const Search = () => {
     fetch(`/api/files/${globalState.folder}/files`, headers)
       .then(handleFetch)
       .then((response) => {
-        console.log(response);
-        update({ files: sort(response) });
+        update({
+          files: sort(response)
+        });
       })
-      .catch((mistake) =>
-        console.log(`/api/files/${globalState.folder}/files`, mistake.message)
-      );
+      .catch((mistake) => {
+        update({
+          open: true,
+          message: mistake.message,
+          severity: 'error',
+        });
+      });
   }, [globalState.folder, state.shouldUpdate]);
 
   /**--------------------- Navigators ----------------------*/
@@ -182,7 +188,7 @@ const Search = () => {
     if (!data && !closing) update({ uploadModal: true });
     else if (data) uploadFile({ ...data, folder: globalState.folder });
 
-    if (closing) update({ uploadModal: false });
+    if (closing) update({ uploadModal: false});
   };
 
   /** Closes the snackbar
@@ -191,8 +197,7 @@ const Search = () => {
    */
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') return;
-    update({ open: false });
-    update({ folderModal: false });
+    update({ open: false, folderModal: false, folderName: 'Nueva carpeta'});
   };
 
   /**
@@ -202,10 +207,19 @@ const Search = () => {
     update({
       shouldUpdate: true,
       open: true,
+      folderModal: false,
+      folderName: 'Nueva carpeta',
       message: mensaje,
       severity: 'success',
     });
   };
+
+  const folderNameChange = (e) => {
+    const pattern = new RegExp('^[\\w\\s\\-]*$', 'i');
+    if (e.target.value.match(pattern)) {
+      update({ folderName: e.target.value });
+    }
+  }
 
   const onError = (mistake) => update({ open: true, message: mistake.message });
 
@@ -393,6 +407,7 @@ const Search = () => {
           theme={globalState.theme}
           isMoving={state.isMoving}
         />
+      </Box>
         <Dialog
           open={state.folderModal}
           className={classes.modal}
@@ -406,10 +421,10 @@ const Search = () => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  defaultValue={state.folderName}
+                  value={state.folderName}
                   variant="outlined"
                   style={{ textAlign: 'center' }}
-                  onChange={(e) => update({ folderName: e.target.value })}
+                  onChange={folderNameChange}
                 />
               </Grid>
               <Grid item xs={12} style={{ paddingTop: '15px' }}>
@@ -431,7 +446,6 @@ const Search = () => {
             </Grid>
           </Paper>
         </Dialog>
-      </Box>
       <FileInfoModal
         open={!!state.fileForModal}
         file={state.fileForModal}

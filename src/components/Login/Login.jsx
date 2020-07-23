@@ -1,8 +1,10 @@
+import Card from '@material-ui/core/Card';
 import Box from '@material-ui/core/Box';
+import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
+import md5 from 'md5';
 import Link from '@material-ui/core/Link';
 import Snackbar from '@material-ui/core/Snackbar';
 import { makeStyles } from '@material-ui/core/styles';
@@ -32,19 +34,35 @@ const useStyles = makeStyles((theme) => ({
     backgroundSize: 'cover',
     backgroundPosition: 'center',
 
-    '& .MuiButtonBase-root': { padding: '0px' },
+    [theme.breakpoints.down('xs')]: {
+      gridColumnStart: '1',
+      gridColumnEnd: '2',
+      gridRowStart: '1',
+      gridRowEnd: '4',
+      '& .MuiCard-root': {
+        maxWidth: 'calc(100vw - 30px)',
+        padding: '1rem'
+      }
+    },
 
     '& button': {
       padding: '0.5rem 1rem',
       fontWeight: '600',
-
-      '&.MuiButton-containedPrimary': {
-        color: '#fff',
-      },
+      margin: '0.25rem 0px',
       '&.Mui-disabled': {
         color: 'rgba(0, 0, 0, 0.26)',
       },
     },
+    '& .MuiIconButton-root': {
+      padding: 0,
+    },
+    '& .forgot': {
+      width: '100%',
+      textAlign: 'center',
+      color: 'rgba(0,0,0,0.7)',
+      marginTop: '0.5rem',
+      display: 'inline-block'
+    }
   },
   box: {
     padding: '1rem 3rem',
@@ -53,13 +71,16 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '400px',
   },
   form: {
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    padding: '0.5rem !important',
+    marginTop: '0.5rem',
+    display:"flex",
+    flexDirection:"column",
+    alignItems:"center",
   },
 }));
+
+const pattern = {
+  username: new RegExp('^[A-Z0-9]*$', 'i'),
+}
 
 const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -93,10 +114,11 @@ const Login = () => {
 
   const invalid = () => {
     const { username, password } = state;
-    return !username.length || password.length < 6;
+    return username.length < 3|| password.length < 6;
   };
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
     if (invalid()) {
       return;
     }
@@ -108,7 +130,7 @@ const Login = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         usuario: username,
-        password,
+        password: md5(password),
       }),
     })
       .then(handleFetch)
@@ -145,89 +167,107 @@ const Login = () => {
   };
 
   const handleInput = ({ target }) => {
-    update({ [target.id]: target.value.trim() });
+    if(!pattern[target.id] || target.value.trim().match(pattern[target.id])){
+      update({ [target.id]: target.value.trim() });
+    }
   };
 
   return (
     <Box component="main" className={classes.main}>
-      <Box
-        className={classes.box}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-      >
-        <Link to="/" component={reactLink}>
-          <IconButton>
-            <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
-          </IconButton>
-        </Link>
-        <Typography component="h1" variant="h5">
-          Inicia Sesión
-        </Typography>
-        <Box className={classes.form} width={1}>
+      <Card className={classes.box}>
+        <CardContent className="center">
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+          >
+            <IconButton>
+              <CloudIcon color="primary" style={{ fontSize: '4rem' }} />
+            </IconButton>
+            <Typography color="secondary" component="h2" variant="h4">
+              Cloudster
+            </Typography>
+            <Typography component="h6" variant="h6">
+              Inicia Sesión
+            </Typography>
+          </Box>
           <Divider />
-          <TextField
-            disabled={state.isLoading}
-            margin="normal"
-            required
-            fullWidth
-            autoFocus
-            value={state.username}
-            onChange={(e) => handleInput(e)}
-            id="username"
-            label="Nombre de usuario"
-            variant="outlined"
-          />
-          <TextField
-            disabled={state.isLoading}
-            margin="normal"
-            required
-            fullWidth
-            value={state.password}
-            onChange={(e) => handleInput(e)}
-            id="password"
-            type="password"
-            label="Contraseña"
-            variant="outlined"
-          />
-          <Button
-            disabled={state.isLoading || invalid()}
-            className={classes.submit}
-            fullWidth
-            onClick={handleLogin}
-            variant="contained"
-            color="primary"
-            size="large"
+          <form
+            className={classes.form}
+            autoComplete="off"
+            onSubmit={handleLogin}
           >
-            Iniciar Sesión
-          </Button>
-          <Snackbar
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            open={state.open}
-            onClose={handleClose}
-            autoHideDuration={6000}
-          >
-            <Alert onClose={handleClose} severity={state.severity}>
-              {state.message}
-            </Alert>
-          </Snackbar>
-        </Box>
-        <Grid container>
-          <Grid item xs>
-            <Link component={reactLink} to="/recover" color="secondary">
+            <Box>
+              <TextField
+                value={state.username}
+                onChange={handleInput}
+                id="username"
+                label="Nombre de usuario"
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                autoFocus
+                disabled={state.isLoading}
+              />
+              <TextField
+                value={state.password}
+                onChange={handleInput}
+                id="password"
+                label="Contraseña"
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                type="password"
+                disabled={state.isLoading}
+              />
+            </Box>
+            <Button
+              disabled={state.isLoading || invalid()}
+              fullWidth
+              variant="contained"
+              color="primary"
+              size="large"
+              type="submit"
+            >
+              Iniciar Sesión
+            </Button>
+            <Link to="/register" style={{ width: '100%' }} component={reactLink}>
+              <Button
+                fullWidth
+                variant="outlined"
+                size="large"
+                color="secondary"
+                type="button"
+              >
+                Registrarse
+              </Button>
+            </Link>
+            <Link
+              component={reactLink}
+              to="/recover"
+              className="forgot"
+            >
               Olvidé mi contraseña
             </Link>
-          </Grid>
-          <Grid item>
-            <Link component={reactLink} to="/register">
-              Registrarse
-            </Link>
-          </Grid>
-        </Grid>
-      </Box>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={state.open}
+        onClose={handleClose}
+        autoHideDuration={6000}
+      >
+        <Alert onClose={handleClose} severity={state.severity}>
+          {state.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
