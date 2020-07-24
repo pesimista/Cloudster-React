@@ -53,18 +53,24 @@ const pattern = new RegExp('^[\\w\\s\\-]*$', 'i');
 const UploadFileModal = ({ open, handleClose }) => {
   const classes = useStyles();
   const [state, update] = useReducer(reducer, initialState);
-  const {
-    state: { theme },
-  } = useContext(saduwux);
+  const { state: { theme } } = useContext(saduwux);
+
   const cleanState = () => {
-    update({ fileFieldName: state.originalName, fileField: null });
+    update({
+      fileFieldName: state.originalName,
+    });
   }
 
+  React.useEffect(() => {
+    update(initialState);
+  }, [open])
+
   const onChange = (e) => {
-    const fileName = e.target.files[0].name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const fileName = e.target.files[0].name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     let _ext = path.extname(fileName);
     const nombre = path.basename(fileName, _ext);
     _ext = _ext.substring(1);
+    
     update({
       fileField: e.target.files[0],
       ext: _ext,
@@ -90,7 +96,7 @@ const UploadFileModal = ({ open, handleClose }) => {
       <Dialog
         open={open}
         className={classes.modal}
-        onClose={handleLocalClose}
+        onClose={e => {console.log(e); handleLocalClose()}}
       >
         <DialogTitle id="file-dialog-title" className={classes.title}>
           {!state.fileField

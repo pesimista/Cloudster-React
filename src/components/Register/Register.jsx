@@ -515,7 +515,7 @@ const Register = () => {
               Cloudster
             </Typography>
             <Typography component="h6" variant="h6">
-              Recuperar contraseña
+              Registrar nuevo usuario
             </Typography>
           </Box>
           <Stepper

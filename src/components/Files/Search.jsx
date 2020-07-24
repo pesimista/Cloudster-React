@@ -163,7 +163,9 @@ const Search = () => {
   const goBack = () =>
     globalState.history.length && dispatch({ type: 'moveBack' });
   /** Goes one folder in */
-  const updateFolder = (ino) => dispatch({ type: 'moveForward', payload: ino });
+  const updateFolder = (ino) => {
+    dispatch({ type: 'moveForward', payload: ino });
+  }
   /** Redirects to the player */
   const updatePlayer = (ino) => {
     dispatch({ type: 'update', payload: { playing: ino } });
@@ -185,10 +187,18 @@ const Search = () => {
    * @param {boolean} closing si se está cerrando desde el dialog
    */
   const handleUploadModal = (data, closing = false) => {
-    if (!data && !closing) update({ uploadModal: true });
-    else if (data) uploadFile({ ...data, folder: globalState.folder });
-
-    if (closing) update({ uploadModal: false});
+    if (!data && !closing) {
+      update({ uploadModal: true });
+ 
+    } else if (data) {
+      uploadFile({
+        ...data,
+        folder: globalState.folder
+      });
+    }
+    if (closing) {
+      update({ uploadModal: false});
+    }
   };
 
   /** Closes the snackbar
@@ -314,6 +324,7 @@ const Search = () => {
                 <Grid item xs sm={3}>
                   <IconButton
                     edge="start"
+                    disabled={!globalState.history.length}
                     onClick={goBack}
                     color="inherit"
                     aria-label="menu"

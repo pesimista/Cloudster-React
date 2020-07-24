@@ -263,7 +263,7 @@ const App = () => {
 
   return (
     <ThemeProvider theme={!state.theme ? prins : dark}>
-      <BrowserRouter basename="/">{switchView()}</BrowserRouter>
+      <BrowserRouter basename="/app">{switchView()}</BrowserRouter>
     </ThemeProvider>
   );
 };
