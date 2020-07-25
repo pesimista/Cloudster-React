@@ -18,6 +18,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import SvgIcon from '@material-ui/core/SvgIcon/SvgIcon';
 import Switch from '@material-ui/core/Switch';
@@ -25,11 +27,13 @@ import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DescriptionIcon from '@material-ui/icons/Description';
 import FolderIcon from '@material-ui/icons/Folder';
+import { useHistory } from 'react-router-dom';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React, { useContext } from 'react';
 import { Cell, Label, Legend, Pie, PieChart } from 'recharts';
 import { saduwux } from '../SF/Context';
 import { handleFetch, reactLink } from '../SF/helpers';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 
 const useStyles = makeStyles((theme) => ({
   avatar: { backgroundColor: green[500] },
@@ -53,10 +57,16 @@ const useStyles = makeStyles((theme) => ({
         height: 'min-content',
         [theme.breakpoints.down('sm')]: {
           maxWidth: 'calc(100vw - 1rem)',
+          margin: '1rem 0'
         },
-        '& .MuiCardContent-root:last-child': {
-          paddingBottom: 16,
-        },
+        '& .MuiCardContent-root':{
+          '&.files-container': {
+            padding: '0',
+          },
+          '&:last-child': {
+            paddingBottom: 16,
+          },
+        }
       },
       '& .center': {
         display: 'flex',
@@ -112,6 +122,7 @@ const reducer = (state, action) => {
 
 const Profile = () => {
   const classes = useStyles();
+  const history = useHistory();
   const matches = useMediaQuery((theme) => theme.breakpoints.up('sm'));
 
   /** @type {context}*/
@@ -135,9 +146,16 @@ const Profile = () => {
       .catch(() => {});
   }, [user.id, state.shouldUpdate]);
 
-  /* const toFolder = () => {  //// Método para llevar al folder en el que se encuentra el archivo en el Search
-
-  }*/
+  const goToFolder = (dependency) => {
+    dispatch({
+      type: 'update',
+      payload: {
+        folder: dependency,
+        history: []
+      }
+    });
+    history.push('/busqueda');
+  }
 
   const handleCheck = ({ target }) => {
     dispatch({
@@ -149,12 +167,24 @@ const Profile = () => {
   const files = () =>
     state.files.map((file, index) => {
       return (
-        <ListItem key={index}>
-          <ListItemIcon>
-            <SvgIcon component={!file.ext ? FolderIcon : DescriptionIcon} />
-          </ListItemIcon>
-          <ListItemText primary={file.name} secondary={null} />
-        </ListItem>
+        <React.Fragment key={index}>
+          <ListItem style={{height: 50}}>
+            <ListItemIcon>
+              <SvgIcon component={!file.ext ? FolderIcon : DescriptionIcon} />
+            </ListItemIcon>
+            <ListItemText primary={file.name} secondary={null} />
+            <ListItemSecondaryAction>
+              <IconButton
+                style={{padding: 0}}
+                aria-label="got-to-containingFolder"
+                onClick={() => goToFolder(file.dependency)}
+              >
+                <ArrowRightIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+          <Divider/>
+        </React.Fragment>
       );
     });
 
@@ -250,12 +280,20 @@ const Profile = () => {
       {
         !state.files.length ? 
         '' : (
-          <Grid item container xs className='card-box'>
-            <Grid item xs={12}>
-              <Card raised={false}>
+          <Grid 
+            container
+            item
+            direction="column"
+            justify="center"
+            alignItems="center"
+            wrap="nowrap"
+            className="card-box"
+          >
+            <Grid item xs={12} style={{width: '100%'}}>
+              <Card raised={false} style={{width: '100%'}}>
                 <CardHeader title="Archivos Subidos" />
                 <Divider />
-                <CardContent>
+                <CardContent className="files-container">
                   <List className={classes.list} dense={true}>
                     {files()}
                   </List>

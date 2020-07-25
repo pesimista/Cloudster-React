@@ -141,7 +141,7 @@ export const postFile = (data, onSuccess, onError) => {
 
   let formData = new FormData();
   formData.append('file', data.fileField);
-  formData.append('name', data.fileFieldName);
+  formData.append('name', `${data.fileFieldName}.${data.ext}`);
 
   fetch(`/api/files/${data.folder}`, {
     method: 'POST',

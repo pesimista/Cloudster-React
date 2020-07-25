@@ -74,7 +74,7 @@ const FilesTableContainer = ({
       .then((files) => {
         files = files.map((file, index) => ({
           ...file,
-          updating: !file.isFile,
+          updating: false,
           index,
         }));
         setState({ fileList: files });
@@ -173,9 +173,6 @@ const FilesTableContainer = ({
   };
 
   const setSuspend = (file) => {
-    if (!file.isFile) {
-      return;
-    }
     setState({ fileToSuspend: { ...file } });
   };
 

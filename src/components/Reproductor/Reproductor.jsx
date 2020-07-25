@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
 }));
 const route = window.location.origin;
+// const route = window.location.hostname;
 
 const Reproductor = () => {
   const classes = useStyles();
@@ -31,7 +32,7 @@ const Reproductor = () => {
         <div className="flex-column min-h100">
           <div style={{ flexGrow: '1', overflow: 'auto', width: '100%' }}>
             <Iframe
-              url={`${route}/api/files/${playing}/watch?token=${token}`}
+              url={`${route}/api/watch/${playing}?token=${token}`}
               height="100%"
               width="100%"
               allow="fullscreen"

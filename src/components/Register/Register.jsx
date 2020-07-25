@@ -17,10 +17,11 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import CloudIcon from '@material-ui/icons/Cloud';
 import React, { useReducer } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 import { handleFetch, structuteChecker, reactLink } from '../SF/helpers';
 import MuiAlert from '@material-ui/lab/Alert';
 import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
+import { saduwux } from '../SF/Context';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -192,6 +193,27 @@ const Register = () => {
   const classes = useStyles();
 
   const [state, update] = useReducer(reducer, initialState);
+  const { state: global, dispatch } = React.useContext(saduwux);
+
+  React.useEffect(() => {
+    if(global.logStatus !== 2){
+      localStorage.clear();
+      dispatch({
+        type: 'update',
+        payload: {
+          logStatus: 0,
+          theme: false
+        }
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (global.logStatus === 2) {
+    return (
+      <Redirect to="/busqueda"/>
+    );
+  }
 
   const invalid = () => {
     if (!state.touched || state.isLoading) {
@@ -515,7 +537,7 @@ const Register = () => {
               Cloudster
             </Typography>
             <Typography component="h6" variant="h6">
-              Recuperar contraseña
+              Registrar nuevo usuario
             </Typography>
           </Box>
           <Stepper
