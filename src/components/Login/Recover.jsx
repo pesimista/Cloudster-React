@@ -17,7 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import CloudIcon from '@material-ui/icons/Cloud';
 import React, { useContext, useReducer } from 'react';
 import md5 from 'md5';
-import { useHistory, withRouter } from 'react-router-dom';
+import { useHistory, withRouter, Redirect } from 'react-router-dom';
 import { saduwux } from '../SF/Context';
 import { handleFetch, reactLink } from '../SF/helpers';
 import backgroundimg1 from '../SF/Media/background_study_by_hibelton_dc28kuo-fullview.jpg';
@@ -153,7 +153,27 @@ const Recover = () => {
   const history = useHistory();
 
   const [state, update] = useReducer(reducer, initialState);
-  const { dispatch } = useContext(saduwux);
+  const { state: global, dispatch } = useContext(saduwux);
+  
+  React.useEffect(() => {
+    if(global.logStatus !== 2){
+      localStorage.clear();
+      dispatch({
+        type: 'update',
+        payload: {
+          logStatus: 0,
+          theme: false
+        }
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (global.logStatus === 2 && !state.isLoading) {
+    return (
+      <Redirect to="/busqueda"/>
+    );
+  }
 
   const invalid = () => {
     if (!state.touched || state.isLoading) {

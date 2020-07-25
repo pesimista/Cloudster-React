@@ -55,15 +55,22 @@ const UploadFileModal = ({ open, handleClose }) => {
   const [state, update] = useReducer(reducer, initialState);
   const { state: { theme } } = useContext(saduwux);
 
+  React.useEffect(() => {
+    update(initialState);
+  }, [open])
+
   const cleanState = () => {
     update({
       fileFieldName: state.originalName,
     });
   }
 
-  React.useEffect(() => {
-    update(initialState);
-  }, [open])
+  const accept = () => {
+    if (!state.fileFieldName.length){
+      return;
+    }
+    handleClose(state, true)
+  }
 
   const onChange = (e) => {
     const fileName = e.target.files[0].name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -112,7 +119,7 @@ const UploadFileModal = ({ open, handleClose }) => {
               changeName={changeName}
               onChange={onChange}
               cleanState={cleanState}
-              handleClose={() => handleClose(state, true)}
+              handleClose={accept}
             />
           </Grid>
         </Paper>
@@ -172,6 +179,7 @@ const ModalContent = (props) => {
         <TextField
           fullWidth
           value={state.fileFieldName}
+          error={!state.fileFieldName.length}
           variant="outlined"
           style={{ textAlign: 'center' }}
           onChange={changeName}
@@ -179,14 +187,15 @@ const ModalContent = (props) => {
       </Grid>
       <Grid item xs={6} style={{ paddingTop: '15px' }}>
         <Button variant="contained" color="secondary" onClick={cleanState}>
-          Limpiar
+          Nombre original
         </Button>
       </Grid>
       <Grid item xs={6} style={{ paddingTop: '15px' }}>
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handleClose()}
+          onClick={handleClose}
+          disabled={!state.fileFieldName.length}
         >
           Aceptar
         </Button>

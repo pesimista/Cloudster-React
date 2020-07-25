@@ -146,21 +146,26 @@ const useFetchUser = (cb) => {
 const App = () => {
   const classes = useStyles();
   const { state, dispatch } = useContext(saduwux);
+  const cleanState = () => {
+    localStorage.clear();
+    dispatch({
+      type: 'update',
+      payload: {
+        logStatus: 0,
+        theme: false
+      }
+    });
+  }
 
   /** Verificacion de token on init */
   useFetchUser(() => {
     const token = localStorage.getItem('token');
     const usingDark = localStorage.getItem('theme');
     if (!token) {
-      dispatch({ type: 'update', payload: { logStatus: 0 } });
-      localStorage.clear();
+      cleanState();
       return;
     }
 
-    dispatch({
-      type: 'update',
-      payload: { logStatus: 1, theme: Boolean(usingDark) },
-    });
     fetch(`/api/users/token`, {
       method: 'GET',
       headers: {
@@ -169,11 +174,16 @@ const App = () => {
       },
     })
       .then(handleFetch)
-      .then((res) => dispatch({ type: 'login', payload: { user: res } }))
-      .catch(() => {
-        localStorage.clear();
-        dispatch({ type: 'update', payload: { logStatus: 0 } });
-      });
+      .then((res) => {
+        dispatch({
+          type: 'login',
+          payload: {
+            user: res,
+            theme: Boolean(usingDark)
+          }
+        })
+      })
+      .catch(cleanState);
   });
 
   const switchView = () => {
