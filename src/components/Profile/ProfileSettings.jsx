@@ -52,6 +52,14 @@ const useStyles = makeStyles((theme) => ({
       }
     },
   },
+  darkFocused: {
+    '& .Mui-focused':{
+      color: 'rgb(255, 255, 255)'
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':{
+      borderColor: 'rgba(255, 255, 255, 0.7)',
+    },
+  },
   root: {
     '& .MuiTab-wrapper': {
       justifyContent: 'flex-start',
@@ -95,6 +103,7 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+
 }));
 
 function Alert(props) {
@@ -198,7 +207,8 @@ const userReducer = (state, payload) => {
 
 const ProfileSettings = () => {
   const classes = useStyles();
-  const { state: { user }, dispatch } = React.useContext(saduwux)
+  /**@type {context} */
+  const { state: { user, theme }, dispatch } = React.useContext(saduwux);
 
   const [state, update] = React.useReducer(userReducer, {
     ...initialState,
@@ -491,6 +501,7 @@ const ProfileSettings = () => {
 
   const getClasses = () =>{
     let className = classes.main;
+    if (theme) className += ` ${classes.darkFocused}`;
     return className;
   }
 

@@ -340,6 +340,9 @@ const Recover = () => {
             required
             fullWidth
             autoFocus
+            inputProps={{
+              maxLength: 16
+            }}
           />
         );
       case 1:
@@ -357,6 +360,9 @@ const Recover = () => {
               fullWidth
               autoFocus
               helperText={state.pregunta1}
+              inputProps={{
+                maxLength: 32
+              }}
             />
             <TextField
               name="respuesta2"
@@ -369,6 +375,9 @@ const Recover = () => {
               required
               fullWidth
               helperText={state.pregunta2}
+              inputProps={{
+                maxLength: 32
+              }}
             />
           </Box>
         );
@@ -387,6 +396,9 @@ const Recover = () => {
               required
               fullWidth
               autoFocus
+              inputProps={{
+                maxLength: 16
+              }}
             />
             <TextField
               name="password2"
@@ -399,6 +411,9 @@ const Recover = () => {
               margin="normal"
               fullWidth
               required
+              inputProps={{
+                maxLength: 16
+              }}
             />
           </Box>
         );

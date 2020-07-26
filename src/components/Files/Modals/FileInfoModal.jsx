@@ -8,7 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 
 const useStyles = makeStyles((theme) => ({
-  image: { width: 164, height: 164 },
+  image: { width: 164, height: 164, margin: 'auto' },
   paperMod: {
     padding: theme.spacing(2),
     paddingTop: 0,
@@ -43,8 +43,8 @@ const FileInfoModal = ({ file, handleClose, open }) => {
         </DialogTitle>
         {/*-------------------------GRID----------------------------*/}
         <Paper className={classes.paperMod}>
-          <Grid container spacing={1} justify="center">
-            <Grid item>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={4}>
               <div className={classes.image}>
                 <img
                   src={getIcon(file.isFile, file.ext)}
@@ -55,7 +55,7 @@ const FileInfoModal = ({ file, handleClose, open }) => {
               </div>
             </Grid>
             <Grid item xs={12} sm={8} container>
-              <Grid item xs container direction="row" spacing={2}>
+              <Grid item xs={12} container direction="row" spacing={2}>
                 <Grid item xs={12}>
                   <Typography variant="body2" color="textSecondary">
                     Nombre:
@@ -63,7 +63,7 @@ const FileInfoModal = ({ file, handleClose, open }) => {
                   <Typography
                     gutterBottom
                     variant="subtitle1"
-                    style={{ wordWrap: 'break-word' }}
+                    style={{ wordWrap: 'break-word', maxWidth: '380px'}}
                   >
                     {file.name}
                   </Typography>

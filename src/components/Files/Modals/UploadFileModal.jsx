@@ -14,7 +14,9 @@ import path from 'path';
 const useStyles = makeStyles((theme) => ({
   root: { flexGrow: 1 },
   title: { flexGrow: 1, textAlign: 'center' },
-  input: { display: 'none' },
+  input: { 
+    display: 'none' ,
+  },
   toolbar: { maxHeight: '64px', position: 'static' },
   container: {
     display: 'flex',
@@ -28,6 +30,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  darkFocused: {
+    '& .Mui-focused':{
+      color: 'rgb(255, 255, 255)'
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':{
+      borderColor: 'rgba(255, 255, 255, 0.7)',
+    },
   },
   paperMod: {
     padding: theme.spacing(2),
@@ -113,7 +123,7 @@ const UploadFileModal = ({ open, handleClose }) => {
         <Paper className={classes.paperMod}>
           <Grid>
             <ModalContent
-              className={classes.input}
+              className={classes}
               state={state}
               theme={theme}
               changeName={changeName}
@@ -145,7 +155,7 @@ const ModalContent = (props) => {
           <input
             accept="/*"
             onChange={(e) => onChange(e)}
-            className={classes}
+            className={classes.input}
             id="icon-button-file"
             type="file"
           />
@@ -181,8 +191,11 @@ const ModalContent = (props) => {
           value={state.fileFieldName}
           error={!state.fileFieldName.length}
           variant="outlined"
-          style={{ textAlign: 'center' }}
+          className={theme ? classes.darkFocused : ''}
           onChange={changeName}
+          inputProps={{
+            maxLength: 64
+          }}
         />
       </Grid>
       <Grid item xs={6} style={{ paddingTop: '15px' }}>

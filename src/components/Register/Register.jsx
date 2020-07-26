@@ -377,6 +377,9 @@ const Register = () => {
                 variant="outlined"
                 helperText="El nombre debe contener al menos 2 catacteres"
                 fullWidth
+                inputProps={{
+                  maxLength: 32
+                }}
               />
               <TextField
                 required
@@ -388,6 +391,9 @@ const Register = () => {
                 variant="outlined"
                 helperText="El apellido debe contener al menos 2 catacteres"
                 fullWidth
+                inputProps={{
+                  maxLength: 32
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -402,6 +408,9 @@ const Register = () => {
                 variant="outlined"
                 helperText="La contraseña debe contener al menos 6 catacteres"
                 fullWidth
+                inputProps={{
+                  maxLength: 16
+                }}
               />
               <TextField
                 required
@@ -413,6 +422,9 @@ const Register = () => {
                 label="Confirmar contraseña"
                 variant="outlined"
                 fullWidth
+                inputProps={{
+                  maxLength: 16
+                }}
                 error={
                   state.password2.length > 2 &&
                   state.password !== state.password2}
@@ -459,6 +471,9 @@ const Register = () => {
                 label="Respuesta"
                 variant="outlined"
                 fullWidth
+                inputProps={{
+                  maxLength: 32
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -490,6 +505,9 @@ const Register = () => {
                 label="Respuesta"
                 variant="outlined"
                 fullWidth
+                inputProps={{
+                  maxLength: 32
+                }}
               />
             </Grid>
           </Grid>
@@ -512,6 +530,9 @@ const Register = () => {
               label="Nombre de usuario"
               variant="outlined"
               fullWidth
+              inputProps={{
+                maxLength: 16
+              }}
             />
           </Box>
         );

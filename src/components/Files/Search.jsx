@@ -66,6 +66,14 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 700,
     textAlign: 'center',
   },
+  darkFocused: {
+    '& .Mui-focused':{
+      color: 'rgb(255, 255, 255)'
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':{
+      borderColor: 'rgba(255, 255, 255, 0.7)',
+    },
+  },
   sectionDesktop: {
     [theme.breakpoints.down('xs')]: {
       display: 'none',
@@ -436,6 +444,7 @@ const Search = () => {
                   variant="outlined"
                   style={{ textAlign: 'center' }}
                   onChange={folderNameChange}
+                  className={globalState.theme ? classes.darkFocused : ''}
                 />
               </Grid>
               <Grid item xs={12} style={{ paddingTop: '15px' }}>

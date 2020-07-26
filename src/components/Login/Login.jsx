@@ -226,6 +226,9 @@ const Login = () => {
                 fullWidth
                 autoFocus
                 disabled={state.isLoading}
+                inputProps={{
+                  maxLength: 16
+                }}
               />
               <TextField
                 value={state.password}
@@ -238,6 +241,9 @@ const Login = () => {
                 fullWidth
                 type="password"
                 disabled={state.isLoading}
+                inputProps={{
+                  maxLength: 16
+                }}
               />
             </Box>
             <Button

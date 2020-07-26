@@ -1,4 +1,5 @@
 import React from 'react';
+import { useReducer, useContext } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,6 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { saduwux } from '../../SF/Context';
 import md5 from 'md5';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,6 +28,14 @@ const useStyles = makeStyles((theme) => ({
       height: '80px',
     },
   },
+  darkFocused: {
+    '& .Mui-focused':{
+      color: 'rgb(255, 255, 255)'
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':{
+      borderColor: 'rgba(255, 255, 255, 0.7)',
+    },
+  },
 }));
 
 const initialState = {
@@ -43,7 +53,8 @@ const reducer = (state, action) => {
 
 const ChangePasswordDialog = ({ user, handleClose }) => {
   const classes = useStyles();
-  const [state, update] = React.useReducer(reducer, initialState);
+  const [state, update] = useReducer(reducer, initialState);
+  const { state: { theme } } = useContext(saduwux);
 
   if (!user) {
     return '';
@@ -113,6 +124,7 @@ const ChangePasswordDialog = ({ user, handleClose }) => {
             direction="column"
             justify="center"
             alignItems="center"
+            className={theme ? classes.darkFocused : ''}
           >
             <TextField
               name="password"
