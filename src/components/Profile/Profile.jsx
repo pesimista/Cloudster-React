@@ -166,13 +166,14 @@ const Profile = () => {
 
   const files = () =>
     state.files.map((file, index) => {
+      const nameToShow = file.name + (!file.ext && file.ext!=='~' ? `.${file.ext}` : '');
       return (
         <React.Fragment key={index}>
           <ListItem style={{height: 50}}>
             <ListItemIcon>
               <SvgIcon component={!file.ext ? FolderIcon : DescriptionIcon} />
             </ListItemIcon>
-            <ListItemText primary={file.name} secondary={null} />
+            <ListItemText primary={nameToShow} secondary={null} />
             <ListItemSecondaryAction>
               <IconButton
                 style={{padding: 0}}

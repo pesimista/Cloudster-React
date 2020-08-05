@@ -243,29 +243,14 @@ const Register = () => {
   };
 
   const questions = [
-    { id: '1', pregunta: 'Cuál es el nombre de tu mejor amigo?' },
-    { id: '2', pregunta: 'Cuál es la ciudad donde naciste?' },
-    { id: '3', pregunta: 'Cómo se llamaba tu primera mascota?' },
-    { id: '4', pregunta: 'Cuál es tu color favorito?' },
-    { id: '5', pregunta: 'Cuál es el segundo nombre de tu madre?' },
+    { id: 1, pregunta: 'Cuál es el nombre de tu mejor amigo?' },
+    { id: 2, pregunta: 'Cuál es la ciudad donde naciste?' },
+    { id: 3, pregunta: 'Cómo se llamaba tu primera mascota?' },
+    { id: 4, pregunta: 'Cuál es tu color favorito?' },
+    { id: 5, pregunta: 'Cuál es el segundo nombre de tu madre?' },
   ];
 
   const handleRegister = () => {
-    const keys = [
-      { name: 'nombre', required: true, type: 'string', length: 2 },
-      { name: 'apellido', required: true, type: 'string', length: 2 },
-      { name: 'password', required: true, type: 'string', length: 6 },
-      { name: 'user', required: true, type: 'string', length: 6 },
-      { name: 'pregunta1', required: true, type: 'number' },
-      { name: 'pregunta2', required: true, type: 'number' },
-      { name: 'respuesta1', required: true, type: 'string', length: 3 },
-      { name: 'respuesta2', required: true, type: 'string', length: 3 },
-    ];
-
-    if (!structuteChecker(state, keys)) {
-      return;
-    }
-
     update({ isLoading: true });
 
     fetch('/api/users', {
@@ -321,6 +306,13 @@ const Register = () => {
   const handleNext = (e) => {
     e.preventDefault();
     if (invalid()) {
+      update({
+        open: true,
+        severity: 'error',
+        message: 'Faltan datos',
+        isLoading: false,
+        touched: false
+      });
       return;
     }
     if (state.activeStep === 2) {

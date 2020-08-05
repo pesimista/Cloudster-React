@@ -232,6 +232,9 @@ const TableContent = ({
     const cells = tableColumns.map((col, i) => {
       let constent = value[col.key];
       switch (col.key) {
+        case 'name': 
+          constent = value.name + (!value.ext && value.ext!=='~' ? `.${value.ext}` : '');
+          break;
         case 'image':
           constent = (
             <ImageCell value={value} className={classes.imageContainer} />
